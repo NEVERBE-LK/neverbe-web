@@ -158,7 +158,7 @@ export default function Footer({
                 <span>info@neverbe.lk</span>
               </a>
               <span className="sport-footer-hours">
-                Mon – Sun · 9:00 AM – 9:00 PM
+                Fri – Wed · 9:00 AM – 7:00 PM (Thursday Closed)
               </span>
             </div>
           </div>
