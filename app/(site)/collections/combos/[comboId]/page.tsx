@@ -16,7 +16,7 @@ const getCombo = cache(async (id: string) => {
 });
 
 const getAbsoluteUrl = (url?: string) => {
-  if (!url) return "https://neverbe.lk/logo-og.png";
+  if (!url) return "https://neverbe.lk/offers-og.png";
   if (url.startsWith("http://") || url.startsWith("https://")) return url;
   return `https://neverbe.lk${url.startsWith("/") ? "" : "/"}${url}`;
 };
@@ -30,31 +30,45 @@ export async function generateMetadata(context: {
 
   if (!combo) {
     return {
-      title: "Deal Not Found | Neverbe",
+      title: "Deal Not Found | neverbe.",
       description: "The requested combo deal could not be found.",
       robots: { index: false, follow: true },
     };
   }
 
   const savings = combo.originalPrice - combo.comboPrice;
+  const ogImg = getAbsoluteUrl(combo.thumbnail?.url || "/offers-og.png");
 
   return {
-    title: `${combo.name} - Save Rs. ${savings} | Neverbe`,
+    metadataBase: new URL("https://neverbe.lk"),
+    title: `${combo.name} - Save Rs. ${savings} | neverbe.`,
     description:
       combo.description ||
-      `Get ${combo.name} bundle and save Rs. ${savings}. Limited time combo deal!`,
+      `Get ${combo.name} bundle and save Rs. ${savings}. Limited time combo deal at neverbe.lk!`,
     openGraph: {
-      title: `${combo.name} | Neverbe Combo Deals`,
+      title: `${combo.name} | neverbe.`,
       description: `Save Rs. ${savings} with this exclusive combo deal.`,
       url: `https://neverbe.lk/collections/combos/${combo.id}`,
+      siteName: "neverbe.",
       images: [
         {
-          url: getAbsoluteUrl(combo.thumbnail?.url),
+          url: ogImg,
+          secureUrl: ogImg,
           width: 1200,
           height: 630,
           alt: combo.name,
         },
       ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${combo.name} | neverbe.`,
+      description: `Save Rs. ${savings} with this exclusive combo deal.`,
+      images: [ogImg],
+    },
+    other: {
+      "image_src": ogImg,
+      "og:image:secure_url": ogImg,
     },
   };
 }
@@ -89,7 +103,7 @@ const ComboDetailPage = async (context: {
   ];
 
   return (
-    <main className="w-full relative bg-white text-primary-dark">
+    <main className="commerce-legacy w-full relative bg-void text-primary">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

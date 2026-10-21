@@ -32,19 +32,16 @@ export const useRecentlyViewed = () => {
 export const RecentlyViewedProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>([]);
-
-  // Load from local storage on mount
-  useEffect(() => {
+  const [recentlyViewed, setRecentlyViewed] = useState<Product[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem("nep_recently_viewed");
-      if (stored) {
-        setRecentlyViewed(JSON.parse(stored));
-      }
+      return stored ? JSON.parse(stored) : [];
     } catch (error) {
       console.error("Failed to load recently viewed items", error);
+      return [];
     }
-  }, []);
+  });
 
   const addToRecentlyViewed = useCallback((product: Product) => {
     setRecentlyViewed((prev) => {
@@ -69,10 +66,13 @@ export const RecentlyViewedProvider: React.FC<{
     localStorage.removeItem("nep_recently_viewed");
   }, []);
 
+  const contextValue = React.useMemo(
+    () => ({ recentlyViewed, addToRecentlyViewed, clearRecentlyViewed }),
+    [recentlyViewed, addToRecentlyViewed, clearRecentlyViewed],
+  );
+
   return (
-    <RecentlyViewedContext.Provider
-      value={{ recentlyViewed, addToRecentlyViewed, clearRecentlyViewed }}
-    >
+    <RecentlyViewedContext.Provider value={contextValue}>
       {children}
     </RecentlyViewedContext.Provider>
   );

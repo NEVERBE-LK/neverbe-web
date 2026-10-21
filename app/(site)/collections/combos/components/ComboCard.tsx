@@ -49,7 +49,7 @@ const ComboCard: React.FC<ComboCardProps> = ({ combo }) => {
         alignItems: "center",
         fontWeight: 800,
         textTransform: "uppercase",
-        color: "#fff",
+        color: hasSavings ? "var(--color-inverse)" : "var(--color-accent-text)",
         letterSpacing: "0.05em",
         top: 12,
         borderRadius: "0 4px 4px 24px",
@@ -71,7 +71,7 @@ const ComboCard: React.FC<ComboCardProps> = ({ combo }) => {
             cover: { position: "relative" },
           }}
           cover={
-            <div className="relative aspect-square w-full overflow-hidden bg-[#fcfdfa] rounded-t-[24px]">
+            <div className="relative aspect-square w-full overflow-hidden bg-void rounded-t-[24px]">
               {combo.previewThumbnail || combo.thumbnail?.url ? (
                 <Image
                   src={combo.previewThumbnail || combo.thumbnail?.url || ""}
@@ -90,7 +90,7 @@ const ComboCard: React.FC<ComboCardProps> = ({ combo }) => {
                   <Tag
                     color="var(--color-accent)"
                     style={{
-                      color: "#fff",
+                      color: "var(--color-accent-text)",
                       fontWeight: 800,
                       letterSpacing: "0.05em",
                       textTransform: "uppercase",
@@ -130,17 +130,9 @@ const ComboCard: React.FC<ComboCardProps> = ({ combo }) => {
             </div>
 
             {combo.type === "BOGO" && (
-              <Text
-                style={{
-                  color: "var(--color-accent)",
-                  fontWeight: 800,
-                  textTransform: "uppercase",
-                  fontSize: "0.75rem",
-                  letterSpacing: "0.05em",
-                }}
-              >
+              <span className="text-accent font-extrabold uppercase text-xs tracking-wider">
                 Buy {combo.buyQuantity}, Get {combo.getQuantity} Free
-              </Text>
+              </span>
             )}
 
             <div className="flex flex-col mt-2">

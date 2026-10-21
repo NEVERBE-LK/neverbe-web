@@ -2,7 +2,10 @@
 
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { Product } from "@/interfaces/Product";
-import QuickViewModal from "@/components/QuickViewModal";
+import dynamic from "next/dynamic";
+const QuickViewModal = dynamic(() => import("@/components/QuickViewModal"), {
+  ssr: false,
+});
 import { useRecentlyViewed } from "@/components/RecentlyViewedProvider";
 
 interface QuickViewContextType {
@@ -34,23 +37,29 @@ export const QuickViewProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsOpen(true);
       addToRecentlyViewed(product);
     },
-    [addToRecentlyViewed]
+    [addToRecentlyViewed],
   );
 
   const closeQuickView = useCallback(() => {
     setIsOpen(false);
-    // Delay clearing product to allow exit animation
-    setTimeout(() => setProduct(null), 300);
+    // Retain the product while the dialog exits; the next open replaces it.
   }, []);
 
+  const contextValue = React.useMemo(
+    () => ({ openQuickView, closeQuickView }),
+    [openQuickView, closeQuickView],
+  );
+
   return (
-    <QuickViewContext.Provider value={{ openQuickView, closeQuickView }}>
+    <QuickViewContext.Provider value={contextValue}>
       {children}
-      <QuickViewModal
-        isOpen={isOpen}
-        onClose={closeQuickView}
-        product={product}
-      />
+      {product && (
+        <QuickViewModal
+          isOpen={isOpen}
+          onClose={closeQuickView}
+          product={product}
+        />
+      )}
     </QuickViewContext.Provider>
   );
 };

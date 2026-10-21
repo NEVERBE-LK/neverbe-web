@@ -38,16 +38,7 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ promotions }) => {
   return (
     <section>
       <Flex align="center" justify="space-between" className="mb-6">
-        <p
-          style={{
-            fontSize: 11,
-            fontWeight: 800,
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            color: "var(--color-primary-dark)",
-            margin: 0,
-          }}
-        >
+        <p className="text-[11px] font-black uppercase tracking-[0.1em] text-primary m-0">
           Active Campaigns
         </p>
         <Flex align="center" gap={8} className="hidden md:flex">
@@ -108,8 +99,8 @@ const CampaignCarousel: React.FC<CampaignCarouselProps> = ({ promotions }) => {
                     <Button
                       style={{
                         borderRadius: 99,
-                        background: "#fff",
-                        color: "var(--color-primary-dark)",
+                        background: "var(--color-white)",
+                        color: "var(--color-ink)",
                         border: "none",
                         fontWeight: 800,
                         fontSize: 11,

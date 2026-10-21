@@ -93,18 +93,44 @@ export const useCoupon = (options: UseCouponOptions = {}): UseCouponReturn => {
   );
   const user = useSelector((state: RootState) => state.authSlice.user);
 
-  const [couponState, setCouponState] = useState<CouponState>({
-    code: "",
+  const [couponState, setCouponState] = useState<CouponState>(() => ({
+    code: savedCouponCode || "",
     isValidating: false,
     isApplied: !!savedCouponCode,
     discount: savedDiscount || 0,
-    message: savedCouponCode ? `Coupon ${savedCouponCode} applied` : null,
+    message: savedCouponCode
+      ? `Coupon "${savedCouponCode}" applied - You save Rs. ${(savedDiscount || 0).toLocaleString()}`
+      : null,
     messageType: savedCouponCode ? "success" : null,
     couponDetails: null,
     conditionFeedback: null,
     isRestricted: false,
     restrictionReason: null,
-  });
+  }));
+
+  const [prevSavedCode, setPrevSavedCode] = useState(savedCouponCode);
+  if (savedCouponCode !== prevSavedCode) {
+    setPrevSavedCode(savedCouponCode);
+    if (savedCouponCode && savedCouponCode !== couponState.code) {
+      setCouponState((prev) => ({
+        ...prev,
+        code: savedCouponCode,
+        isApplied: true,
+        discount: savedDiscount || 0,
+        message: `Coupon "${savedCouponCode}" applied - You save Rs. ${(savedDiscount || 0).toLocaleString()}`,
+        messageType: "success",
+      }));
+    } else if (!savedCouponCode && couponState.isApplied) {
+      setCouponState((prev) => ({
+        ...prev,
+        code: "",
+        isApplied: false,
+        discount: 0,
+        message: null,
+        messageType: null,
+      }));
+    }
+  }
 
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
   const lastValidatedCode = useRef<string>("");
@@ -124,24 +150,32 @@ export const useCoupon = (options: UseCouponOptions = {}): UseCouponReturn => {
       .join("|");
   }, [bagItems]);
 
-  // Sync with saved coupon on mount
-  useEffect(() => {
-    if (savedCouponCode && savedCouponCode !== couponState.code) {
-      setCouponState((prev) => ({
-        ...prev,
-        code: savedCouponCode,
-        isApplied: true,
-        discount: savedDiscount,
-        message: `Coupon "${savedCouponCode}" applied - You save Rs. ${savedDiscount.toLocaleString()}`,
-        messageType: "success",
-      }));
-    }
-  }, [savedCouponCode, savedDiscount]);
-
   // Calculate cart total for validation
   const getCartTotal = useCallback(() => {
     return calculateTotal(bagItems) - calculateTotalDiscount(bagItems);
   }, [bagItems]);
+
+  // Generate success message based on coupon type
+  const getSuccessMessage = (result: CouponValidationResult): string => {
+    const { discount, coupon } = result;
+
+    if (!coupon) {
+      return `Coupon valid! You save Rs. ${discount.toLocaleString()}`;
+    }
+
+    switch (coupon.discountType) {
+      case "PERCENTAGE":
+        return `${
+          coupon.discountValue
+        }% off applied! You save Rs. ${discount.toLocaleString()}`;
+      case "FIXED":
+        return `Rs. ${coupon.discountValue} off applied!`;
+      case "FREE_SHIPPING":
+        return "Free shipping applied!";
+      default:
+        return `Coupon valid! You save Rs. ${discount.toLocaleString()}`;
+    }
+  };
 
   // Validate coupon against API
   const validateCoupon = useCallback(async () => {
@@ -249,28 +283,6 @@ export const useCoupon = (options: UseCouponOptions = {}): UseCouponReturn => {
     savedCouponCode,
     dispatch,
   ]);
-
-  // Generate success message based on coupon type
-  const getSuccessMessage = (result: CouponValidationResult): string => {
-    const { discount, coupon } = result;
-
-    if (!coupon) {
-      return `Coupon valid! You save Rs. ${discount.toLocaleString()}`;
-    }
-
-    switch (coupon.discountType) {
-      case "PERCENTAGE":
-        return `${
-          coupon.discountValue
-        }% off applied! You save Rs. ${discount.toLocaleString()}`;
-      case "FIXED":
-        return `Rs. ${coupon.discountValue} off applied!`;
-      case "FREE_SHIPPING":
-        return "Free shipping applied!";
-      default:
-        return `Coupon valid! You save Rs. ${discount.toLocaleString()}`;
-    }
-  };
 
   // Set code with optional auto-validation
   const setCode = useCallback(
@@ -387,18 +399,20 @@ export const useCoupon = (options: UseCouponOptions = {}): UseCouponReturn => {
     // If bag has combo items, remove any applied coupon
     if (hasComboItems && couponState.isApplied) {
       dispatch(removeCoupon());
-      setCouponState((prev) => ({
-        ...prev,
-        isApplied: false,
-        discount: 0,
-        message: "Coupons cannot be combined with combo deals",
-        messageType: "error",
-        couponDetails: null,
-        isRestricted: false,
-        restrictionReason: null,
-      }));
+      const timer = setTimeout(() => {
+        setCouponState((prev) => ({
+          ...prev,
+          isApplied: false,
+          discount: 0,
+          message: "Coupons cannot be combined with combo deals",
+          messageType: "error",
+          couponDetails: null,
+          isRestricted: false,
+          restrictionReason: null,
+        }));
+      }, 0);
       lastValidatedCode.current = "";
-      return;
+      return () => clearTimeout(timer);
     }
 
     // Re-validate existing coupon when bag changes

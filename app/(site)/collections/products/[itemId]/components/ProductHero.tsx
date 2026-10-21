@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { ArrowRight, Heart, Minus, Plus, Truck, RotateCcw } from "lucide-react";
+import Spinner from "@/components/Spinner";
 import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -55,14 +58,14 @@ const ProductHero = ({ item }: { item: Product }) => {
     dispatch(hydrateWishlist());
   }, [dispatch]);
 
-  const [selectedImage, setSelectedImage] = useState(item.thumbnail);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(
-    item.variants[0],
-  );
+  const initialVariant = item.variants?.[0] || { id: "", variantId: "", variantName: "", images: [], sizes: [], status: false };
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(initialVariant);
+  const [selectedImage, setSelectedImage] = useState(initialVariant.images?.[0] || item.thumbnail);
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [qty, setQty] = useState(1);
   const [sizeStock, setSizeStock] = useState<Record<string, number>>({});
-  const [stockLoading, setStockLoading] = useState(false);
+  const [stockLoading, setStockLoading] = useState(Boolean(initialVariant.variantId && initialVariant.sizes?.length));
+  const [stockError, setStockError] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
   const [allVariantStock, setAllVariantStock] = useState<
     Record<string, number>
@@ -94,66 +97,28 @@ const ProductHero = ({ item }: { item: Product }) => {
   };
 
   useEffect(() => {
-    if (selectedVariant.images?.length) {
-      setSelectedImage(selectedVariant.images[0]);
+    if (!selectedVariant.variantId || !selectedVariant.sizes?.length) {
+      return;
     }
-  }, [selectedVariant]);
-
-  useEffect(() => {
-    if (!item.variants?.length) return;
-
-    const loadAllVariantStock = async () => {
-      const stockMap: Record<string, number> = {};
-
-      const promises = item.variants.map(async (variant) => {
-        if (!variant.sizes?.length) {
-          stockMap[variant.variantId] = 0;
-          return;
-        }
-
-        try {
-          const res = await axiosInstance.get(
-            `/web/inventory/batch?productId=${item.id}&variantId=${
-              variant.variantId
-            }&sizes=${variant.sizes.join(",")}`,
-          );
-          const data = res.data;
-          const totalStock = Object.values(data.stock || {}).reduce(
-            (sum: number, qty: unknown) => sum + (Number(qty) || 0),
-            0,
-          );
-          stockMap[variant.variantId] = totalStock;
-        } catch {
-          stockMap[variant.variantId] = 0;
-        }
+    const controller = new AbortController();
+    const params = new URLSearchParams({
+      productId: item.id,
+      variantId: selectedVariant.variantId,
+      sizes: selectedVariant.sizes.join(","),
+    });
+    axiosInstance
+      .get(`/web/inventory/batch?${params}`, { signal: controller.signal })
+      .then((res) => {
+        if (!controller.signal.aborted) setSizeStock(res.data.stock || {});
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setStockError(true);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setStockLoading(false);
       });
-
-      await Promise.all(promises);
-      setAllVariantStock(stockMap);
-    };
-
-    loadAllVariantStock();
-  }, [item.id]);
-
-  useEffect(() => {
-    const fetchStock = async () => {
-      setStockLoading(true);
-      try {
-        const res = await axiosInstance.get(
-          `/web/inventory/batch?productId=${item.id}&variantId=${
-            selectedVariant.variantId
-          }&sizes=${selectedVariant.sizes.join(",")}`,
-        );
-        const data = res.data;
-        setSizeStock(data.stock || {});
-      } catch (e) {
-        console.error(e);
-      } flex: {
-        setStockLoading(false);
-      }
-    };
-    fetchStock();
-  }, [selectedVariant.variantId, item.id]);
+    return () => controller.abort();
+  }, [selectedVariant.variantId, selectedVariant.sizes, item.id]);
 
   const availableStock = selectedSize ? sizeStock[selectedSize] ?? 0 : 0;
   const bagQty =
@@ -175,7 +140,7 @@ const ProductHero = ({ item }: { item: Product }) => {
       productId: item.id,
       variantId: selectedVariant.variantId,
       name: item.name,
-      thumbnail: selectedVariant.images[0]?.url || item.thumbnail.url,
+      thumbnail: selectedVariant.images?.[0]?.url || item.thumbnail?.url || "/collection-placeholder.png",
       price: item.sellingPrice,
       addedAt: new Date().toISOString(),
     };
@@ -187,6 +152,7 @@ const ProductHero = ({ item }: { item: Product }) => {
       toast.error("Please select a size");
       return;
     }
+    if (stockLoading || stockError || qty + bagQty > availableStock) { toast.error("Please choose an available size and quantity."); return; }
     const productDiscount =
       Math.round(((item.discount / 100) * item.sellingPrice * qty) / 10) * 10;
     dispatch(
@@ -197,11 +163,11 @@ const ProductHero = ({ item }: { item: Product }) => {
         quantity: qty,
         price: item.sellingPrice,
         name: item.name,
-        thumbnail: selectedVariant.images[0]?.url || item.thumbnail.url,
+        thumbnail: selectedVariant.images?.[0]?.url || item.thumbnail?.url || "/collection-placeholder.png",
         itemType: "product",
         variantName: selectedVariant.variantName,
         discount: productDiscount,
-        maxQuantity: 10,
+        maxQuantity: Math.min(10, availableStock),
         category: item.category || "",
         brand: item.brand || "",
         weight: item.weight || 1000,
@@ -211,320 +177,19 @@ const ProductHero = ({ item }: { item: Product }) => {
     setQty(1);
   };
 
-  return (
-    <section className="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-6 md:py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
-      {/* --- LEFT COLUMN: IMAGES --- */}
-      <div className="lg:col-span-7 flex flex-col gap-4">
-        <div className="relative aspect-square bg-[var(--v2-bg-elevated)] rounded-3xl overflow-hidden border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] p-2">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedImage.url}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="w-full h-full relative"
-            >
-              <Image
-                src={selectedImage.url}
-                alt={item.name}
-                fill
-                priority
-                className="object-cover rounded-2xl"
-              />
-            </motion.div>
-          </AnimatePresence>
-
-          {item.discount > 0 && (
-            <div className="absolute top-4 left-4 bg-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)] px-4 py-1.5 rounded-full font-black text-[10px] uppercase tracking-widest shadow-lg">
-              {item.discount}% Off
-            </div>
-          )}
-        </div>
-
-        {/* Thumbnail gallery */}
-        <div className="grid grid-cols-6 gap-3">
-          {selectedVariant.images.map((img, idx) => (
-            <button
-              type="button"
-              key={idx}
-              onClick={() => setSelectedImage(img)}
-              className={`relative aspect-square bg-[var(--v2-bg-elevated)] rounded-2xl overflow-hidden border transition-all p-0.5 h-auto w-full cursor-pointer ${
-                selectedImage.url === img.url
-                  ? "border-[var(--v2-accent,#2EE66A)] ring-2 ring-[var(--v2-accent,#2EE66A)]/30"
-                  : "border-[var(--v2-glass-border,rgba(255,255,255,0.1))] opacity-60 hover:opacity-100"
-              }`}
-            >
-              <Image
-                src={img.url}
-                alt=""
-                fill
-                className="object-cover rounded-xl"
-              />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* --- RIGHT COLUMN: DETAILS --- */}
-      <div className="lg:col-span-5 relative">
-        <div className="lg:sticky lg:top-28 flex flex-col gap-6">
-          {activePromo && (
-            <div className="bg-[var(--v2-accent,#2EE66A)]/10 text-[var(--v2-accent,#2EE66A)] border border-[var(--v2-accent,#2EE66A)]/30 p-4 rounded-2xl flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider">
-                {activePromo.name || "Special Offer"}
-              </span>
-              <span className="text-[9px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)]">
-                Limited Time
-              </span>
-            </div>
-          )}
-
-          <header>
-            <span className="v2-section-label text-[10px] mb-1 block">
-              {item.brand?.replace("-", " ")}
-            </span>
-            <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] leading-tight m-0 mb-4">
-              {item.name}
-            </h1>
-
-            <div className="flex items-baseline gap-4 flex-wrap mb-6">
-              <span className="text-3xl font-black text-[var(--v2-accent,#2EE66A)]">
-                LKR {discountedPrice.toLocaleString()}
-              </span>
-
-              {hasAnyDiscount && originalPrice > discountedPrice && (
-                <span className="text-sm text-[var(--v2-text-muted,#666666)] line-through">
-                  LKR {originalPrice.toLocaleString()}
-                </span>
-              )}
-
-              {hasAnyDiscount && totalSavings > 0 && (
-                <span className="bg-[var(--v2-accent,#2EE66A)]/10 text-[var(--v2-accent,#2EE66A)] border border-[var(--v2-accent,#2EE66A)]/30 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">
-                  Save LKR {totalSavings.toLocaleString()}
-                </span>
-              )}
-
-              {selectedSize && (
-                <StockBadge stockCount={availableStock} className="mt-1" />
-              )}
-            </div>
-
-            {/* Delivery Ticker */}
-            <div className="flex items-center gap-6 border-y border-[var(--v2-glass-border,rgba(255,255,255,0.08))] py-3.5 text-xs font-bold uppercase tracking-wider text-[var(--v2-text-secondary,#A0A0A0)]">
-              <div className="flex items-center gap-2">
-                <FaTruckFast className="text-[var(--v2-accent,#2EE66A)]" size={16} />
-                <span>Standard Delivery 2-3 Days</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaArrowRotateLeft className="text-[var(--v2-accent,#2EE66A)]" size={16} />
-                <span>7-Day Exchange</span>
-              </div>
-            </div>
-          </header>
-
-          {/* Color Selection */}
-          <div>
-            <span className="text-xs font-black uppercase tracking-widest text-[var(--v2-text-primary,#F5F5F5)] block mb-3">
-              Select Color
-            </span>
-            <div className="flex flex-wrap gap-2.5">
-              {item.variants.map((v) => {
-                const variantPromo = getVariantPromotion(v.variantId);
-                const variantTotalStock = allVariantStock[v.variantId];
-                const isVariantOutOfStock =
-                  variantTotalStock !== undefined && variantTotalStock <= 0;
-
-                return (
-                  <button
-                    type="button"
-                    key={v.variantId}
-                    onClick={() => {
-                      setSelectedVariant(v);
-                      setSelectedSize("");
-                    }}
-                    className={`relative w-14 h-14 bg-[var(--v2-bg-elevated)] rounded-2xl overflow-hidden border p-0.5 transition-all cursor-pointer ${
-                      selectedVariant.variantId === v.variantId
-                        ? "border-[var(--v2-accent,#2EE66A)] ring-2 ring-[var(--v2-accent,#2EE66A)]/30"
-                        : "border-[var(--v2-glass-border,rgba(255,255,255,0.1))] opacity-60 hover:opacity-100"
-                    } ${isVariantOutOfStock ? "opacity-40" : ""}`}
-                    title={v.variantName}
-                  >
-                    <div className="relative w-full h-full">
-                      <Image
-                        src={v.images[0].url}
-                        alt={v.variantName}
-                        fill
-                        className="object-cover rounded-xl"
-                      />
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Size Selection */}
-          <div>
-            <div className="flex justify-between items-center mb-3">
-              <span className="text-xs font-black uppercase tracking-widest text-[var(--v2-text-primary,#F5F5F5)]">
-                Select Size
-              </span>
-              <button
-                type="button"
-                onClick={() => setShowSizeGuide(true)}
-                className="text-xs text-[var(--v2-accent,#2EE66A)] font-bold uppercase tracking-wider underline border-none bg-transparent cursor-pointer p-0"
-              >
-                Size Guide
-              </button>
-            </div>
-            <SizeGrid
-              sizes={selectedVariant.sizes}
-              selectedSize={selectedSize}
-              onSelectSize={setSelectedSize}
-              stockMap={sizeStock}
-              stockLoading={stockLoading}
-            />
-          </div>
-
-          {/* Quantity & Actions */}
-          <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-widest text-[var(--v2-text-primary,#F5F5F5)]">
-                Quantity
-              </span>
-              <div className="flex items-center gap-3 bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))] border border-[var(--v2-glass-border,rgba(255,255,255,0.1))] rounded-full px-3 py-1">
-                <button
-                  type="button"
-                  onClick={() => setQty(Math.max(1, qty - 1))}
-                  disabled={qty <= 1}
-                  className="text-[var(--v2-text-primary,#F5F5F5)] hover:text-[var(--v2-accent,#2EE66A)] bg-transparent border-none cursor-pointer p-1"
-                >
-                  <IoRemoveOutline size={16} />
-                </button>
-                <span className="text-sm font-black text-[var(--v2-text-primary,#F5F5F5)] px-2">
-                  {qty}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setQty(Math.min(10, qty + 1))}
-                  disabled={qty >= 10}
-                  className="text-[var(--v2-text-primary,#F5F5F5)] hover:text-[var(--v2-accent,#2EE66A)] bg-transparent border-none cursor-pointer p-1"
-                >
-                  <IoAddOutline size={16} />
-                </button>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={handleAddToBag}
-                disabled={
-                  !item.inStock ||
-                  !selectedSize ||
-                  availableStock === 0 ||
-                  isLimitReached
-                }
-                className={`flex-1 py-4 rounded-full font-black uppercase tracking-widest text-xs transition-all border-none cursor-pointer shadow-lg ${
-                  !item.inStock || (selectedSize && availableStock === 0) || isLimitReached
-                    ? "bg-rose-500/20 text-rose-400 cursor-not-allowed"
-                    : !selectedSize
-                    ? "bg-[var(--v2-glass-bg,rgba(255,255,255,0.05))] text-[var(--v2-text-muted,#666666)] cursor-not-allowed border border-[var(--v2-glass-border,rgba(255,255,255,0.1))]"
-                    : "bg-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)] hover:opacity-90 active:scale-95"
-                }`}
-              >
-                {!item.inStock || (availableStock === 0 && selectedSize)
-                  ? "Sold Out"
-                  : isLimitReached
-                  ? "Inventory Maxed"
-                  : !selectedSize
-                  ? "Select Size to Add"
-                  : "Add to Bag"}
-              </button>
-
-              <button
-                type="button"
-                onClick={handleToggleWishlist}
-                className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
-                  isInWishlist
-                    ? "bg-[var(--v2-accent,#2EE66A)] border-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)]"
-                    : "bg-[var(--v2-glass-bg,rgba(255,255,255,0.05))] border-[var(--v2-glass-border,rgba(255,255,255,0.1))] text-[var(--v2-text-primary,#F5F5F5)] hover:border-[var(--v2-accent,#2EE66A)]"
-                }`}
-              >
-                {isInWishlist ? <IoHeart size={22} /> : <IoHeartOutline size={22} />}
-              </button>
-            </div>
-
-            {/* Koko Payment Banner */}
-            <div className="flex items-center justify-center gap-2 p-3 bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))] border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] rounded-2xl">
-              <span className="text-[11px] font-bold text-[var(--v2-text-secondary,#A0A0A0)] uppercase tracking-wider">
-                Or 3 interest-free payments of LKR {(discountedPrice / 3).toFixed(0)} with
-              </span>
-              <Image src={KOKOLogo} alt="KOKO" width={45} height={16} className="object-contain" />
-            </div>
-          </div>
-
-          {/* Share & Support */}
-          <div className="pt-4 border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] flex items-center justify-between text-xs font-bold uppercase tracking-wider">
-            <ShareButtons
-              title={item.name}
-              url={`/collections/products/${item.id}`}
-            />
-            <a
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#25D366]/15 border border-[#25D366]/40 hover:bg-[#25D366]/25 hover:scale-105 font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer"
-            >
-              <FaWhatsapp size={18} className="text-[#25D366] shrink-0" />
-              <span className="text-[var(--v2-text-primary,#F5F5F5)] font-black text-xs tracking-wider">Chat with Specialist</span>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Description */}
-      {item.description && (
-        <div className="lg:col-span-12 border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pt-8 mt-6">
-          <span className="v2-section-label text-[10px] mb-2 block">DETAILS &amp; SPECS</span>
-          <h3 className="text-xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-4 m-0">
-            About This Product
-          </h3>
-          <div className="text-sm text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed space-y-3">
-            <ReactMarkdown
-              rehypePlugins={[rehypeRaw]}
-              components={{
-                p: ({ children }) => (
-                  <p className="mb-3 text-sm text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
-                    {children}
-                  </p>
-                ),
-                strong: ({ children }) => (
-                  <strong className="font-bold text-[var(--v2-text-primary,#F5F5F5)]">
-                    {children}
-                  </strong>
-                ),
-                li: ({ children }) => (
-                  <li className="flex items-start gap-2 text-sm text-[var(--v2-text-secondary,#A0A0A0)]">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--v2-accent,#2EE66A)] shrink-0" />
-                    <span>{children}</span>
-                  </li>
-                ),
-              }}
-            >
-              {item.description}
-            </ReactMarkdown>
-          </div>
-        </div>
-      )}
-
-      <SizeGuideDialog
-        isOpen={showSizeGuide}
-        onClose={() => setShowSizeGuide(false)}
-      />
-    </section>
-  );
+  const images = selectedVariant.images?.length ? selectedVariant.images : [item.thumbnail];
+  const canAdd = !!selectedSize && !stockLoading && !stockError && availableStock > 0 && !isLimitReached;
+  return <section className="commerce-product-detail">
+    <div className="commerce-product-gallery"><div className="commerce-product-main-image"><Image src={selectedImage?.url || item.thumbnail?.url || "/collection-placeholder.png"} alt={item.name} fill preload sizes="(max-width:900px) 100vw, 58vw"/>{item.isNewArrival&&<span className="commerce-product-badge">Just landed</span>}</div><div className="commerce-product-thumbnails" role="group" aria-label="Product images">{images.filter(Boolean).map((image,index)=><button type="button" key={`${image.url}-${index}`} onClick={()=>setSelectedImage(image)} aria-label={`View image ${index+1} of ${item.name}`} aria-pressed={selectedImage?.url===image.url}><Image src={image.url||"/collection-placeholder.png"} alt={`${item.name}, view ${index+1}`} fill sizes="90px"/></button>)}</div></div>
+    <div className="commerce-product-info"><p className="sport-eyebrow">{item.brand?.replaceAll("-"," ")||"THE NEVERBE COLLECTION"}</p><h1>{item.name}</h1><p className="commerce-product-category">{item.category?.replaceAll("-"," ")}</p><div className="commerce-product-price"><strong>LKR {discountedPrice.toLocaleString("en-LK")}</strong>{originalPrice>discountedPrice&&<del>LKR {originalPrice.toLocaleString("en-LK")}</del>}</div>{discountedPrice>0&&<div className="commerce-product-koko" aria-label={`or 3 installments of LKR ${Math.round(discountedPrice/3).toLocaleString("en-LK")} with Koko`}><span>or 3 interest-free payments of <strong>LKR {Math.round(discountedPrice/3).toLocaleString("en-LK")}</strong> with</span><Image src={KOKOLogo} alt="Koko" width={38} height={17} className="commerce-koko-logo"/></div>}{activePromo&&<div className="commerce-product-promo">{activePromo.name}</div>}
+    <div className="commerce-product-selection"><div className="commerce-label-row"><h2>Choose your colour</h2><span>{selectedVariant.variantName}</span></div><div className="commerce-product-variants">{item.variants?.map(variant=><button key={variant.variantId} type="button" title={variant.variantName} aria-label={variant.variantName||"Product option"} aria-pressed={selectedVariant.variantId===variant.variantId} onClick={()=>{setSelectedVariant(variant);setSelectedImage(variant.images?.[0]||item.thumbnail);setSelectedSize("");setQty(1);setSizeStock({});setStockLoading(Boolean(variant.variantId&&variant.sizes?.length));setStockError(false);}}><Image src={variant.images?.[0]?.url||item.thumbnail?.url||"/collection-placeholder.png"} alt={variant.variantName||item.name} fill sizes="64px"/></button>)}</div></div>
+    <div className="commerce-product-selection"><div className="commerce-label-row"><h2>Select size</h2><button type="button" onClick={()=>setShowSizeGuide(true)}>Size guide</button></div><SizeGrid sizes={selectedVariant.sizes||[]} selectedSize={selectedSize} onSelectSize={size=>{setSelectedSize(size);setQty(1);}} stockMap={sizeStock} stockLoading={stockLoading} disabled={stockError}/>{stockLoading&&<div className="commerce-stock-loading"><Spinner/></div>}{stockError&&<p className="commerce-error" role="alert">Availability couldn’t be checked. Please refresh or contact us before ordering.</p>}{!selectedVariant.sizes?.length&&<p className="commerce-muted">This option is currently unavailable.</p>}</div>
+    <div className="commerce-label-row"><h2>Quantity</h2><div className="commerce-quantity"><button type="button" aria-label="Decrease quantity" disabled={qty<=1} onClick={()=>setQty(n=>Math.max(1,n-1))}><Minus size={15}/></button><span>{qty}</span><button type="button" aria-label="Increase quantity" disabled={!selectedSize||qty>=Math.min(10,availableStock-bagQty)} onClick={()=>setQty(n=>Math.min(10,availableStock-bagQty,n+1))}><Plus size={15}/></button></div></div>
+    <div className="commerce-product-buy"><button type="button" className="commerce-primary" disabled={!canAdd} onClick={handleAddToBag}>Add to bag <ArrowRight size={18}/></button><button type="button" className="commerce-save" aria-label={isInWishlist?"Remove from favourites":"Save to favourites"} aria-pressed={isInWishlist} onClick={handleToggleWishlist}><Heart size={21} fill={isInWishlist?"currentColor":"none"}/></button></div>
+    <p className="commerce-product-hint">{selectedSize?availableStock>0?isLimitReached?"This quantity exceeds the stock available for your size.":`Size ${selectedSize} selected. Ready for your next move.`:"This size is currently sold out.":"Select an available size to add this item to your bag."}</p>
+    <div className="commerce-product-benefits"><span><Truck size={18}/> Delivery across Sri Lanka</span><span><RotateCcw size={18}/><Link href="/policies/shipping-return-policy">Delivery & exchange policy</Link></span></div>
+    <details className="commerce-product-accordion" open><summary>The details</summary><div className="commerce-prose"><ReactMarkdown rehypePlugins={[rehypeRaw]}>{item.description||"Explore your new everyday essential. Contact our team if you need help choosing the right fit."}</ReactMarkdown></div></details><details className="commerce-product-accordion"><summary>Delivery & payment</summary><p>Prices are in Sri Lankan rupees. Delivery fees and available payment options are confirmed at checkout.</p><Link href="/policies/shipping-return-policy">Read our delivery and return policy</Link></details><div className="commerce-product-share"><ShareButtons title={item.name} url={`/collections/products/${item.id}`} /><Link href="/contact">Need help choosing?</Link></div>
+    </div><SizeGuideDialog isOpen={showSizeGuide} onClose={()=>setShowSizeGuide(false)}/>
+  </section>;
 };
-
 export default ProductHero;

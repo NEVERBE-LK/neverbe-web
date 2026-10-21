@@ -11,6 +11,27 @@ interface Props {
   compact?: boolean;
 }
 
+const TimeBlock = ({
+  value,
+  label,
+  showLabel = true,
+}: {
+  value: number | undefined;
+  label: string;
+  showLabel?: boolean;
+}) => (
+  <div className="flex flex-col items-center min-w-[32px]">
+    <span className="font-display font-black text-xl md:text-2xl leading-none text-primary-dark tracking-tighter">
+      {String(value || 0).padStart(2, "0")}
+    </span>
+    {showLabel && (
+      <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-muted mt-1">
+        {label}
+      </span>
+    )}
+  </div>
+);
+
 const CountdownTimer: React.FC<Props> = ({
   targetDate,
   onExpire,
@@ -63,43 +84,23 @@ const CountdownTimer: React.FC<Props> = ({
     );
   }
 
-  const TimeBlock = ({
-    value,
-    label,
-  }: {
-    value: number | undefined;
-    label: string;
-  }) => (
-    <div className="flex flex-col items-center min-w-[32px]">
-      {/* Numbers using Brand Display font for a premium look */}
-      <span className="font-display font-black text-xl md:text-2xl leading-none text-primary-dark tracking-tighter">
-        {String(value || 0).padStart(2, "0")}
-      </span>
-      {labels && (
-        <span className="text-[9px] uppercase font-bold tracking-[0.15em] text-muted mt-1">
-          {label}
-        </span>
-      )}
-    </div>
-  );
-
   return (
     <div
       className={`flex items-center gap-2 md:gap-3 animate-fade ${className}`}
     >
       {Number(days) > 0 && (
         <>
-          <TimeBlock value={days} label="Days" />
+          <TimeBlock value={days} label="Days" showLabel={labels} />
           <span className="font-black text-lg md:text-xl text-accent pb-4">
             :
           </span>
         </>
       )}
-      <TimeBlock value={hours} label="Hrs" />
+      <TimeBlock value={hours} label="Hrs" showLabel={labels} />
       <span className="font-black text-lg md:text-xl text-accent pb-4">:</span>
-      <TimeBlock value={minutes} label="Mins" />
+      <TimeBlock value={minutes} label="Mins" showLabel={labels} />
       <span className="font-black text-lg md:text-xl text-accent pb-4">:</span>
-      <TimeBlock value={seconds} label="Secs" />
+      <TimeBlock value={seconds} label="Secs" showLabel={labels} />
     </div>
   );
 };

@@ -8,4 +8,12 @@ export const axiosInstance = axios.create({
   headers: {},
 });
 
+// Bound catalog reads without cutting off order or payment submissions.
+axiosInstance.interceptors.request.use((config) => {
+  if ((config.method || "get").toLowerCase() === "get" && !config.timeout) {
+    config.timeout = 10000;
+  }
+  return config;
+});
+
 export default axiosInstance;

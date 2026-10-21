@@ -59,38 +59,38 @@ const CouponCard: React.FC<Props> = ({ coupon }) => {
       initial={{ opacity: 0, y: 15 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="relative flex flex-col sm:flex-row bg-[var(--v2-bg-surface,#141414)] border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] hover:border-[var(--v2-accent,#2EE66A)] transition-all duration-300 group rounded-3xl overflow-hidden shadow-xl"
+      className="relative flex flex-col sm:flex-row bg-surface border border-glass-border hover:border-accent transition-all duration-300 group rounded-3xl overflow-hidden shadow-xl"
     >
       {/* Left / Top Badge: Discount Value */}
-      <div className="bg-gradient-to-br from-[var(--v2-accent,#2EE66A)] to-[var(--v2-accent-dim,#1B8A3F)] text-[var(--v2-accent-text,#0A0A0A)] p-5 flex flex-col items-center justify-center min-w-[130px] shrink-0 font-display">
-        <IoTicketOutline size={24} className="mb-1 text-[var(--v2-accent-text,#0A0A0A)] opacity-90" />
-        <span className="text-3xl font-black tracking-tighter leading-none text-[var(--v2-accent-text,#0A0A0A)]">
+      <div className="bg-gradient-to-br from-accent to-accent-dim text-accent-text p-5 flex flex-col items-center justify-center min-w-[130px] shrink-0 font-display">
+        <IoTicketOutline size={24} className="mb-1 text-accent-text opacity-90" />
+        <span className="text-3xl font-black tracking-tighter leading-none text-accent-text">
           {coupon.discountType === "PERCENTAGE"
             ? `${coupon.discountValue}%`
             : coupon.discountType === "FIXED"
             ? `LKR ${coupon.discountValue}`
             : "FREE"}
         </span>
-        <span className="text-[10px] font-black uppercase tracking-widest mt-1 opacity-90 text-[var(--v2-accent-text,#0A0A0A)]">
+        <span className="text-[10px] font-black uppercase tracking-widest mt-1 opacity-90 text-accent-text">
           {coupon.discountType === "FREE_SHIPPING" ? "Shipping" : "OFF"}
         </span>
       </div>
 
       {/* Dashed Ticket Divider */}
-      <div className="hidden sm:block w-px border-r-2 border-dashed border-[var(--v2-glass-border,rgba(255,255,255,0.15))] relative">
-        <div className="absolute -top-3 -left-2.5 w-5 h-5 rounded-full bg-[var(--v2-bg-surface,#141414)] border border-[var(--v2-glass-border,rgba(255,255,255,0.08))]" />
-        <div className="absolute -bottom-3 -left-2.5 w-5 h-5 rounded-full bg-[var(--v2-bg-surface,#141414)] border border-[var(--v2-glass-border,rgba(255,255,255,0.08))]" />
+      <div className="hidden sm:block w-px border-r-2 border-dashed border-glass-border relative">
+        <div className="absolute -top-3 -left-2.5 w-5 h-5 rounded-full bg-surface border border-glass-border" />
+        <div className="absolute -bottom-3 -left-2.5 w-5 h-5 rounded-full bg-surface border border-glass-border" />
       </div>
 
       {/* Content Body */}
       <div className="flex-1 p-5 flex flex-col justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-            <span className="px-2.5 py-0.5 rounded-full bg-[var(--v2-glass-bg,rgba(255,255,255,0.05))] border border-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent,#2EE66A)] text-[10px] font-black tracking-widest uppercase">
+            <span className="px-2.5 py-0.5 rounded-full bg-glass border border-accent text-accent text-[10px] font-black tracking-widest uppercase">
               CODE: {coupon.code.toUpperCase()}
             </span>
             {coupon.endDate && (
-              <div className="text-[10px] text-amber-400 font-extrabold flex items-center gap-1 uppercase tracking-wider bg-amber-400/10 px-2 py-0.5 rounded-full border border-amber-400/20">
+              <div className="text-[10px] text-warning font-extrabold flex items-center gap-1 uppercase tracking-wider bg-warning/10 px-2 py-0.5 rounded-full border border-warning/20">
                 <IoTimeOutline size={12} className="animate-spin-slow" />
                 <CountdownTimer
                   targetDate={getSafeISOString(coupon.endDate)}
@@ -101,12 +101,12 @@ const CouponCard: React.FC<Props> = ({ coupon }) => {
             )}
           </div>
 
-          <h3 className="text-sm font-black uppercase text-[var(--v2-text-primary,#F5F5F5)] tracking-tight line-clamp-2 m-0">
+          <h3 className="text-sm font-black uppercase text-primary tracking-tight line-clamp-2 m-0">
             {coupon.description || "Exclusive Member Voucher"}
           </h3>
 
           {(!!coupon.minOrderAmount && coupon.minOrderAmount > 0) || coupon.firstOrderOnly ? (
-            <p className="text-[10px] font-bold text-[var(--v2-text-muted,#666666)] uppercase tracking-wider mt-2.5 m-0">
+            <p className="text-[10px] font-bold text-muted uppercase tracking-wider mt-2.5 m-0">
               {!!coupon.minOrderAmount &&
                 coupon.minOrderAmount > 0 &&
                 `Min. Order LKR ${coupon.minOrderAmount.toLocaleString()}`}
@@ -120,14 +120,14 @@ const CouponCard: React.FC<Props> = ({ coupon }) => {
           onClick={handleCopy}
           className={`w-full py-2.5 px-4 rounded-full text-xs font-black uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer ${
             copied
-              ? "bg-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)] shadow-md scale-98"
-              : "bg-[var(--v2-glass-bg,rgba(255,255,255,0.05))] text-[var(--v2-text-primary,#F5F5F5)] border border-[var(--v2-glass-border,rgba(255,255,255,0.1))] hover:border-[var(--v2-accent,#2EE66A)] hover:text-[var(--v2-accent,#2EE66A)]"
+              ? "bg-accent text-accent-text shadow-md scale-98"
+              : "bg-glass text-primary border border-glass-border hover:border-accent hover:text-accent"
           }`}
         >
           {copied ? (
             <>
-              <IoCheckmarkDoneOutline size={16} className="text-[var(--v2-accent-text,#0A0A0A)]" />
-              <span className="text-[var(--v2-accent-text,#0A0A0A)] font-black">COPIED CODE!</span>
+              <IoCheckmarkDoneOutline size={16} className="text-accent-text" />
+              <span className="text-accent-text font-black">COPIED CODE!</span>
             </>
           ) : (
             <>

@@ -18,7 +18,7 @@ const sectionLabel: React.CSSProperties = {
   fontWeight: 800,
   textTransform: "uppercase" as const,
   letterSpacing: "0.1em",
-  color: "var(--color-primary-dark)",
+  color: "var(--color-primary)",
   display: "block",
   marginBottom: 12,
 };
@@ -78,7 +78,7 @@ const OffersPage = async () => {
 
   let dealsList: any[] = [];
   try {
-    const dealsResult = await getDealsProducts({ page: 1, size: 30 });
+    const dealsResult = await getDealsProducts({ page: 1, size: 12 });
     dealsList = dealsResult?.dataList || [];
   } catch (e) {
     console.error("Error fetching deal items:", e);
@@ -187,27 +187,27 @@ const OffersPage = async () => {
   };
 
   return (
-    <main className="w-full min-h-screen bg-[var(--v2-bg-surface,#141414)]">
+    <main className="commerce-legacy w-full min-h-screen bg-surface">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(offersSchema) }}
       />
 
       {/* Hero Header */}
-      <div className="bg-[var(--v2-bg-surface,#141414)] border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pt-16 pb-6 md:pt-20 md:pb-8">
+      <div className="bg-surface border-b border-glass-border pt-16 pb-6 md:pt-20 md:pb-8">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--v2-text-muted,#666666)] mb-3">
-            <Link href="/" className="hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted mb-3">
+            <Link href="/" className="hover:text-accent transition-colors">
               Home
             </Link>
             <span>/</span>
-            <span className="text-[var(--v2-text-primary,#F5F5F5)]">Offers</span>
+            <span className="text-primary">Offers</span>
           </nav>
           <span className="v2-section-label mb-2">LIMITED TIME DEALS</span>
-          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-2">
+          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary mb-2">
             Offers &amp; Promotions
           </h1>
-          <p className="text-[15px] font-medium text-[var(--v2-text-secondary,#A0A0A0)] m-0 max-w-xl">
+          <p className="text-[15px] font-medium text-secondary m-0 max-w-xl">
             Exclusive discounts, active coupons &amp; markdown deals on sneakers and apparel.
           </p>
         </div>
@@ -216,13 +216,13 @@ const OffersPage = async () => {
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 md:py-12 space-y-12">
         {/* Campaign Hero Banner */}
         <section>
-          <CampaignCarousel />
+          <CampaignCarousel promotions={bannerPromotions} />
         </section>
 
         {/* Active Promotions */}
         {promotions.length > 0 && (
           <section>
-            <h2 className="font-display font-black text-2xl uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-6">
+            <h2 className="font-display font-black text-2xl uppercase tracking-tight text-primary mb-6">
               Active Campaigns
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -232,23 +232,23 @@ const OffersPage = async () => {
                   className="v2-glass p-6 rounded-3xl relative overflow-hidden flex flex-col justify-between"
                 >
                   <div>
-                    <span className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-full bg-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)] inline-block mb-3">
+                    <span className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-full bg-accent text-accent-text inline-block mb-3">
                       {promo.type}
                     </span>
-                    <h3 className="font-display font-bold text-xl uppercase text-[var(--v2-text-primary,#F5F5F5)] mb-2">
+                    <h3 className="font-display font-bold text-xl uppercase text-primary mb-2">
                       {promo.name}
                     </h3>
-                    <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+                    <p className="text-xs text-secondary leading-relaxed m-0">
                       {promo.description}
                     </p>
                   </div>
-                  <div className="mt-6 pt-4 border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] flex justify-between items-center">
-                    <span className="text-[11px] font-extrabold text-[var(--v2-accent,#2EE66A)] uppercase tracking-wider">
+                  <div className="mt-6 pt-4 border-t border-glass-border flex justify-between items-center">
+                    <span className="text-[11px] font-extrabold text-accent uppercase tracking-wider">
                       Auto-applied at checkout
                     </span>
                     <Link
                       href="/collections/products"
-                      className="text-[11px] font-extrabold text-[var(--v2-text-primary,#F5F5F5)] hover:text-[var(--v2-accent,#2EE66A)] uppercase tracking-wider transition-colors"
+                      className="text-[11px] font-extrabold text-primary hover:text-accent uppercase tracking-wider transition-colors"
                     >
                       Shop Eligible Items →
                     </Link>
@@ -262,7 +262,7 @@ const OffersPage = async () => {
         {/* Active Coupons */}
         {coupons.length > 0 && (
           <section>
-            <h2 className="font-display font-black text-2xl uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-6">
+            <h2 className="font-display font-black text-2xl uppercase tracking-tight text-primary mb-6">
               Available Coupons
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -277,16 +277,16 @@ const OffersPage = async () => {
         <section>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <h2 className="font-display font-black text-2xl uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-1">
+              <h2 className="font-display font-black text-2xl uppercase tracking-tight text-primary mb-1">
                 Markdown Deals
               </h2>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] m-0">
+              <p className="text-xs text-secondary m-0">
                 Best prices on premium products.
               </p>
             </div>
             <Link
               href="/collections/combos"
-              className="text-xs font-extrabold text-[var(--v2-accent,#2EE66A)] uppercase tracking-wider hover:underline"
+              className="text-xs font-extrabold text-accent uppercase tracking-wider hover:underline"
             >
               View Bundle Deals →
             </Link>
@@ -298,26 +298,26 @@ const OffersPage = async () => {
       </div>
 
       {/* SEO Footer */}
-      <div className="border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] py-12 md:py-16 bg-[var(--v2-bg-surface,#141414)]">
+      <div className="border-t border-glass-border py-12 md:py-16 bg-surface">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Member Benefits</span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Member Benefits</span>
+              <p className="text-xs text-secondary leading-relaxed m-0">
                 Sign up to unlock early access, exclusive deals, and the best prices on premium products in Sri Lanka.
               </p>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Ways to Save</span>
-              <ul className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] space-y-1.5 list-none p-0 m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Ways to Save</span>
+              <ul className="text-xs text-secondary space-y-1.5 list-none p-0 m-0">
                 <li>• Seasonal Markdown Deals</li>
                 <li>• Exclusive Coupon Codes</li>
                 <li>• Bundle &amp; Save Combos</li>
               </ul>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Price Match Promise</span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Price Match Promise</span>
+              <p className="text-xs text-secondary leading-relaxed m-0">
                 Found a better price elsewhere? Let us know and we&apos;ll do our best to match it.
               </p>
             </div>

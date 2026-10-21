@@ -11,19 +11,21 @@ type SortOption = "NO SELCT" | "LOW TO HIGH" | "HIGH TO LOW" | "NEW ARRIVALS";
 interface UseProductListingOptions {
   apiEndpoint: string;
   defaultSize?: number;
+  defaultCategory?: string;
 }
 
 export const useProductListing = ({
   apiEndpoint,
-  defaultSize = 16,
+  defaultSize = 12,
+  defaultCategory,
 }: UseProductListingOptions) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // --- 1. Read State from URL ---
-  const page = Number(searchParams.get("page")) || 1;
-  const size = Number(searchParams.get("size")) || defaultSize;
+  const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const size = Math.min(100, Math.max(1, Number(searchParams.get("size")) || defaultSize));
   const inStock = searchParams.get("inStock") === "true";
   const selectedGender = searchParams.get("gender") || "";
 
@@ -33,8 +35,8 @@ export const useProductListing = ({
     [searchParams],
   );
   const selectedCategories = useMemo(
-    () => searchParams.get("category")?.split(",").filter(Boolean) || [],
-    [searchParams],
+    () => defaultCategory ? [defaultCategory.toLowerCase()] : searchParams.get("category")?.split(",").filter(Boolean) || [],
+    [searchParams, defaultCategory],
   );
   const selectedSizes = useMemo(
     () => searchParams.get("sizes")?.split(",").filter(Boolean) || [],
@@ -62,11 +64,15 @@ export const useProductListing = ({
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   // --- 3. Data Fetching ---
   useEffect(() => {
+    const controller = new AbortController();
     const fetchProducts = async () => {
       setLoading(true);
+      setError(false);
       try {
         const params = new URLSearchParams();
         params.set("page", page.toString());
@@ -94,7 +100,7 @@ export const useProductListing = ({
           ? apiEndpoint.split("/api/v1")[1]
           : apiEndpoint;
 
-        const res = await axiosInstance.get(`${endpoint}?${params}`);
+        const res = await axiosInstance.get(`${endpoint}?${params}`, { signal: controller.signal });
         const data = res.data;
 
         // Client-side Sort (if API sort isn't sufficient or for consistency)
@@ -106,19 +112,24 @@ export const useProductListing = ({
           selectedSort,
         );
 
+        if (controller.signal.aborted) return;
         setProducts(sorted);
         setTotal(data.total || 0);
       } catch (error) {
+        if (controller.signal.aborted) return;
+        setError(true);
         console.error("Failed to fetch products:", error);
         setProducts([]);
         setTotal(0);
       } finally {
-        setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       }
     };
 
     fetchProducts();
+    return () => controller.abort();
   }, [
+    attempt,
     apiEndpoint,
     page,
     size,
@@ -257,6 +268,8 @@ export const useProductListing = ({
     products,
     total,
     loading,
+    error,
+    retry: () => setAttempt(value => value + 1),
 
     // State
     page,

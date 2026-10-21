@@ -91,7 +91,7 @@ const ContactPage = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-28 pb-20 flex flex-col items-center px-4 sm:px-6 lg:px-12 bg-[var(--v2-bg-surface,#141414)] text-[var(--v2-text-primary,#F5F5F5)]">
+    <div className="commerce-legacy min-h-screen pt-28 pb-20 flex flex-col items-center px-4 sm:px-6 lg:px-12 bg-surface text-primary">
       {/* Structured Data JSON-LD */}
       <script
         type="application/ld+json"
@@ -101,11 +101,11 @@ const ContactPage = () => {
       {/* --- Header Section --- */}
       <header className="text-center mb-12 max-w-2xl mx-auto">
         <span className="v2-section-label mb-2">WE ARE HERE FOR YOU</span>
-        <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0 leading-none">
+        <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary m-0 leading-none">
           Contact Us
         </h1>
-        <p className="text-xs sm:text-sm font-medium text-[var(--v2-text-secondary,#A0A0A0)] mt-4 m-0">
-          Whether you have a question about sizing, order tracking, or feedback — we're ready to assist.
+        <p className="text-xs sm:text-sm font-medium text-secondary mt-4 m-0">
+          Whether you have a question about sizing, order tracking, or feedback — we&apos;re ready to assist.
         </p>
       </header>
 

@@ -9,7 +9,6 @@ import ProductFAQ from "./components/ProductFAQ";
 import RecentlyViewedTracker from "./components/RecentlyViewedTracker";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import ProductReviews from "./components/ProductReviews";
-import { Flex } from "antd";
 
 const getAbsoluteUrl = (url?: string) => {
   if (!url) return "https://neverbe.lk/collections-og.png";
@@ -34,18 +33,20 @@ export async function generateMetadata(context: {
 
   if (!item) {
     return {
-      title: "Item Not Found | Neverbe",
-      description: "The requested sneaker could not be found.",
+      title: "Item Not Found | neverbe.",
+      description: "The requested item could not be found.",
       robots: { index: false, follow: true },
     };
   }
 
   const safeTitle = `${item.name}`;
-  const categoryLabel = item.category || "fashion";
+  const categoryLabel = item.category || "apparel";
+  const ogImageUrl = `https://neverbe.lk/api/og/product/${item.id}`;
 
   return {
+    metadataBase: new URL("https://neverbe.lk"),
     title: safeTitle,
-    description: `Shop ${item.name} online in Sri Lanka. Premium quality ${categoryLabel} with island-wide delivery & Cash on Delivery available at Neverbe.`,
+    description: `Shop ${item.name} online in Sri Lanka. Premium quality ${categoryLabel} with island-wide delivery & Cash on Delivery available at neverbe.`,
     keywords: [
       item.name,
       `${categoryLabel} sri lanka`,
@@ -59,34 +60,32 @@ export async function generateMetadata(context: {
       canonical: `https://neverbe.lk/collections/products/${item.id}`,
     },
     openGraph: {
-      title: safeTitle,
-      description: `Shop ${item.name} - premium ${categoryLabel} in Sri Lanka at Neverbe.`,
+      title: `${safeTitle} | neverbe.`,
+      description: `Shop ${item.name} - premium ${categoryLabel} in Sri Lanka at neverbe.`,
       url: `https://neverbe.lk/collections/products/${item.id}`,
       type: "website",
-      siteName: "Neverbe",
+      siteName: "neverbe.",
       locale: "en_LK",
       images: [
         {
-          url: getAbsoluteUrl(item.thumbnail?.url),
+          url: ogImageUrl,
+          secureUrl: ogImageUrl,
           width: 1200,
           height: 630,
           type: "image/jpeg",
-          alt: `${item.name} - Premium Edition`,
-        },
-        {
-          url: getAbsoluteUrl(item.thumbnail?.url),
-          width: 600,
-          height: 600,
-          type: "image/jpeg",
-          alt: `${item.name} - Square View`,
+          alt: `${item.name} | neverbe.`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: safeTitle,
-      description: `Explore ${item.name} at Neverbe. Premium quality footwear and apparel in Sri Lanka.`,
-      images: [getAbsoluteUrl(item.thumbnail?.url)],
+      title: `${safeTitle} | neverbe.`,
+      description: `Shop ${item.name} online in Sri Lanka. Premium quality ${categoryLabel} with island-wide delivery at neverbe.`,
+      images: [ogImageUrl],
+    },
+    other: {
+      "image_src": ogImageUrl,
+      "og:image:secure_url": ogImageUrl,
     },
   };
 }
@@ -232,9 +231,8 @@ const Page = async (context: { params: Promise<{ itemId: string }> }) => {
   ];
 
   return (
-    <Flex
-      vertical
-      className="w-full relative mt-[72px] md:mt-[80px] min-h-screen bg-[var(--v2-bg-void,#0A0A0A)] text-[var(--v2-text-primary,#F5F5F5)]"
+    <div
+      className="commerce-product-page flex flex-col w-full relative min-h-screen bg-void text-primary"
     >
       <script
         type="application/ld+json"
@@ -245,7 +243,7 @@ const Page = async (context: { params: Promise<{ itemId: string }> }) => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
       />
       {/* Breadcrumbs Navigation */}
-      <div className="w-full bg-[var(--v2-bg-surface,#141414)] border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] py-3.5">
+      <div className="w-full bg-surface border-b border-glass-border py-3.5">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
           <Breadcrumbs items={breadcrumbItems} />
         </div>
@@ -255,7 +253,7 @@ const Page = async (context: { params: Promise<{ itemId: string }> }) => {
       <ProductFAQ />
       <SimilarProducts items={similarItems || []} />
       <RecentlyViewedTracker product={item} />
-    </Flex>
+    </div>
   );
 };
 

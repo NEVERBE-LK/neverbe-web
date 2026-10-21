@@ -25,10 +25,10 @@ const ShippingDetails = ({
 
   return (
     <div className="w-full">
-      <div className="mb-6 border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pb-4 flex items-center justify-between">
+      <div className="mb-6 border-b border-glass-border pb-4 flex items-center justify-between">
         <div>
           <span className="v2-section-label text-[9px] mb-0.5">BILLING &amp; NOTES</span>
-          <h2 className="text-xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
+          <h2 className="text-xl font-black uppercase tracking-tight text-primary m-0">
             Shipping &amp; Delivery Preferences
           </h2>
         </div>
@@ -39,7 +39,7 @@ const ShippingDetails = ({
           id="sameAddress"
           checked={shippingSameAsBilling}
           onChange={(e) => setShippingSameAsBilling(!shippingSameAsBilling)}
-          className="text-xs font-black uppercase tracking-wider text-[var(--v2-text-primary,#F5F5F5)]"
+          className="text-xs font-black uppercase tracking-wider text-primary"
         >
           Same as billing address
         </Checkbox>
@@ -51,8 +51,8 @@ const ShippingDetails = ({
             <Form.Item
               name="shippingName"
               label={
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                  Recipient Name <span className="text-rose-500 font-black ml-0.5">*</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                  Recipient Name <span className="text-error font-black ml-0.5">*</span>
                 </span>
               }
               rules={[
@@ -62,7 +62,7 @@ const ShippingDetails = ({
               <Input
                 placeholder="Recipient Full Name"
                 onChange={handleChange}
-                className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+                className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
               />
             </Form.Item>
           </Col>
@@ -71,8 +71,8 @@ const ShippingDetails = ({
             <Form.Item
               name="shippingPhone"
               label={
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                  Recipient Phone <span className="text-rose-500 font-black ml-0.5">*</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                  Recipient Phone <span className="text-error font-black ml-0.5">*</span>
                 </span>
               }
               rules={[
@@ -85,7 +85,7 @@ const ShippingDetails = ({
               <Input
                 placeholder="077 123 4567"
                 onChange={handleChange}
-                className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+                className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
               />
             </Form.Item>
           </Col>
@@ -94,8 +94,8 @@ const ShippingDetails = ({
             <Form.Item
               name="shippingAddress"
               label={
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                  Shipping Address <span className="text-rose-500 font-black ml-0.5">*</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                  Shipping Address <span className="text-error font-black ml-0.5">*</span>
                 </span>
               }
               rules={[
@@ -105,7 +105,7 @@ const ShippingDetails = ({
               <Input
                 placeholder="House No, Street Name"
                 onChange={handleChange}
-                className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+                className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
               />
             </Form.Item>
           </Col>
@@ -114,8 +114,8 @@ const ShippingDetails = ({
             <Form.Item
               name="shippingCity"
               label={
-                <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                  City <span className="text-rose-500 font-black ml-0.5">*</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                  City <span className="text-error font-black ml-0.5">*</span>
                 </span>
               }
               rules={[{ required: true, message: "Please input city!" }]}
@@ -123,7 +123,7 @@ const ShippingDetails = ({
               <Input
                 placeholder="City"
                 onChange={handleChange}
-                className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+                className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
               />
             </Form.Item>
           </Col>

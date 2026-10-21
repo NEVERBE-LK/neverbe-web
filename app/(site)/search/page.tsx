@@ -39,7 +39,7 @@ export async function generateMetadata(props: SearchPageProps): Promise<Metadata
       ],
     },
     robots: {
-      index: !!query,
+      index: false,
       follow: true,
     },
   };
@@ -56,7 +56,7 @@ export default async function SearchPage(props: SearchPageProps) {
       const response = await axiosInstance.get("/web/products/search", {
         params: {
           q: query.trim(),
-          hitsPerPage: 40
+          hitsPerPage: 12
         }
       });
       products = response.data.hits || [];

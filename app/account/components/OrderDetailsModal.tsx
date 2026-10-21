@@ -1,4 +1,5 @@
 "use client";
+import { printPalette } from "@/config/theme";
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,9 +21,6 @@ import { BusinessInfo } from "@/config/BusinessInfo";
 import { axiosInstance } from "@/actions/axiosInstance";
 import { submitExternalForm, processDeliveryFeePrepayment } from "@/actions/orderAction";
 import toast from "react-hot-toast";
-
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 
 interface OrderDetailsModalProps {
   order: Order | null;
@@ -47,36 +45,21 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 }) => {
   const [downloading, setDownloading] = React.useState(false);
   const [processingFee, setProcessingFee] = React.useState(false);
-
-  if (!isOpen || !order) return null;
-
-  const {
-    orderId,
-    createdAt,
-    status,
-    items,
-    customer,
-    paymentMethod,
-    paymentStatus,
-    shippingFee,
-    fee,
-    discount,
-    trackingNumber,
-  } = order;
-
-  // New Tracking State
   const [trackingHistory, setTrackingHistory] = React.useState<
     { date: string; status: string }[]
   >([]);
   const [loadingTracking, setLoadingTracking] = React.useState(false);
 
+  const orderId = order?.orderId;
+  const trackingNumber = order?.trackingNumber;
+
   React.useEffect(() => {
     const fetchTracking = async () => {
-      if (trackingNumber) {
+      if (trackingNumber && orderId) {
         setLoadingTracking(true);
         try {
           const res = await axiosInstance.get(
-            `/web/orders/${order.orderId}/tracking`,
+            `/web/orders/${orderId}/tracking`,
           );
           setTrackingHistory(res.data.data.history || []);
         } catch (error) {
@@ -87,7 +70,21 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       }
     };
     fetchTracking();
-  }, [order?.orderId, trackingNumber]);
+  }, [orderId, trackingNumber]);
+
+  if (!isOpen || !order) return null;
+
+  const {
+    createdAt,
+    status,
+    items,
+    customer,
+    paymentMethod,
+    paymentStatus,
+    shippingFee,
+    fee,
+    discount,
+  } = order;
 
   // Calculation Logic
   // Subtotal is the sum of net prices (price - discount) * quantity
@@ -117,6 +114,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
   const handleDownloadInvoice = async () => {
     setDownloading(true);
     try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import("jspdf"),
+        import("jspdf-autotable"),
+      ]);
       const doc = new jsPDF();
 
       // Preload images
@@ -164,32 +165,32 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       // Invoice Title & Info
       doc.setFont("helvetica", "black");
       doc.setFontSize(28);
-      doc.setTextColor(46, 158, 91); // Neverbe green
+      doc.setTextColor(printPalette.accent); // Neverbe green
       doc.text("INVOICE", 196, 22, { align: "right" });
 
       doc.setFontSize(10);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(0);
+      doc.setTextColor(printPalette.ink);
       doc.text(`Order ID: #${orderId}`, 196, 30, { align: "right" });
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(100);
+      doc.setTextColor(printPalette.secondary);
       doc.text(`Date: ${toSafeLocaleString(createdAt)}`, 196, 35, {
         align: "right",
       });
       doc.text(`Status: ${status.toUpperCase()}`, 196, 40, { align: "right" });
 
       // 2. Customer & Shipping details
-      doc.setDrawColor(230);
+      doc.setDrawColor(printPalette.border);
       doc.line(14, 48, 196, 48); // Divider
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.setTextColor(0);
+      doc.setTextColor(printPalette.ink);
       doc.text("BILLED TO", 14, 58);
       doc.text("SHIPPED TO", 140, 58); // Pushed further right to justify between
 
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(80);
+      doc.setTextColor(printPalette.secondary);
       doc.setFontSize(9);
       
       // Billed To details
@@ -238,8 +239,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         startY: tableStartY,
         theme: "grid",
         headStyles: { 
-          fillColor: [46, 158, 91], 
-          textColor: [255, 255, 255],
+          fillColor: printPalette.accent, 
+          textColor: printPalette.white,
           fontStyle: "bold",
           halign: "center"
         },
@@ -276,7 +277,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(100);
+      doc.setTextColor(printPalette.secondary);
       
       doc.text("Subtotal:", summaryX, finalY);
       doc.text(`Rs. ${subtotal.toLocaleString()}`, valueX, finalY, { align: "right" });
@@ -284,7 +285,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       let currentY = finalY + 7;
 
       if (promotionDiscountSum > 0) {
-        doc.setTextColor(46, 158, 91);
+        doc.setTextColor(printPalette.accent);
         doc.setFont("helvetica", "bold");
         doc.text("Auto Promotion:", summaryX, currentY);
         doc.text(`- Rs. ${promotionDiscountSum.toLocaleString()}`, valueX, currentY, { align: "right" });
@@ -292,32 +293,32 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       }
 
       if (couponDiscountSum > 0) {
-        doc.setTextColor(46, 158, 91);
+        doc.setTextColor(printPalette.accent);
         doc.setFont("helvetica", "bold");
         doc.text("Coupon Savings:", summaryX, currentY);
         doc.text(`- Rs. ${couponDiscountSum.toLocaleString()}`, valueX, currentY, { align: "right" });
         currentY += 7;
       }
 
-      doc.setTextColor(100);
+      doc.setTextColor(printPalette.secondary);
       doc.setFont("helvetica", "normal");
       doc.text("Shipping Fee:", summaryX, currentY);
       doc.text(`Rs. ${(shippingFee || 0).toLocaleString()}`, valueX, currentY, { align: "right" });
       
       currentY += 10;
-      doc.setDrawColor(230);
+      doc.setDrawColor(printPalette.border);
       doc.line(summaryX, currentY - 5, valueX, currentY - 5);
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
-      doc.setTextColor(0);
+      doc.setTextColor(printPalette.ink);
       doc.text("Grand Total:", summaryX, currentY);
       doc.text(`Rs. ${total.toLocaleString()}`, valueX, currentY, { align: "right" });
 
       // 5. Footer & Terms
       const footerY = 270;
       doc.setFontSize(8);
-      doc.setTextColor(150);
+      doc.setTextColor(printPalette.muted);
       doc.setFont("helvetica", "italic");
       doc.text("Terms & Conditions:", 14, footerY);
       doc.text("1. Items can be exchanged within 7 days of purchase.", 14, footerY + 5);
@@ -325,7 +326,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
-      doc.setTextColor(46, 158, 91);
+      doc.setTextColor(printPalette.accent);
       doc.text("THANK YOU FOR SHOPPING WITH Neverbe!", 105, 285, { align: "center" });
 
       doc.save(`Neverbe-Invoice-${orderId}.pdf`);
@@ -353,10 +354,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           initial={{ opacity: 0, scale: 0.98, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 10 }}
-          className="relative bg-white w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[2.5rem] shadow-2xl border border-default flex flex-col"
+          className="relative bg-surface w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[2.5rem] shadow-2xl border border-default flex flex-col"
         >
           {/* HEADER */}
-          <div className="sticky top-0 bg-white border-b border-default p-6 md:p-8 flex items-center justify-between z-20">
+          <div className="sticky top-0 bg-surface border-b border-default p-6 md:p-8 flex items-center justify-between z-20">
             <div>
               <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-primary-dark leading-none">
                 Order Details
@@ -376,9 +377,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
           <div className="p-6 md:p-10 overflow-y-auto hide-scrollbar space-y-10">
             {/* STATUS & ACTIONS */}
-            <div className="flex flex-wrap items-center justify-between gap-6 bg-white p-6 rounded-4xl border border-default">
+            <div className="flex flex-wrap items-center justify-between gap-6 bg-surface-2 p-6 rounded-4xl border border-default">
               <div className="flex items-center gap-5">
-                <div className="p-4 bg-accent text-white rounded-2xl shadow-lg shadow-accent/20">
+                <div className="p-4 bg-accent text-inverse rounded-2xl shadow-lg shadow-accent/20">
                   <IoCubeOutline size={24} />
                 </div>
                 <div>
@@ -397,7 +398,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   onClick={handleDownloadInvoice}
                   loading={downloading}
                   disabled={downloading}
-                  className="flex items-center gap-2 px-6 py-4 bg-white text-primary-dark border border-strong hover:border-primary transition-all text-xs! font-black! uppercase! tracking-widest! rounded-full shadow-sm h-auto"
+                  className="flex items-center gap-2 px-6 py-4 bg-surface text-primary-dark border border-strong hover:border-primary transition-all text-xs! font-black! uppercase! tracking-widest! rounded-full shadow-sm h-auto"
                 >
                   <IoCloudDownloadOutline size={18} />
                   {downloading ? "Generating..." : "Download Invoice"}
@@ -434,7 +435,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     {[...trackingHistory].reverse().map((item, idx) => (
                       <div key={idx} className="relative group">
                         <div
-                          className={`absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-125 ${idx === 0 ? "bg-accent scale-125" : "bg-muted"}`}
+                          className={`absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-surface-2 shadow-sm transition-transform group-hover:scale-125 ${idx === 0 ? "bg-accent scale-125" : "bg-muted"}`}
                         />
                         <div className="flex flex-col gap-1">
                           <p
@@ -450,7 +451,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-4 bg-white/50 rounded-2xl border border-dashed border-default">
+                  <div className="text-center py-4 bg-surface-2/50 rounded-2xl border border-dashed border-default">
                     <p className="text-[10px] text-muted font-bold uppercase tracking-widest">
                       Live tracking data is being updated or currently unavailable.
                     </p>
@@ -469,9 +470,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 {items.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex gap-6 p-4 bg-white rounded-3xl border border-default hover:border-accent transition-all group"
+                    className="flex gap-6 p-4 bg-surface-2 rounded-3xl border border-default hover:border-accent transition-all group"
                   >
-                    <div className="w-20 h-20 bg-white shrink-0 rounded-2xl overflow-hidden border border-default p-1">
+                    <div className="w-20 h-20 bg-surface shrink-0 rounded-2xl overflow-hidden border border-default p-1">
                       <Image
                         width={80}
                         height={80}
@@ -536,10 +537,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-amber-500/10 border border-amber-500 rounded-[2.5rem] p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                  <div className="bg-warning/10 border border-warning rounded-[2.5rem] p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-start gap-5">
-                      <div className="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center shrink-0">
-                        <IoWarningOutline className="text-amber-500 text-2xl" />
+                      <div className="w-12 h-12 bg-warning/20 rounded-full flex items-center justify-center shrink-0">
+                        <IoWarningOutline className="text-warning text-2xl" />
                       </div>
                       <div>
                         <h3 className="text-primary-dark font-display font-black uppercase text-lg">
@@ -554,7 +555,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       onClick={handlePayDeliveryFee}
                       loading={processingFee}
                       disabled={processingFee}
-                      className="bg-amber-500 hover:bg-amber-400 text-black border-none text-xs font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-md shrink-0 transition-all"
+                      className="bg-warning hover:bg-warning text-dark border-none text-xs font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-md shrink-0 transition-all"
                     >
                       Pay LKR {order.shippingFee} Delivery Fee
                     </Button>
@@ -629,7 +630,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               </div>
 
               {/* SUMMARY */}
-              <div className="bg-white p-8 rounded-[2.5rem] border border-default flex flex-col justify-between">
+              <div className="bg-surface-2 p-8 rounded-[2.5rem] border border-default flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-accent">
                     <span>Subtotal</span>
@@ -679,7 +680,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             </div>
           </div>
 
-          <div className="p-6 bg-white border-t border-default text-center">
+          <div className="p-6 bg-surface border-t border-default text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted">
               Customer Exclusives
             </p>

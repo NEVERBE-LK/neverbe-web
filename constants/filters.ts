@@ -1,9 +1,16 @@
 /**
- * Filter constants shared across all filter components
+ * Filter constants shared across filter components
+ * Note: Filter sizes, brands, and categories are dynamically fetched from the API via useFilterData.
+ * These serve as emergency offline/network-fallback values.
  */
 
-// Common shoe sizes
 export const AVAILABLE_SIZES = [
+  "XS",
+  "S",
+  "M",
+  "L",
+  "XL",
+  "XXL",
   "36",
   "37",
   "38",
@@ -17,6 +24,7 @@ export const AVAILABLE_SIZES = [
   "46",
   "47",
 ];
+
 export const OCCASIONS = [
   "Casual",
   "Formal",

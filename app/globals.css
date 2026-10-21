@@ -5,86 +5,59 @@
   --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --max-width-content: 1400px;
-}
 
-/* ═══════════════ 2026 DYNAMIC THEME SYSTEM (DARK & LIGHT) ═══════════════ */
+  /* Surfaces & Backgrounds */
+  --color-void: var(--v2-bg-void);
+  --color-surface: var(--v2-bg-surface);
+  --color-surface-2: var(--v2-bg-elevated);
+  --color-surface-3: var(--v2-bg-elevated);
+  --color-elevated: var(--v2-bg-elevated);
+  --color-card: var(--v2-bg-card);
 
-:root,
-[data-theme="dark"],
-html.dark {
-  --v2-bg-void: #0A0A0A;
-  --v2-bg-surface: #141414;
-  --v2-bg-elevated: #1E1E1E;
-  --v2-bg-card: #181818;
-  --v2-accent: #2EE66A;
-  --v2-accent-text: #0A0A0A;
-  --v2-accent-dim: #1B8A3F;
-  --v2-accent-glow: rgba(46, 230, 106, 0.15);
-  --v2-accent-glow-strong: rgba(46, 230, 106, 0.3);
-  --v2-text-primary: #F5F5F5;
-  --v2-text-secondary: #A0A0A0;
-  --v2-text-muted: #666666;
-  --v2-text-dim: #444444;
-  --v2-glass-bg: rgba(255, 255, 255, 0.04);
-  --v2-glass-bg-hover: rgba(255, 255, 255, 0.08);
-  --v2-glass-border: rgba(255, 255, 255, 0.08);
-  --v2-glass-border-hover: rgba(255, 255, 255, 0.15);
-  --v2-gradient-accent: linear-gradient(135deg, #2EE66A 0%, #1B8A3F 100%);
-  --v2-shadow-glow: 0 0 40px rgba(46, 230, 106, 0.1);
-  --v2-shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
-  --v2-radius-card: 24px;
-  --v2-radius-pill: 99px;
-  --v2-backdrop-bg: rgba(0, 0, 0, 0.75);
-  --v2-transition-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Typography / Text */
+  --color-primary: var(--v2-text-primary);
+  --color-primary-dark: var(--v2-text-primary);
+  --color-dark: var(--v2-text-primary);
+  --color-secondary: var(--v2-text-secondary);
+  --color-muted: var(--v2-text-muted);
+  --color-dim: var(--v2-text-dim);
 
-  /* Semantic Color Bindings */
-  --color-surface: #141414;
-  --color-surface-2: #1E1E1E;
-  --color-primary-dark: #F5F5F5;
-  --color-text-primary: #F5F5F5;
-  --color-text-secondary: #A0A0A0;
-  --color-default: rgba(255, 255, 255, 0.08);
-  --color-muted: #666666;
-  --color-bg-primary: #0A0A0A;
-  --color-bg-secondary: #141414;
-  --color-accent: #2EE66A;
-}
+  /* Accent & Brand */
+  --color-accent: var(--v2-accent);
+  --color-accent-text: var(--v2-accent-text);
+  --color-accent-dim: var(--v2-accent-dim);
 
-[data-theme="light"],
-html.light {
-  --v2-bg-void: #F8FAF5;
-  --v2-bg-surface: #FFFFFF;
-  --v2-bg-elevated: #F0F5EC;
-  --v2-bg-card: #FFFFFF;
-  --v2-accent: #2E9E5B;
-  --v2-accent-text: #FFFFFF;
-  --v2-accent-dim: #1E6E3F;
-  --v2-accent-glow: rgba(46, 158, 91, 0.15);
-  --v2-accent-glow-strong: rgba(46, 158, 91, 0.3);
-  --v2-text-primary: #0E331C;
-  --v2-text-secondary: #2E4D38;
-  --v2-text-muted: #6B8E78;
-  --v2-text-dim: #A0B5A8;
-  --v2-glass-bg: rgba(46, 158, 91, 0.05);
-  --v2-glass-bg-hover: rgba(46, 158, 91, 0.1);
-  --v2-glass-border: rgba(46, 158, 91, 0.15);
-  --v2-glass-border-hover: rgba(46, 158, 91, 0.25);
-  --v2-gradient-accent: linear-gradient(135deg, #2E9E5B 0%, #1E6E3F 100%);
-  --v2-shadow-glow: 0 0 40px rgba(46, 158, 91, 0.15);
-  --v2-shadow-card: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --v2-backdrop-bg: rgba(0, 0, 0, 0.45);
+  /* Glass / Surfaces */
+  --color-glass: var(--v2-glass-bg);
+  --color-glass-bg: var(--v2-glass-bg);
+  --color-glass-hover: var(--v2-glass-bg-hover);
+  --color-glass-border: var(--v2-glass-border);
+  --color-glass-border-hover: var(--v2-glass-border-hover);
+  --color-default: var(--v2-glass-border);
 
-  /* Semantic Color Bindings */
-  --color-surface: #FFFFFF;
-  --color-surface-2: #F0F5EC;
-  --color-primary-dark: #0E331C;
-  --color-text-primary: #0E331C;
-  --color-text-secondary: #2E4D38;
-  --color-default: rgba(46, 158, 91, 0.15);
-  --color-muted: #6B8E78;
-  --color-bg-primary: #F8FAF5;
-  --color-bg-secondary: #FFFFFF;
-  --color-accent: #2E9E5B;
+  /* Borders */
+  --color-border-primary: var(--v2-glass-border);
+  --color-border-secondary: var(--color-border-strong);
+  --color-border-strong: var(--color-border-strong);
+  --color-strong: var(--color-border-strong);
+
+  /* Inverted / Fixed */
+  --color-inverse: var(--v2-bg-void);
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-on-image: #ffffff;
+  --color-image-muted: rgba(255, 255, 255, 0.9);
+  --color-image-surface: #171717;
+  --color-on-image-hover: #e5e5e5;
+
+  /* Semantic Feedback States */
+  --color-success: var(--status-success);
+  --color-error: var(--status-error);
+  --color-warning: var(--status-warning);
+  --color-info: var(--status-info);
+  --sport-highlight: var(--color-highlight, #ffffff);
+  --color-sport-highlight: var(--color-highlight, #ffffff);
+  --color-sport-footer: var(--color-dark-surface, #141414);
 }
 
 html,
@@ -97,6 +70,21 @@ body {
   max-width: 100vw !important;
   margin: 0;
   padding: 0;
+}
+
+/* Link reset - zero specificity wrapper so button and component classes always win */
+a {
+  text-decoration: none;
+}
+:where(a:not([class*="commerce-"]):not([class*="sport-"]):not([class*="btn"]):not([class*="button"]):not([role="button"])) {
+  color: inherit;
+}
+
+/* Eliminate all text glow and text-shadows globally */
+*,
+*::before,
+*::after {
+  text-shadow: none !important;
 }
 
 /* ═══════════════ GLOBAL COMPONENT UTILITIES ═══════════════ */
@@ -129,7 +117,7 @@ body {
 
 .ant-card:hover {
   border-color: var(--v2-accent) !important;
-  box-shadow: var(--v2-shadow-card), 0 0 20px var(--v2-accent-glow) !important;
+  box-shadow: var(--v2-shadow-card) !important;
 }
 
 .ant-card-meta-title,
@@ -152,8 +140,8 @@ h5.ant-typography {
 }
 
 .ant-pagination-item {
-  background: var(--v2-glass-bg, rgba(255, 255, 255, 0.05)) !important;
-  border: 1px solid var(--v2-glass-border, rgba(255, 255, 255, 0.1)) !important;
+  background: var(--v2-glass-bg) !important;
+  border: 1px solid var(--v2-glass-border) !important;
   border-radius: 99px !important;
   min-width: 40px !important;
   height: 40px !important;
@@ -163,37 +151,37 @@ h5.ant-typography {
 }
 
 .ant-pagination-item a {
-  color: var(--v2-text-primary, #F5F5F5) !important;
+  color: var(--v2-text-primary) !important;
   font-weight: 800 !important;
   font-size: 13px !important;
 }
 
 .ant-pagination-item:hover {
-  border-color: var(--v2-accent, #2EE66A) !important;
-  background: var(--v2-glass-bg-hover, rgba(255, 255, 255, 0.1)) !important;
+  border-color: var(--v2-accent) !important;
+  background: var(--v2-glass-bg-hover) !important;
 }
 
 .ant-pagination-item:hover a {
-  color: var(--v2-accent, #2EE66A) !important;
+  color: var(--v2-accent) !important;
 }
 
 .ant-pagination-item-active {
-  background: var(--v2-accent, #2EE66A) !important;
-  border-color: var(--v2-accent, #2EE66A) !important;
-  box-shadow: var(--v2-shadow-glow) !important;
+  background: var(--v2-accent) !important;
+  border-color: var(--v2-accent) !important;
+  box-shadow: none !important;
 }
 
 .ant-pagination-item-active a {
-  color: #0A0A0A !important;
+  color: var(--v2-accent-text) !important;
   font-weight: 900 !important;
 }
 
 .ant-pagination-prev .ant-pagination-item-link,
 .ant-pagination-next .ant-pagination-item-link {
-  background: var(--v2-glass-bg, rgba(255, 255, 255, 0.05)) !important;
-  border: 1px solid var(--v2-glass-border, rgba(255, 255, 255, 0.1)) !important;
+  background: var(--v2-glass-bg) !important;
+  border: 1px solid var(--v2-glass-border) !important;
   border-radius: 99px !important;
-  color: var(--v2-text-primary, #F5F5F5) !important;
+  color: var(--v2-text-primary) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -203,8 +191,8 @@ h5.ant-typography {
 
 .ant-pagination-prev:hover .ant-pagination-item-link,
 .ant-pagination-next:hover .ant-pagination-item-link {
-  border-color: var(--v2-accent, #2EE66A) !important;
-  color: var(--v2-accent, #2EE66A) !important;
+  border-color: var(--v2-accent) !important;
+  color: var(--v2-accent) !important;
 }
 
 /* Glass Card */
@@ -219,7 +207,7 @@ h5.ant-typography {
 .v2-glass:hover {
   background: var(--v2-glass-bg-hover);
   border-color: var(--v2-glass-border-hover);
-  box-shadow: var(--v2-shadow-glow);
+  box-shadow: none;
 }
 
 /* Accent Button */
@@ -244,7 +232,7 @@ h5.ant-typography {
   background: var(--v2-accent-dim);
   color: var(--v2-accent-text);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px var(--v2-accent-glow-strong);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 .v2-btn-accent:active {
   transform: translateY(0);
@@ -313,16 +301,18 @@ h5.ant-typography {
 .v2-pill:hover {
   border-color: var(--v2-accent);
   color: var(--v2-accent);
-  box-shadow: var(--v2-shadow-glow);
+  box-shadow: none;
 }
 
 /* Utility to hide scrollbars */
 .hide-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Hide reCAPTCHA badge */
@@ -330,23 +320,116 @@ h5.ant-typography {
   visibility: hidden;
 }
 
-/* Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+/* ==========================================================================
+   NEVERBE Custom Scrollbar System (Custom Owned Design Across All Views)
+   ========================================================================== */
+
+/* Theme-adaptive Scrollbar Design Tokens */
+:root,
+html.light,
+[data-theme="light"] {
+  --color-scroll-thumb: rgba(10, 10, 10, 0.22);
+  --color-scroll-thumb-hover: rgba(10, 10, 10, 0.55);
+  --color-scroll-thumb-active: rgba(10, 10, 10, 0.85);
+  --color-scroll-track: transparent;
 }
-::-webkit-scrollbar-track {
+
+html.dark,
+[data-theme="dark"] {
+  --color-scroll-thumb: rgba(255, 255, 255, 0.22);
+  --color-scroll-thumb-hover: rgba(255, 255, 255, 0.55);
+  --color-scroll-thumb-active: rgba(255, 255, 255, 0.85);
+  --color-scroll-track: transparent;
+}
+
+/* 1. Universal WebKit / Blink Engine (Chrome, Edge, Safari, Opera, Brave) */
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: var(--color-scroll-track, transparent);
+}
+
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-scroll-thumb);
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-scroll-thumb-hover);
+}
+
+::-webkit-scrollbar-thumb:active,
+*::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-scroll-thumb-active);
+}
+
+::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
-  background-color: var(--v2-glass-border);
-  border-radius: 99px;
+
+/* 2. Whole Page Root Scrollbar (Subtly wider pill for easy grasping) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
   border: 2px solid transparent;
-  background-clip: content-box;
 }
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--v2-accent);
+
+/* 3. Drawers, Filters, Quick View, Menus & Compact Scroll Areas */
+.commerce-drawer-scroll::-webkit-scrollbar,
+.commerce-menu-scroll::-webkit-scrollbar,
+.commerce-filter-options::-webkit-scrollbar,
+.commerce-cart-content.is-compact::-webkit-scrollbar,
+.commerce-quick-view-drawer .ant-drawer-body::-webkit-scrollbar,
+.commerce-filter-drawer .ant-drawer-body::-webkit-scrollbar,
+.commerce-cart-drawer .ant-drawer-body::-webkit-scrollbar,
+.commerce-drawer .ant-drawer-body::-webkit-scrollbar,
+.ant-drawer-body::-webkit-scrollbar,
+.ant-modal-body::-webkit-scrollbar,
+.ant-modal-wrap::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
 }
+
+.commerce-drawer-scroll::-webkit-scrollbar-thumb,
+.commerce-menu-scroll::-webkit-scrollbar-thumb,
+.commerce-filter-options::-webkit-scrollbar-thumb,
+.commerce-cart-content.is-compact::-webkit-scrollbar-thumb,
+.commerce-quick-view-drawer .ant-drawer-body::-webkit-scrollbar-thumb,
+.commerce-filter-drawer .ant-drawer-body::-webkit-scrollbar-thumb,
+.commerce-cart-drawer .ant-drawer-body::-webkit-scrollbar-thumb,
+.commerce-drawer .ant-drawer-body::-webkit-scrollbar-thumb,
+.ant-drawer-body::-webkit-scrollbar-thumb,
+.ant-modal-body::-webkit-scrollbar-thumb,
+.ant-modal-wrap::-webkit-scrollbar-thumb {
+  border: 1px solid transparent;
+}
+
+/* 4. Firefox & Non-WebKit Fallback (Only active where ::-webkit-scrollbar is unsupported) */
+@supports not selector(::-webkit-scrollbar) {
+  html,
+  body,
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scroll-thumb) transparent;
+  }
+}
+
 .v2-dialog-backdrop {
   background-color: var(--v2-backdrop-bg) !important;
   backdrop-filter: blur(12px) !important;
@@ -367,10 +450,6 @@ h5.ant-typography {
 }
 .v2-breadcrumb-icon {
   color: var(--v2-text-secondary) !important;
-}
-
-* {
-  scrollbar-color: var(--v2-glass-border) transparent;
 }
 
 /* Keyframe Animations */
@@ -409,24 +488,24 @@ h5.ant-typography {
 
 /* Ant Design Modal Theme Variable Overrides */
 .ant-modal-content {
-  background-color: var(--v2-bg-surface, #141414) !important;
-  color: var(--v2-text-primary, #F5F5F5) !important;
-  border: 1px solid var(--v2-glass-border, rgba(255, 255, 255, 0.08)) !important;
+  background-color: var(--v2-bg-surface) !important;
+  color: var(--v2-text-primary) !important;
+  border: 1px solid var(--v2-glass-border) !important;
   border-radius: 28px !important;
 }
 
 .ant-modal-header {
   background: transparent !important;
-  color: var(--v2-text-primary, #F5F5F5) !important;
+  color: var(--v2-text-primary) !important;
 }
 
 .ant-modal-title {
-  color: var(--v2-text-primary, #F5F5F5) !important;
+  color: var(--v2-text-primary) !important;
 }
 
 .ant-upload-select {
-  background-color: var(--v2-glass-bg, rgba(255, 255, 255, 0.04)) !important;
-  border-color: var(--v2-glass-border, rgba(255, 255, 255, 0.1)) !important;
+  background-color: var(--v2-glass-bg) !important;
+  border-color: var(--v2-glass-border) !important;
 }
 
 /* Lenis Smooth Scroll */

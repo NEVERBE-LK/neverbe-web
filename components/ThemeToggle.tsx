@@ -1,57 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Sun, Moon } from "lucide-react";
 
+function applyTheme(theme: "light" | "dark") {
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.classList.toggle("dark", theme === "dark");
+  document.documentElement.classList.toggle("light", theme === "light");
+}
+
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-
   useEffect(() => {
-    const savedTheme =
-      (localStorage.getItem("neverbe_theme") as "dark" | "light") || "dark";
-    setTheme(savedTheme);
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    if (savedTheme === "light") {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
-    }
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const followSystem = () => {
+      try {
+        if (localStorage.getItem("neverbe_theme")) return;
+      } catch {
+        /* Follow system when storage is unavailable. */
+      }
+      applyTheme(media.matches ? "dark" : "light");
+    };
+    media.addEventListener("change", followSystem);
+    return () => media.removeEventListener("change", followSystem);
   }, []);
-
-  const toggleTheme = () => {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    localStorage.setItem("neverbe_theme", nextTheme);
-    document.documentElement.setAttribute("data-theme", nextTheme);
-    if (nextTheme === "light") {
-      document.documentElement.classList.add("light");
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
-      document.documentElement.classList.remove("light");
+  const toggle = () => {
+    const next =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    applyTheme(next);
+    try {
+      localStorage.setItem("neverbe_theme", next);
+    } catch {
+      /* The selected theme still applies without storage. */
     }
   };
-
   return (
     <button
-      onClick={toggleTheme}
-      aria-label="Toggle Dark / Light Mode"
-      title={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
-      className="flex shrink-0 items-center justify-center w-[40px] h-[40px] rounded-full hover:bg-white/10 transition-all group cursor-pointer border border-white/10 bg-transparent outline-none m-0 p-0"
+      type="button"
+      onClick={toggle}
+      className="sport-icon sport-theme-toggle"
+      aria-label="Toggle light and dark mode"
+      title="Toggle light and dark mode"
     >
-      {theme === "dark" ? (
-        <Sun
-          size={20}
-          className="text-[var(--v2-text-secondary)] group-hover:text-[var(--v2-accent)] group-hover:rotate-45 transition-all duration-300"
-        />
-      ) : (
-        <Moon
-          size={20}
-          className="text-[var(--v2-text-secondary)] group-hover:text-[var(--v2-accent)] group-hover:-rotate-12 transition-all duration-300"
-        />
-      )}
+      <Sun className="sport-theme-sun" size={20} />
+      <Moon className="sport-theme-moon" size={20} />
     </button>
   );
 }

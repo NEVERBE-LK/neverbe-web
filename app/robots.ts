@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/bag/", "/checkout/", "/account/", "/admin/"],
+      disallow: ["/bag/", "/checkout/", "/account/", "/admin/", "/api/", "/ebill/", "/search"],
     },
     sitemap: "https://neverbe.lk/sitemap.xml",
   };

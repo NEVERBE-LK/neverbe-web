@@ -1,10 +1,9 @@
 "use client";
+import { printPalette } from "@/config/theme";
 
 import React from "react";
 import { Button } from "antd";
 import { IoCloudDownloadOutline } from "react-icons/io5";
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import { toSafeLocaleString } from "@/actions/utilAction";
 import { BusinessInfo } from "@/config/BusinessInfo";
 
@@ -30,6 +29,10 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
     const { orderId, createdAt, status, items, customer, paymentMethod, paymentStatus, shippingFee, fee, discount, couponDiscount, promotionDiscount, total: backendTotal } = order;
 
     try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import("jspdf"),
+        import("jspdf-autotable"),
+      ]);
       const doc = new jsPDF();
 
       // Preload images
@@ -64,27 +67,27 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(24);
-      doc.setTextColor(15, 23, 42); // slate-900
+      doc.setTextColor(printPalette.ink); // slate-900
       doc.text("INVOICE", 30, 18);
       
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
-      doc.setTextColor(148, 163, 184); // slate-400
+      doc.setTextColor(printPalette.muted); // slate-400
       doc.text("OFFICIAL RECEIPT", 30, 23);
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
-      doc.setTextColor(15, 23, 42);
-      doc.text("NeverBe.", 196, 16, { align: "right" });
+      doc.setTextColor(printPalette.ink);
+      doc.text("neverbe.", 196, 16, { align: "right" });
       
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
-      doc.setTextColor(100, 116, 139); // slate-500
+      doc.setTextColor(printPalette.secondary); // slate-500
       doc.text(BusinessInfo.addressLine1, 196, 21, { align: "right" });
       doc.text(`${BusinessInfo.city}, Sri Lanka`, 196, 26, { align: "right" });
       doc.text(BusinessInfo.phone, 196, 31, { align: "right" });
 
-      doc.setDrawColor(241, 245, 249); // slate-100
+      doc.setDrawColor(printPalette.surface); // slate-100
       doc.setLineWidth(0.5);
       doc.line(14, 38, 196, 38);
 
@@ -92,18 +95,18 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       let y = 46;
       doc.setFontSize(8);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(148, 163, 184); // slate-400
+      doc.setTextColor(printPalette.muted); // slate-400
       doc.text("INVOICE TO", 14, y);
       
       y += 5;
       doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42); // slate-900
+      doc.setTextColor(printPalette.ink); // slate-900
       doc.text(customer?.name || "Walk-in Customer", 14, y);
       
       if (customer) {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
-        doc.setTextColor(71, 85, 105); // slate-600
+        doc.setTextColor(printPalette.secondary); // slate-600
         const addressText = `${customer.address || ""}${customer.city ? `, ${customer.city}` : ""}${customer.zip ? ` ${customer.zip}` : ""}`;
         const splitBilling = doc.splitTextToSize(addressText, 60);
         y += 5;
@@ -118,17 +121,17 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       if (customer?.shippingAddress) {
         doc.setFontSize(8);
         doc.setFont("helvetica", "bold");
-        doc.setTextColor(148, 163, 184);
+        doc.setTextColor(printPalette.muted);
         doc.text("SHIP TO", 80, yShip);
 
         yShip += 5;
         doc.setFontSize(10);
-        doc.setTextColor(15, 23, 42);
+        doc.setTextColor(printPalette.ink);
         doc.text(customer.shippingName || customer.name, 80, yShip);
 
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
-        doc.setTextColor(71, 85, 105);
+        doc.setTextColor(printPalette.secondary);
         const shipAddressText = `${customer.shippingAddress || ""}${customer.shippingCity ? `, ${customer.shippingCity}` : ""}${customer.shippingZip ? ` ${customer.shippingZip}` : ""}`;
         const splitShipping = doc.splitTextToSize(shipAddressText, 60);
         yShip += 5;
@@ -139,34 +142,34 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       let yOrder = 46;
       doc.setFontSize(8);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(148, 163, 184);
+      doc.setTextColor(printPalette.muted);
       doc.text("ORDER NO.", 196, yOrder, { align: "right" });
       yOrder += 4.5;
       doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(printPalette.ink);
       doc.text(`#${orderId}`, 196, yOrder, { align: "right" });
 
       yOrder += 8;
       doc.setFontSize(8);
-      doc.setTextColor(148, 163, 184);
+      doc.setTextColor(printPalette.muted);
       doc.text("DATE ISSUED", 196, yOrder, { align: "right" });
       yOrder += 4.5;
       doc.setFontSize(9);
-      doc.setTextColor(51, 65, 85); // slate-700
-      doc.text(toSafeLocaleString(createdAt), 196, yOrder, { align: "right" });
+      doc.setTextColor(printPalette.ink); // slate-700
+      doc.text(toSafeLocaleString(createdAt) || "", 196, yOrder, { align: "right" });
 
       yOrder += 8;
       doc.setFontSize(8);
-      doc.setTextColor(148, 163, 184);
+      doc.setTextColor(printPalette.muted);
       doc.text("PAYMENT STATUS", 196, yOrder, { align: "right" });
       yOrder += 4.5;
       doc.setFontSize(9);
-      doc.setTextColor(4, 120, 87); // emerald-700
+      doc.setTextColor(printPalette.accent); // emerald-700
       doc.text(paymentStatus || "PENDING", 196, yOrder, { align: "right" });
 
       const finalMetadataY = Math.max(y + 10, yShip + 10, yOrder + 10);
       
-      doc.setDrawColor(241, 245, 249);
+      doc.setDrawColor(printPalette.surface);
       doc.line(14, finalMetadataY - 5, 196, finalMetadataY - 5);
 
       // 3. TABLE
@@ -193,25 +196,25 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
         startY: tableStartY,
         theme: "plain",
         headStyles: { 
-          fillColor: [248, 250, 252], // slate-50
-          textColor: [100, 116, 139], // slate-500
+          fillColor: printPalette.surface, // slate-50
+          textColor: printPalette.secondary, // slate-500
           fontStyle: "bold", 
           fontSize: 8,
         },
         bodyStyles: {
-          textColor: [15, 23, 42],
+          textColor: printPalette.ink,
           fontSize: 9,
         },
         alternateRowStyles: {
-          fillColor: [248, 250, 252],
+          fillColor: printPalette.surface,
         },
         columnStyles: { 
           0: { cellWidth: 15, halign: "center" },
           1: { fontStyle: "bold" },
-          2: { halign: "center", textColor: [51, 65, 85] }, 
-          3: { halign: "center", textColor: [51, 65, 85] }, 
-          4: { halign: "right", textColor: [51, 65, 85] },
-          5: { halign: "right", textColor: [225, 29, 72] }, 
+          2: { halign: "center", textColor: printPalette.ink }, 
+          3: { halign: "center", textColor: printPalette.ink }, 
+          4: { halign: "right", textColor: printPalette.ink },
+          5: { halign: "right", textColor: printPalette.error }, 
           6: { halign: "right", fontStyle: "bold" }, 
         },
         styles: { cellPadding: 4, minCellHeight: 12 },
@@ -247,16 +250,16 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
 
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(71, 85, 105); 
+      doc.setTextColor(printPalette.secondary); 
       doc.text("Subtotal", summaryX, currentY);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(15, 23, 42); 
+      doc.setTextColor(printPalette.ink); 
       doc.text(`Rs ${rawSubtotal.toLocaleString()}`, valueX, currentY, { align: "right" });
 
       if (totalDiscount > 0) {
         currentY += 6;
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(225, 29, 72); 
+        doc.setTextColor(printPalette.error); 
         doc.text("Total Discount", summaryX, currentY);
         doc.setFont("helvetica", "bold");
         doc.text(`-Rs ${totalDiscount.toLocaleString()}`, valueX, currentY, { align: "right" });
@@ -264,38 +267,38 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       if (shippingFee && shippingFee > 0) {
         currentY += 6;
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(71, 85, 105); // slate-600
+        doc.setTextColor(printPalette.secondary); // slate-600
         doc.text("Shipping Fee", summaryX, currentY);
         doc.setFont("helvetica", "bold");
-        doc.setTextColor(15, 23, 42); // slate-900
+        doc.setTextColor(printPalette.ink); // slate-900
         doc.text(`Rs ${shippingFee.toLocaleString()}`, valueX, currentY, { align: "right" });
       }
 
       if (fee && fee > 0) {
         currentY += 6;
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(71, 85, 105); // slate-600
+        doc.setTextColor(printPalette.secondary); // slate-600
         doc.text("Processing Fee", summaryX, currentY);
         doc.setFont("helvetica", "bold");
-        doc.setTextColor(15, 23, 42); // slate-900
+        doc.setTextColor(printPalette.ink); // slate-900
         doc.text(`Rs ${fee.toLocaleString()}`, valueX, currentY, { align: "right" });
       }
 
       currentY += 8;
-      doc.setDrawColor(15, 23, 42); // slate-900
+      doc.setDrawColor(printPalette.ink); // slate-900
       doc.line(summaryX, currentY - 4, valueX, currentY - 4);
 
       doc.setFontSize(10);
-      doc.setTextColor(15, 23, 42);
+      doc.setTextColor(printPalette.ink);
       doc.text("GRAND TOTAL", summaryX, currentY);
-      doc.setTextColor(4, 120, 87); // emerald-700
+      doc.setTextColor(printPalette.accent); // emerald-700
       doc.text(`Rs ${grandTotal.toLocaleString()}`, valueX, currentY, { align: "right" });
 
       // 5. FOOTER
       doc.setFontSize(7);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(148, 163, 184); // slate-400
-      doc.setDrawColor(241, 245, 249); // slate-100
+      doc.setTextColor(printPalette.muted); // slate-400
+      doc.setDrawColor(printPalette.surface); // slate-100
       doc.line(14, 280, 196, 280);
       doc.text("Thank you for choosing NeverBe! For support queries, contact info@neverbe.lk", 105, 285, { align: "center" });
 
@@ -312,7 +315,7 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       onClick={handleDownloadInvoice}
       loading={downloading}
       disabled={downloading}
-      className="flex items-center gap-2 px-6 py-4 bg-white text-primary-dark border border-strong hover:border-accent hover:text-accent transition-all text-xs font-black uppercase tracking-widest rounded-full shadow-sm h-auto"
+      className="flex items-center gap-2 px-6 py-4 bg-surface text-primary border border-strong hover:border-accent hover:text-accent transition-all text-xs font-black uppercase tracking-widest rounded-full shadow-sm h-auto"
     >
       <IoCloudDownloadOutline size={18} />
       {downloading ? "Generating..." : "Download PDF"}

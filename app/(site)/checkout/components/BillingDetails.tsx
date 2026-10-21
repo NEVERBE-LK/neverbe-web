@@ -18,9 +18,9 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
 }) => {
   return (
     <div className="w-full">
-      <div className="mb-6 border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pb-4">
+      <div className="mb-6 border-b border-glass-border pb-4">
         <span className="v2-section-label text-[9px] mb-0.5">CONTACT &amp; SHIPPING</span>
-        <h2 className="text-xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
+        <h2 className="text-xl font-black uppercase tracking-tight text-primary m-0">
           Delivery Address
         </h2>
       </div>
@@ -30,8 +30,8 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Form.Item
             name="first_name"
             label={
-              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                First Name <span className="text-rose-500 font-black ml-0.5">*</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                First Name <span className="text-error font-black ml-0.5">*</span>
               </span>
             }
             rules={[
@@ -40,7 +40,7 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           >
             <Input
               placeholder="John"
-              className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
         </Col>
@@ -49,8 +49,8 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Form.Item
             name="last_name"
             label={
-              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                Last Name <span className="text-rose-500 font-black ml-0.5">*</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                Last Name <span className="text-error font-black ml-0.5">*</span>
               </span>
             }
             rules={[
@@ -59,7 +59,7 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           >
             <Input
               placeholder="Doe"
-              className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
         </Col>
@@ -68,15 +68,15 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Form.Item
             name="address"
             label={
-              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                Street Address <span className="text-rose-500 font-black ml-0.5">*</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                Street Address <span className="text-error font-black ml-0.5">*</span>
               </span>
             }
             rules={[{ required: true, message: "Please input your address!" }]}
           >
             <Input
               placeholder="House No, Street Name, Apartment"
-              className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
         </Col>
@@ -85,15 +85,15 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Form.Item
             name="city"
             label={
-              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                City <span className="text-rose-500 font-black ml-0.5">*</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                City <span className="text-error font-black ml-0.5">*</span>
               </span>
             }
             rules={[{ required: true, message: "Please input your city!" }]}
           >
             <Input
               placeholder="Colombo"
-              className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
         </Col>
@@ -102,8 +102,8 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Form.Item
             name="phone"
             label={
-              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                Phone Number <span className="text-rose-500 font-black ml-0.5">*</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                Phone Number <span className="text-error font-black ml-0.5">*</span>
               </span>
             }
             rules={[
@@ -113,7 +113,7 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
             <Input
               placeholder="077 123 4567"
               onBlur={(e) => onPhoneBlur && onPhoneBlur(e.target.value)}
-              className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
         </Col>
@@ -122,8 +122,8 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Form.Item
             name="email"
             label={
-              <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-text-secondary,#A0A0A0)]">
-                Email Address <span className="text-rose-500 font-black ml-0.5">*</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary">
+                Email Address <span className="text-error font-black ml-0.5">*</span>
               </span>
             }
             rules={[
@@ -133,7 +133,7 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           >
             <Input
               placeholder="your@email.com"
-              className="h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]! border-[var(--v2-glass-border,rgba(255,255,255,0.1))]! text-[var(--v2-text-primary,#F5F5F5)]! font-bold text-xs"
+              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
         </Col>
@@ -142,7 +142,7 @@ const BillingDetails: React.FC<BillingDetailsProps> = ({
           <Checkbox
             checked={saveAddress}
             onChange={(e) => setSaveAddress(e.target.checked)}
-            className="text-xs font-bold text-[var(--v2-text-secondary,#A0A0A0)] uppercase tracking-wider"
+            className="text-xs font-bold text-secondary uppercase tracking-wider"
           >
             Save this address for fast 1-click checkout
           </Checkbox>

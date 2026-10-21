@@ -86,8 +86,8 @@ const CombosGrid: React.FC<CombosGridProps> = ({
                     onClick={() => handlePageChange(pageNum)}
                     className={`min-w-[36px] h-9 flex items-center justify-center text-sm font-black rounded-full transition-all ${
                       currentPage === pageNum
-                        ? "bg-accent text-dark shadow-custom"
-                        : "bg-transparent text-primary-dark hover:text-accent hover:bg-surface-2"
+                        ? "bg-accent text-accent-text shadow-custom"
+                        : "bg-transparent text-primary hover:text-secondary hover:bg-surface-2"
                     }`}
                   >
                     {pageNum}

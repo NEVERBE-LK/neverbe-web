@@ -10,7 +10,7 @@ const sectionLabel: React.CSSProperties = {
   fontWeight: 800,
   textTransform: "uppercase",
   letterSpacing: "0.1em",
-  color: "var(--color-primary-dark)",
+  color: "var(--color-primary)",
   display: "block",
   marginBottom: 12,
 };
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
 };
 
 const NewArrivalsPage = async () => {
-  const { total, dataList } = await getNewArrivals(30);
+  const { total, dataList } = await getNewArrivals(12);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -164,27 +164,27 @@ const NewArrivalsPage = async () => {
   };
 
   return (
-    <main className="w-full min-h-screen bg-[var(--v2-bg-surface,#141414)]">
+    <main className="commerce-legacy w-full min-h-screen bg-surface">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
 
       {/* Hero Header */}
-      <div className="bg-[var(--v2-bg-surface,#141414)] border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pt-28 pb-10 md:pt-36 md:pb-14">
+      <div className="bg-surface border-b border-glass-border pt-28 pb-10 md:pt-36 md:pb-14">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--v2-text-muted,#666666)] mb-3">
-            <Link href="/" className="hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted mb-3">
+            <Link href="/" className="hover:text-accent transition-colors">
               Home
             </Link>
             <span>/</span>
-            <span className="text-[var(--v2-text-primary,#F5F5F5)]">New Arrivals</span>
+            <span className="text-primary">New Arrivals</span>
           </nav>
           <span className="v2-section-label mb-2">JUST DROPPED</span>
-          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-2">
+          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary mb-2">
             New Arrivals
           </h1>
-          <p className="text-[15px] font-medium text-[var(--v2-text-secondary,#A0A0A0)] m-0 max-w-xl">
+          <p className="text-[15px] font-medium text-secondary m-0 max-w-xl">
             Fresh styles just added to the collection.
           </p>
         </div>
@@ -198,26 +198,26 @@ const NewArrivalsPage = async () => {
       </div>
 
       {/* SEO Footer */}
-      <div className="border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] py-12 md:py-16 bg-[var(--v2-bg-surface,#141414)]">
+      <div className="border-t border-glass-border py-12 md:py-16 bg-surface">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Fresh Drops Weekly</span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Fresh Drops Weekly</span>
+              <p className="text-xs text-secondary leading-relaxed m-0">
                 We update our collection with the latest releases from global sneaker culture. Premium quality guaranteed.
               </p>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Trending Now</span>
-              <ul className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] space-y-1.5 list-none p-0 m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Trending Now</span>
+              <ul className="text-xs text-secondary space-y-1.5 list-none p-0 m-0">
                 <li>• Retro High Tops</li>
                 <li>• Chunky Dad Shoes</li>
                 <li>• Minimalist Slides</li>
               </ul>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Limited Stock</span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Limited Stock</span>
+              <p className="text-xs text-secondary leading-relaxed m-0">
                 Most new arrivals are limited runs. If you see your size, grab it before it&apos;s gone.
               </p>
             </div>

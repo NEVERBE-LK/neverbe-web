@@ -1,5 +1,5 @@
 export const BusinessInfo = {
-  name: "Neverbe",
+  name: "neverbe.",
   legalName: "Neverbe (Pvt) Ltd",
   addressLine1: "330/4/10 New Kandy Road",
   addressLine2: "Degoda",

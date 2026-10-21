@@ -14,7 +14,7 @@ const getProductsForCategory = cache(
     try {
       return await getProductsByCategory(categoryLabel, {
         page: String(page),
-        size: "30",
+        size: "12",
       });
     } catch (e) {
       console.error(e);
@@ -99,7 +99,7 @@ const sectionLabel: React.CSSProperties = {
   fontWeight: 800,
   textTransform: "uppercase" as const,
   letterSpacing: "0.1em",
-  color: "var(--color-primary-dark)",
+  color: "var(--color-primary)",
   display: "block",
   marginBottom: 12,
 };
@@ -244,7 +244,7 @@ const CategoryPage = async (context: {
   };
 
   return (
-    <main className="v2-landing w-full min-h-screen bg-[var(--v2-bg-void,#0A0A0A)] text-[var(--v2-text-primary,#F5F5F5)] transition-colors duration-300">
+    <main className="commerce-legacy v2-landing w-full min-h-screen bg-void text-primary transition-colors duration-300">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -253,28 +253,28 @@ const CategoryPage = async (context: {
       />
 
       {/* Page Header Hero */}
-      <div className="relative w-full py-12 md:py-16 border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] overflow-hidden bg-[var(--v2-bg-surface,#141414)]">
+      <div className="relative w-full py-12 md:py-16 border-b border-glass-border overflow-hidden bg-surface">
         {/* Subtle Ambient Glow */}
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(46,230,106,0.08),transparent_70%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,color-mix(in srgb, var(--color-accent) 8.0%, transparent),transparent_70%)]" />
 
         <div className="relative max-w-[1400px] mx-auto px-4 md:px-8">
-          <nav className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-text-muted,#666666)] mb-4">
-            <Link href="/" className="hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+          <nav className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-muted mb-4">
+            <Link href="/" className="hover:text-accent transition-colors">
               Home
             </Link>
             <span>/</span>
-            <Link href="/collections/products" className="hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+            <Link href="/collections/products" className="hover:text-accent transition-colors">
               Products
             </Link>
             <span>/</span>
-            <span className="text-[var(--v2-text-primary,#F5F5F5)]">{mapping.h1}</span>
+            <span className="text-primary">{mapping.h1}</span>
           </nav>
 
           <span className="v2-section-label mb-2">Category Spotlight</span>
-          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-3">
+          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary mb-3">
             {mapping.h1}
           </h1>
-          <p className="text-[15px] font-medium text-[var(--v2-text-secondary,#A0A0A0)] max-w-xl">
+          <p className="text-[15px] font-medium text-secondary max-w-xl">
             {mapping.subtitle}
           </p>
         </div>
@@ -283,34 +283,34 @@ const CategoryPage = async (context: {
       {/* Product Grid & Filter Layout */}
       <div className="w-full py-4 md:py-8">
         <Suspense fallback={null}>
-          <Products items={productList} />
+          <Products items={productList} defaultCategory={mapping.label} />
         </Suspense>
       </div>
 
       {/* SEO Footer */}
-      <div className="border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] py-16 bg-[var(--v2-bg-surface,#141414)]">
+      <div className="border-t border-glass-border py-16 bg-surface">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-3">
                 {mapping.h1} in Sri Lanka
               </span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed">
+              <p className="text-xs text-secondary leading-relaxed">
                 {mapping.description}
               </p>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-3">
                 Browse More
               </span>
-              <ul className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] space-y-2 list-none p-0 m-0">
+              <ul className="text-xs text-secondary space-y-2 list-none p-0 m-0">
                 {CATEGORY_MAPPINGS.filter((c) => c.slug !== mapping.slug)
                   .slice(0, 4)
                   .map((c) => (
                     <li key={c.slug}>
                       <Link
                         href={`/collections/${c.slug}`}
-                        className="hover:text-[var(--v2-accent,#2EE66A)] transition-colors"
+                        className="hover:text-accent transition-colors"
                       >
                         {c.h1}
                       </Link>
@@ -319,10 +319,10 @@ const CategoryPage = async (context: {
               </ul>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-3">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-3">
                 Quality Guaranteed
               </span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed">
+              <p className="text-xs text-secondary leading-relaxed">
                 Free size exchanges within 7 days. Cash on Delivery island-wide. Every product is premium quality — durability and comfort guaranteed.
               </p>
             </div>

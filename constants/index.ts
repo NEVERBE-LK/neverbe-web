@@ -224,7 +224,7 @@ export const informationLinks: FooterLink[] = [
   { title: "Terms & Conditions", url: "/policies/terms-conditions" },
   { title: "Privacy Policy", url: "/policies/privacy-policy" },
   { title: "About Us", url: "/aboutUs" },
-  { title: "Contact Us", url: "contact" },
+  { title: "Contact Us", url: "/contact" },
 ];
 export const privacyPolicy = {
   company: "Watch Line",

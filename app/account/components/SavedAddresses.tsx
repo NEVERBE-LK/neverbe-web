@@ -85,7 +85,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="v2-glass p-6 rounded-3xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))]"
+              className="v2-glass p-6 rounded-3xl border border-glass-border"
             >
               <Form
                 form={form}
@@ -99,13 +99,13 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                 }}
               >
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-base font-black text-[var(--v2-text-primary,#F5F5F5)] uppercase tracking-tight m-0">
+                  <h3 className="text-base font-black text-primary uppercase tracking-tight m-0">
                     Edit {type} Address
                   </h3>
                   <button
                     type="button"
                     onClick={() => setIsEditing(false)}
-                    className="text-[var(--v2-text-muted,#666666)] hover:text-[var(--v2-text-primary,#F5F5F5)] transition-colors p-0 border-none bg-transparent cursor-pointer"
+                    className="text-muted hover:text-primary transition-colors p-0 border-none bg-transparent cursor-pointer"
                   >
                     <IoCloseOutline size={22} />
                   </button>
@@ -118,7 +118,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                 >
                   <Input
                     placeholder="Street Address"
-                    className="w-full h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))] border-[var(--v2-glass-border,rgba(255,255,255,0.1))] text-[var(--v2-text-primary,#F5F5F5)] font-bold text-xs"
+                    className="w-full h-12 rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
                   />
                 </Form.Item>
                 <div className="grid grid-cols-2 gap-4">
@@ -129,7 +129,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                   >
                     <Input
                       placeholder="City"
-                      className="w-full h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))] border-[var(--v2-glass-border,rgba(255,255,255,0.1))] text-[var(--v2-text-primary,#F5F5F5)] font-bold text-xs"
+                      className="w-full h-12 rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
                     />
                   </Form.Item>
                   <Form.Item
@@ -139,7 +139,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                   >
                     <Input
                       placeholder="Phone Number"
-                      className="w-full h-12 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))] border-[var(--v2-glass-border,rgba(255,255,255,0.1))] text-[var(--v2-text-primary,#F5F5F5)] font-bold text-xs"
+                      className="w-full h-12 rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
                     />
                   </Form.Item>
                 </div>
@@ -148,7 +148,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                   type="primary"
                   htmlType="submit"
                   loading={isSaving}
-                  className="w-full h-12 rounded-full bg-[var(--v2-accent,#2EE66A)]! !text-[var(--v2-accent-text)] font-black uppercase text-xs tracking-widest border-none mt-2 cursor-pointer shadow-md"
+                  className="w-full h-12 rounded-full bg-accent! !text-accent-text font-black uppercase text-xs tracking-widest border-none mt-2 cursor-pointer shadow-md"
                 >
                   Save Address
                 </Button>
@@ -156,35 +156,35 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
             </motion.div>
           ) : (
             <motion.div key="display" className="h-full">
-              <div className="v2-glass p-6 rounded-3xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] hover:border-[var(--v2-accent,#2EE66A)] transition-all duration-300 flex flex-col justify-between h-full min-h-[220px] relative group">
+              <div className="v2-glass p-6 rounded-3xl border border-glass-border hover:border-accent transition-all duration-300 flex flex-col justify-between h-full min-h-[220px] relative group">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-2xl bg-[var(--v2-accent,#2EE66A)]/10 border border-[var(--v2-accent,#2EE66A)]/20 text-[var(--v2-accent,#2EE66A)] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center">
                       {type === "Shipping" ? (
                         <IoMapOutline size={20} />
                       ) : (
                         <IoCardOutline size={20} />
                       )}
                     </div>
-                    <h3 className="font-black text-base uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
+                    <h3 className="font-black text-base uppercase tracking-tight text-primary m-0">
                       {type} Address
                     </h3>
                   </div>
 
                   {existing ? (
                     <div className="space-y-1">
-                      <p className="text-sm font-extrabold text-[var(--v2-text-primary,#F5F5F5)] m-0">
+                      <p className="text-sm font-extrabold text-primary m-0">
                         {existing.address}
                       </p>
-                      <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] m-0">
+                      <p className="text-xs text-secondary m-0">
                         {existing.city}
                       </p>
-                      <p className="text-xs font-black text-[var(--v2-accent,#2EE66A)] uppercase tracking-wider mt-2 m-0">
+                      <p className="text-xs font-black text-accent uppercase tracking-wider mt-2 m-0">
                         {existing.phone}
                       </p>
                     </div>
                   ) : (
-                    <p className="text-xs text-[var(--v2-text-muted,#666666)] m-0">
+                    <p className="text-xs text-muted m-0">
                       {user?.isAnonymous
                         ? "Registered customers can save multiple addresses here."
                         : "No address saved yet"}
@@ -198,8 +198,8 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                     onClick={() => setIsEditing(true)}
                     className={`flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all bg-transparent border-none p-0 cursor-pointer ${
                       user?.isAnonymous
-                        ? "text-[var(--v2-text-muted,#666666)] cursor-not-allowed opacity-60"
-                        : "text-[var(--v2-accent,#2EE66A)] hover:underline"
+                        ? "text-muted cursor-not-allowed opacity-60"
+                        : "text-accent hover:underline"
                     }`}
                   >
                     {user?.isAnonymous ? (
@@ -212,7 +212,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                 </div>
 
                 {existing && (
-                  <div className="absolute top-6 right-6 text-[var(--v2-accent,#2EE66A)]">
+                  <div className="absolute top-6 right-6 text-accent">
                     <IoCheckmarkCircleOutline size={22} />
                   </div>
                 )}
@@ -226,12 +226,12 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
 
   return (
     <div className="space-y-8">
-      <div className="border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pb-6">
+      <div className="border-b border-glass-border pb-6">
         <span className="v2-section-label mb-1">DELIVERY DESTINATIONS</span>
-        <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
+        <h2 className="text-3xl font-black uppercase tracking-tight text-primary m-0">
           Saved Addresses
         </h2>
-        <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] font-medium mt-1 m-0">
+        <p className="text-xs text-secondary font-medium mt-1 m-0">
           Manage your delivery &amp; billing locations for fast 1-click checkout.
         </p>
       </div>

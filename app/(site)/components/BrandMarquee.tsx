@@ -41,7 +41,7 @@ function BrandItem({ brand }: { brand: Brand }) {
       : BRAND_LOGOS[normalizedName] || null;
 
   return (
-    <div className="v2-glass inline-flex items-center justify-center w-[180px] h-20 px-6 rounded-2xl transition-all duration-300 filter grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-[var(--v2-accent,#2EE66A)] shrink-0 group cursor-pointer">
+    <div className="v2-glass inline-flex items-center justify-center w-[180px] h-20 px-6 rounded-2xl transition-all duration-300 filter grayscale opacity-60 hover:grayscale-0 hover:opacity-100 hover:border-accent shrink-0 group cursor-pointer">
       {logoUrl && !imageError ? (
         <Image
           src={logoUrl}
@@ -52,7 +52,7 @@ function BrandItem({ brand }: { brand: Brand }) {
           className="object-contain max-h-[38px] invert brightness-200 group-hover:brightness-100 transition-all"
         />
       ) : (
-        <span className="font-display font-black text-sm uppercase tracking-widest text-[var(--v2-text-primary,#F5F5F5)] group-hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+        <span className="font-display font-black text-sm uppercase tracking-widest text-primary group-hover:text-accent transition-colors">
           {brand.name}
         </span>
       )}
@@ -65,7 +65,7 @@ export default function BrandMarquee({ brands }: { brands?: Brand[] }) {
   const duplicatedBrands = [...displayBrands, ...displayBrands, ...displayBrands];
 
   return (
-    <section className="bg-[var(--v2-bg-void,#0A0A0A)] py-16 md:py-20 overflow-hidden border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
+    <section className="bg-void py-16 md:py-20 overflow-hidden border-t border-glass-border">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <span className="v2-section-label">OUR BRANDS</span>

@@ -114,7 +114,7 @@ export function BentoShowcase({ categories, promotions }: BentoShowcaseProps) {
         </div>
         <Link
           href="/collections/products"
-          className="text-[var(--v2-text-secondary)] hover:text-[var(--v2-accent)] transition-colors text-sm font-medium"
+          className="text-secondary hover:text-accent transition-colors text-sm font-medium"
         >
           View All &rarr;
         </Link>
@@ -131,7 +131,7 @@ export function BentoShowcase({ categories, promotions }: BentoShowcaseProps) {
           <motion.div
             key={item.label + index}
             variants={itemVariants}
-            className={`group relative overflow-hidden rounded-[var(--v2-radius-card)] border border-[var(--v2-glass-border)] hover:border-[var(--v2-accent)] transition-all duration-500 ${getGridAreaClass(
+            className={`group relative overflow-hidden rounded-sm border border-glass-border hover:border-accent transition-all duration-500 ${getGridAreaClass(
               index
             )}`}
           >
@@ -145,7 +145,7 @@ export function BentoShowcase({ categories, promotions }: BentoShowcaseProps) {
                   sizes="(max-width: 768px) 100vw, 33vw"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 transition-transform duration-700 group-hover:scale-105" />
+                <div className="w-full h-full bg-gradient-to-br from-surface-2 to-surface-2 transition-transform duration-700 group-hover:scale-105" />
               )}
 
               {/* Dark Gradient Overlay for High Contrast Text */}
@@ -153,17 +153,17 @@ export function BentoShowcase({ categories, promotions }: BentoShowcaseProps) {
                 className="absolute inset-0 z-20 pointer-events-none transition-opacity duration-300"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.3) 50%, transparent 100%)",
+                    "linear-gradient(to top, color-mix(in srgb, var(--color-black) 85.0%, transparent) 0%, color-mix(in srgb, var(--color-black) 30.0%, transparent) 50%, transparent 100%)",
                 }}
               />
 
               <div className="absolute inset-x-0 bottom-0 p-6 z-30 flex justify-between items-end">
-                <h3 className="text-[14px] font-[800] uppercase tracking-wide text-white group-hover:text-[var(--v2-accent)] transition-colors duration-300 m-0">
+                <h3 className="text-[14px] font-[800] uppercase tracking-wide text-inverse group-hover:text-accent transition-colors duration-300 m-0">
                   {item.label}
                 </h3>
 
-                <div className="w-9 h-9 rounded-full bg-black/40 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-80 group-hover:opacity-100 group-hover:bg-[var(--v2-accent)] group-hover:border-[var(--v2-accent)] transition-all duration-300">
-                  <ArrowUpRight className="w-4 h-4 text-white group-hover:text-[#0A0A0A] transition-colors" />
+                <div className="w-9 h-9 rounded-full bg-dark/40 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-80 group-hover:opacity-100 group-hover:bg-accent group-hover:border-accent transition-all duration-300">
+                  <ArrowUpRight className="w-4 h-4 text-inverse group-hover:text-accent-text transition-colors" />
                 </div>
               </div>
             </Link>

@@ -29,4 +29,4 @@ env:
   - variable: NEXT_PUBLIC_RECAPTCHA_SITE_KEY
     value: "6LfEkOwrAAAAABOebRpa-aTV27NesIrQLczgAf39"
   - variable: NEXT_PUBLIC_WHATSAPP_NUMBER
-    value: "94705208999"
+    value: "94729249999"

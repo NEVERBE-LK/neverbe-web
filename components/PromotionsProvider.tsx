@@ -75,20 +75,31 @@ export const PromotionsProvider = ({
     fetchPromotions();
   }, []);
 
+  // Precompute and sort active date-valid promotions once
+  const validPromotions = React.useMemo(() => {
+    return promotions
+      .filter((promo) => isPromotionDateValid(promo.startDate, promo.endDate).valid)
+      .sort((a: any, b: any) => (b.priority || 0) - (a.priority || 0));
+  }, [promotions]);
+
+  // Fast cache for product promotion lookups
+  const promoCache = React.useRef(new Map<string, ActivePromotion | null>());
+  React.useEffect(() => {
+    promoCache.current.clear();
+  }, [validPromotions]);
+
   // Match a product to the best available promotion
   const getPromotionForProduct = useCallback(
     (productId: string, variantId?: string): ActivePromotion | null => {
       if (!productId) return null;
+      const key = `${productId}:${variantId || ""}`;
+      if (promoCache.current.has(key)) {
+        return promoCache.current.get(key) || null;
+      }
 
-      const matches = promotions.filter((promo) => {
-        // 1. Check Date Validity
-        const dateCheck = isPromotionDateValid(promo.startDate, promo.endDate);
-        if (!dateCheck.valid) return false;
+      for (const promo of validPromotions) {
+        if (promo.excludedProducts?.includes(productId)) continue;
 
-        // 2. Initial Exclusions
-        if (promo.excludedProducts?.includes(productId)) return false;
-
-        // 3. Use Granular Utility for targeting (Product, Variant, Conditions)
         const isEligible = isVariantEligibleForPromotion(
           productId,
           variantId || "",
@@ -97,68 +108,49 @@ export const PromotionsProvider = ({
           promo.applicableProducts,
         );
 
-        if (!isEligible) return false;
-
-        // 4. Category/Brand Check (Additional layer if not covered by conditions)
-        if (
-          promo.applicableCategories &&
-          promo.applicableCategories.length > 0
-        ) {
-          // Note: Full category/brand check requires product data which might not be in the promo object.
-          // This is a simplified check assuming the caller handles basic eligibility if it's a general promo.
+        if (isEligible) {
+          promoCache.current.set(key, promo);
+          return promo;
         }
+      }
 
-        return true;
-      });
-
-      // Return highest priority match
-      return (
-        matches.sort(
-          (a: any, b: any) => (b.priority || 0) - (a.priority || 0),
-        )[0] || null
-      );
+      promoCache.current.set(key, null);
+      return null;
     },
-    [promotions],
+    [validPromotions],
   );
 
   const getPromotionsForProduct = useCallback(
     (productId: string, variantId?: string): ActivePromotion[] => {
       if (!productId) return [];
 
-      return promotions
-        .filter((promo) => {
-          // 1. Check Date Validity
-          const dateCheck = isPromotionDateValid(promo.startDate, promo.endDate);
-          if (!dateCheck.valid) return false;
+      return validPromotions.filter((promo) => {
+        if (promo.excludedProducts?.includes(productId)) return false;
 
-          // 2. Initial Exclusions
-          if (promo.excludedProducts?.includes(productId)) return false;
-
-          // 3. Use Granular Utility for targeting
-          const isEligible = isVariantEligibleForPromotion(
-            productId,
-            variantId || "",
-            promo.applicableProductVariants as ProductVariantTarget[],
-            promo.conditions as PromotionCondition[],
-            promo.applicableProducts,
-          );
-
-          return isEligible;
-        })
-        .sort((a: any, b: any) => (b.priority || 0) - (a.priority || 0));
+        return isVariantEligibleForPromotion(
+          productId,
+          variantId || "",
+          promo.applicableProductVariants as ProductVariantTarget[],
+          promo.conditions as PromotionCondition[],
+          promo.applicableProducts,
+        );
+      });
     },
-    [promotions],
+    [validPromotions],
+  );
+
+  const contextValue = React.useMemo(
+    () => ({
+      promotions,
+      isLoading,
+      getPromotionForProduct,
+      getPromotionsForProduct,
+    }),
+    [promotions, isLoading, getPromotionForProduct, getPromotionsForProduct],
   );
 
   return (
-    <PromotionsContext.Provider
-      value={{ 
-        promotions, 
-        isLoading, 
-        getPromotionForProduct,
-        getPromotionsForProduct 
-      }}
-    >
+    <PromotionsContext.Provider value={contextValue}>
       {children}
     </PromotionsContext.Provider>
   );

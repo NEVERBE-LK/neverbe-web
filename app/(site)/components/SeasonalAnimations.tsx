@@ -20,21 +20,29 @@ const SeasonalAnimations = ({
   );
 };
 
-const SnowAnimation = () => {
-  // Generate random snowflakes
-  // Reduced size (2-6px) and opacity (0.3-0.6) for a premium, subtle look
-  const snowflakes = Array.from({ length: 60 }).map((_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    duration: Math.random() * 10 + 10, // Slower, more elegant fall (10-20s)
-    delay: Math.random() * 10,
-    size: Math.random() * 4 + 2, // 2px - 6px
-    opacity: Math.random() * 0.4 + 0.2, // 0.2 - 0.6 opacity
-  }));
+const SNOWFLAKES = Array.from({ length: 60 }).map((_, i) => {
+  const r1 = ((i * 9301 + 49297) % 233280) / 233280;
+  const r2 = ((i * 9377 + 49307) % 233280) / 233280;
+  const r3 = ((i * 9439 + 49339) % 233280) / 233280;
+  const r4 = ((i * 9511 + 49369) % 233280) / 233280;
+  const r5 = ((i * 9587 + 49417) % 233280) / 233280;
+  const r6 = ((i * 9661 + 49451) % 233280) / 233280;
 
+  return {
+    id: i,
+    left: `${r1 * 100}%`,
+    duration: r2 * 10 + 10, // Slower, more elegant fall (10-20s)
+    delay: r3 * 10,
+    size: r4 * 4 + 2, // 2px - 6px
+    opacity: r5 * 0.4 + 0.2, // 0.2 - 0.6 opacity
+    drift: r6 * 50 - 25, // Natural drift
+  };
+});
+
+const SnowAnimation = () => {
   return (
     <>
-      {snowflakes.map((flake) => (
+      {SNOWFLAKES.map((flake) => (
         <m.div
           key={flake.id}
           className="absolute bg-white rounded-full blur-[0.5px]"
@@ -47,7 +55,7 @@ const SnowAnimation = () => {
           }}
           animate={{
             y: ["0vh", "100vh"],
-            x: [0, Math.random() * 50 - 25], // Natural drift
+            x: [0, flake.drift],
           }}
           transition={{
             duration: flake.duration,
@@ -61,6 +69,47 @@ const SnowAnimation = () => {
   );
 };
 
+class FireworkParticle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  alpha: number;
+  color: string;
+  decay: number;
+
+  constructor(x: number, y: number, color: string) {
+    this.x = x;
+    this.y = y;
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = Math.random() * 4 + 2;
+    this.vx = Math.cos(angle) * velocity;
+    this.vy = Math.sin(angle) * velocity;
+    this.alpha = 1;
+    this.color = color;
+    this.decay = Math.random() * 0.015 + 0.01;
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    this.vy += 0.08;
+    this.vx *= 0.98;
+    this.vy *= 0.98;
+    this.alpha -= this.decay;
+  }
+}
+
 // Canvas-based Firework implementation
 const FireworksAnimation = () => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -71,7 +120,7 @@ const FireworksAnimation = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let particles: Particle[] = [];
+    let particles: FireworkParticle[] = [];
     let animationId: number;
 
     const resize = () => {
@@ -81,56 +130,13 @@ const FireworksAnimation = () => {
     window.addEventListener("resize", resize);
     resize();
 
-    class Particle {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      alpha: number;
-      color: string;
-      decay: number;
-
-      constructor(x: number, y: number, color: string) {
-        this.x = x;
-        this.y = y;
-        const angle = Math.random() * Math.PI * 2;
-        // Faster, sharper explosion
-        const velocity = Math.random() * 4 + 2;
-        this.vx = Math.cos(angle) * velocity;
-        this.vy = Math.sin(angle) * velocity;
-        this.alpha = 1;
-        this.color = color;
-        this.decay = Math.random() * 0.015 + 0.01; // Varying fade speed
-      }
-
-      draw() {
-        if (!ctx) return;
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2); // Smaller particles
-        ctx.fill();
-        ctx.restore();
-      }
-
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy += 0.08; // Slightly heavier gravity
-        this.vx *= 0.98; // Air resistance
-        this.vy *= 0.98;
-        this.alpha -= this.decay;
-      }
-    }
-
     // Premium Color Palette: Gold, Silver, White, Champagne
     const colors = [
-      "#FFD700", // Gold
-      "#C0C0C0", // Silver
-      "#FFFFFF", // White
-      "#F0E68C", // Khaki/Champagne
-      "#B8860B", // Dark Goldenrod
+      "var(--color-highlight)", // Gold
+      "var(--color-secondary)", // Silver
+      "var(--color-white)", // White
+      "var(--color-highlight)", // Khaki/Champagne
+      "var(--color-warning)", // Dark Goldenrod
     ];
 
     const createFirework = () => {
@@ -140,7 +146,7 @@ const FireworksAnimation = () => {
       const color = colors[Math.floor(Math.random() * colors.length)];
 
       for (let i = 0; i < 80; i++) {
-        particles.push(new Particle(x, y, color));
+        particles.push(new FireworkParticle(x, y, color));
       }
     };
 
@@ -155,7 +161,7 @@ const FireworksAnimation = () => {
 
       particles.forEach((p, i) => {
         p.update();
-        p.draw();
+        p.draw(ctx);
         if (p.alpha <= 0) {
           particles.splice(i, 1);
         }

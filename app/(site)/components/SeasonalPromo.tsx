@@ -42,7 +42,7 @@ const SeasonalPromo = ({
 
   const bgClass =
     season === "christmas"
-      ? "bg-primary-600 text-white"
+      ? "bg-primary-600 text-inverse"
       : "bg-primary-50 text-primary-dark";
 
   return (

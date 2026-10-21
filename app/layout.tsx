@@ -1,4 +1,8 @@
+import { designTokens, themeCss } from "@/config/theme";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./sportswear.css";
+import "./commerce.css";
 import { WebVitals } from "@/components/WebVitals";
 import { Suspense } from "react";
 import AnalyticsTracker from "@/app/(site)/components/AnalyticsTracker";
@@ -10,7 +14,7 @@ export const metadata: Metadata = {
     template: "%s | Neverbe",
   },
   description:
-    "Neverbe is Sri Lanka's #1 online store for shoes, clothing & apparel. Shop sneakers, t-shirts, activewear, sportswear & fashion accessories. Island-wide delivery & Cash on Delivery.",
+    "Neverbe is an online store in Sri Lanka for shoes, clothing & apparel. Shop sneakers, t-shirts, activewear, sportswear & fashion accessories. Island-wide delivery & Cash on Delivery.",
   applicationName: "Neverbe",
   keywords: [
     "Neverbe",
@@ -47,26 +51,26 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/brand/neverbe-mark-black.svg", type: "image/svg+xml" },
+    ],
     shortcut: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
   metadataBase: new URL("https://neverbe.lk"),
-  alternates: {
-    canonical: "https://neverbe.lk",
-  },
   openGraph: {
     title: "Neverbe — Shoes & Clothing in Sri Lanka | Online Fashion Store",
     description:
-      "Sri Lanka's top online store for shoes, clothing & fashion. Sneakers, t-shirts, activewear, gym wear & more with island-wide delivery.",
+      "Shop online in Sri Lanka for shoes, clothing & fashion. Sneakers, t-shirts, activewear, gym wear & more with island-wide delivery.",
     siteName: "Neverbe",
     url: "https://neverbe.lk",
     locale: "en_LK",
     type: "website",
     images: [
       {
-        url: "/logo-og.png",
+        url: "/main-og.png",
         width: 1200,
         height: 630,
         alt: "Neverbe - Premium Footwear & Apparel Sri Lanka",
@@ -78,23 +82,24 @@ export const metadata: Metadata = {
     title: "Neverbe — Shoes & Clothing Sri Lanka | Fashion Online",
     description:
       "Shop shoes, clothing & apparel in Sri Lanka. Sneakers, activewear, t-shirts & more with Cash on Delivery island-wide.",
-    images: ["/logo-og.png"],
+    images: ["/main-og.png"],
     creator: "@neverbe_lk",
-  },
-  verification: {
-    google: "your-google-verification-code", // Replace with actual code
   },
   category: "retail",
 };
 
-const monoClass = "font-mono";
-const interClass = "font-sans";
-const plusJakartaClass = "font-display";
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: designTokens.light["v2-bg-void"] },
+    { media: "(prefers-color-scheme: dark)", color: designTokens.dark["v2-bg-void"] },
+  ],
+  colorScheme: "light dark",
+};
 
 import StoreProvider from "@/app/(site)/components/StoreProvider";
 import AuthProvider from "@/components/AuthProvider";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
-import { ConfigProvider } from "antd";
+import CommerceThemeProvider from "@/components/CommerceThemeProvider";
 
 export default function RootLayout({
   children,
@@ -140,16 +145,16 @@ export default function RootLayout({
   const websiteLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Neverbe",
-    "alternateName": ["Neverbe", "Neverbe Shoes & Clothing"],
-    "url": "https://neverbe.lk",
+    name: "Neverbe",
+    alternateName: ["Neverbe", "Neverbe Shoes & Clothing"],
+    url: "https://neverbe.lk",
   };
 
   const localBusinessLd = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "Neverbe",
-    image: "https://neverbe.lk/logo-og.png",
+    image: "https://neverbe.lk/main-og.png",
     "@id": "https://neverbe.lk",
     url: "https://neverbe.lk",
     telephone: "+94729249999",
@@ -160,30 +165,17 @@ export default function RootLayout({
       addressRegion: "Gampaha",
       addressCountry: "LK",
     },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 6.9869,
-      longitude: 80.0127,
-    },
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
-      opens: "00:00",
-      closes: "23:59",
-    },
   };
 
   return (
-    <html lang="en" className="bg-white text-primary-dark">
+    <html lang="en-LK" suppressHydrationWarning>
       <head>
+        <style id="neverbe-theme" dangerouslySetInnerHTML={{ __html: themeCss }} />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('neverbe_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.classList.add(t)}catch(e){document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}})()`,
+          }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -197,9 +189,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className="antialiased min-h-screen flex flex-col font-sans"
-      >
+      <body className="antialiased min-h-screen flex flex-col font-sans">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -212,84 +202,19 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }}
         />
+        <a href="#main-content" className="sport-skip-link">
+          Skip to content
+        </a>
         <StoreProvider>
           <AuthProvider>
             <AntdRegistry>
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: "var(--color-accent)",
-                    colorLink: "var(--color-accent)",
-                    colorLinkHover: "var(--color-accent)",
-                    colorLinkActive: "var(--color-accent-hover)",
-                    colorInfo: "var(--color-accent)",
-                    colorSuccess: "var(--color-accent)",
-                    fontFamily: "var(--font-inter)",
-                    borderRadius: 12,
-                    colorBgLayout: "#f8faf5",
-                    colorBgContainer: "#ffffff",
-                    colorTextBase: "var(--color-primary-dark)",
-                  },
-                  components: {
-                    Card: {
-                      borderRadiusLG: 20,
-                      paddingLG: 24,
-                      colorBgContainer: "#ffffff",
-                    },
-                    Button: {
-                      borderRadius: 99,
-                      controlHeight: 44,
-                      controlHeightLG: 56,
-                      fontWeight: 700,
-                      colorPrimary: "var(--color-accent)",
-                      colorPrimaryHover: "var(--color-accent-hover)",
-                      colorPrimaryActive: "var(--color-accent-hover)",
-                      primaryColor: "#ffffff",
-                    },
-                    Checkbox: {
-                      colorPrimary: "var(--color-accent)",
-                      colorPrimaryHover: "var(--color-accent-hover)",
-                    },
-                    Carousel: {
-                      dotHeight: 6,
-                      dotWidth: 32,
-                      dotActiveWidth: 48,
-                    },
-                    Input: {
-                      borderRadius: 99,
-                      colorPrimary: "var(--color-accent)",
-                      colorPrimaryHover: "var(--color-accent)",
-                      activeBorderColor: "var(--color-accent)",
-                      hoverBorderColor: "var(--color-accent)",
-                    },
-                    Select: {
-                      borderRadius: 99,
-                      colorPrimary: "var(--color-accent)",
-                    },
-                    Tag: {
-                      borderRadiusSM: 99,
-                    },
-                    Collapse: {
-                      borderRadius: 12,
-                    },
-                    Drawer: {
-                      borderRadius: 32,
-                    },
-                    Badge: {
-                      colorPrimary: "var(--color-accent)",
-                    },
-                    Spin: {
-                      colorPrimary: "var(--color-accent)",
-                    },
-                  },
-                }}
-              >
-                <main className="flex-1">{children}</main>
+              <CommerceThemeProvider>
+                <div className="flex-1 flex flex-col w-full">{children}</div>
                 <WebVitals />
                 <Suspense fallback={null}>
                   <AnalyticsTracker />
                 </Suspense>
-              </ConfigProvider>
+              </CommerceThemeProvider>
             </AntdRegistry>
           </AuthProvider>
         </StoreProvider>

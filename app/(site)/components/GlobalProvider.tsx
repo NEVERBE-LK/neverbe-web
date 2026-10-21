@@ -4,10 +4,11 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { initializeBag } from "@/redux/bagSlice/bagSlice";
 import { AnimatePresence } from "framer-motion";
-import Bag from "@/components/Bag";
+import dynamic from "next/dynamic";
+const Bag = dynamic(() => import("@/components/Bag"), { ssr: false });
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Menu from "@/components/Menu";
+const Menu = dynamic(() => import("@/components/Menu"), { ssr: false });
 import MobileCheckoutBar from "@/components/MobileCheckoutBar";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -16,7 +17,6 @@ import { PromotionsProvider } from "@/components/PromotionsProvider";
 import QuickViewProvider from "@/components/QuickViewProvider";
 import RecentlyViewedProvider from "@/components/RecentlyViewedProvider";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
-import SmoothScroll from "@/app/(site)/components/SmoothScroll";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -42,7 +42,7 @@ const GlobalProvider = ({
 
   useEffect(() => {
     dispatch(initializeBag());
-  }, []);
+  }, [dispatch]);
 
   return (
     <GoogleReCaptchaProvider
@@ -50,15 +50,15 @@ const GlobalProvider = ({
       scriptProps={{
         async: true,
         defer: true,
-        appendTo: "head",
+        appendTo: "body",
       }}
     >
-      <main className="w-full relative flex flex-col justify-between min-h-screen overflow-clip">
+      <div className="w-full relative flex flex-col flex-1 min-h-screen">
         <PromotionsProvider>
           <RecentlyViewedProvider>
             <QuickViewProvider>
               <Header season={season} mainNav={mainNav} />
-              <SmoothScroll>{children}</SmoothScroll>
+              <main id="main-content" className="commerce-content flex-1 flex flex-col w-full">{children}</main>
               <Footer footerNav={footerNav} socialLinks={socialLinks} />
               <AnimatePresence>{showBag && <Bag />}</AnimatePresence>
               <AnimatePresence>
@@ -70,7 +70,7 @@ const GlobalProvider = ({
             </QuickViewProvider>
           </RecentlyViewedProvider>
         </PromotionsProvider>
-      </main>
+      </div>
     </GoogleReCaptchaProvider>
   );
 };

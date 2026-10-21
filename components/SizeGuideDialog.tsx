@@ -1,13 +1,8 @@
 "use client";
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { IoClose } from "react-icons/io5";
-
-interface SizeGuideDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
+import { useState } from "react";
+import { Modal } from "antd";
+import Link from "next/link";
+interface SizeGuideDialogProps {isOpen:boolean;onClose:()=>void;}
 const menSizes = [
   { us: "7", uk: "6", eu: "40", cm: "25" },
   { us: "7.5", uk: "6.5", eu: "40.5", cm: "25.5" },
@@ -49,113 +44,8 @@ const kidSizes = [
   { us: "6Y", uk: "5.5", eu: "38.5", cm: "24" },
 ];
 
-const SizeGuideDialog: React.FC<SizeGuideDialogProps> = ({
-  isOpen,
-  onClose,
-}) => {
-  const [activeTab, setActiveTab] = useState<"men" | "women" | "kids">("men");
 
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 v2-dialog-backdrop"
-          />
-
-          {/* Dialog Container */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="relative bg-[var(--v2-bg-surface,#141414)] text-[var(--v2-text-primary,#F5F5F5)] w-full max-w-2xl max-h-[85vh] rounded-3xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] shadow-2xl overflow-hidden flex flex-col z-10 my-auto"
-          >
-            {/* Header */}
-            <div className="flex justify-between items-center p-6 border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] shrink-0">
-              <div className="flex flex-col">
-                <span className="v2-section-label text-[9px] mb-0.5">SPECIFICATIONS</span>
-                <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
-                  Size Guide &amp; Conversions
-                </h2>
-              </div>
-              <button
-                onClick={onClose}
-                className="w-9 h-9 rounded-full bg-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)] border border-[var(--v2-accent,#2EE66A)] hover:opacity-90 flex items-center justify-center transition-all cursor-pointer shadow-md"
-                aria-label="Close"
-              >
-                <IoClose className="text-[var(--v2-accent-text,#0A0A0A)]" size={20} />
-              </button>
-            </div>
-
-            {/* Content Container */}
-            <div className="p-6 overflow-y-auto hide-scrollbar">
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] mb-6 font-medium leading-relaxed m-0">
-                Ensure the perfect fit. If you are between sizes, we recommend ordering the next size up for optimal comfort.
-              </p>
-
-              {/* Tabs */}
-              <div className="flex gap-4 mb-6 border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
-                {(["men", "women", "kids"] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`pb-3 text-xs font-black uppercase tracking-widest transition-all relative border-none bg-transparent cursor-pointer ${
-                      activeTab === tab
-                        ? "text-[var(--v2-accent,#2EE66A)]"
-                        : "text-[var(--v2-text-muted,#666666)] hover:text-[var(--v2-text-primary,#F5F5F5)]"
-                    }`}
-                  >
-                    <span>{tab}</span>
-                    {activeTab === tab && (
-                      <motion.div
-                        layoutId="activeTabGuide"
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--v2-accent,#2EE66A)]"
-                      />
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              {/* Table */}
-              <div className="overflow-x-auto rounded-2xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
-                <table className="w-full text-xs text-left whitespace-nowrap border-collapse">
-                  <thead className="bg-[#0A0A0A] text-[var(--v2-accent,#2EE66A)] border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
-                    <tr>
-                      <th className="px-5 py-3 font-black uppercase tracking-wider">US Size</th>
-                      <th className="px-5 py-3 font-black uppercase tracking-wider">UK Size</th>
-                      <th className="px-5 py-3 font-black uppercase tracking-wider">EU Size</th>
-                      <th className="px-5 py-3 font-black uppercase tracking-wider">CM Length</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--v2-glass-border,rgba(255,255,255,0.06))]">
-                    {(activeTab === "men"
-                      ? menSizes
-                      : activeTab === "women"
-                      ? womenSizes
-                      : kidSizes
-                    ).map((row, idx) => (
-                      <tr key={idx} className="hover:bg-[var(--v2-glass-bg,rgba(255,255,255,0.02))] transition-colors">
-                        <td className="px-5 py-3 font-black text-[var(--v2-text-primary,#F5F5F5)]">{row.us}</td>
-                        <td className="px-5 py-3 font-bold text-[var(--v2-text-secondary,#A0A0A0)]">{row.uk}</td>
-                        <td className="px-5 py-3 font-bold text-[var(--v2-text-secondary,#A0A0A0)]">{row.eu}</td>
-                        <td className="px-5 py-3 font-bold text-[var(--v2-text-secondary,#A0A0A0)]">{row.cm}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  );
-};
-
-export default SizeGuideDialog;
+export default function SizeGuideDialog({isOpen,onClose}:SizeGuideDialogProps){
+ const [tab,setTab]=useState("men");const sizes=tab==="men"?menSizes:tab==="women"?womenSizes:kidSizes;
+ return <Modal open={isOpen} onCancel={onClose} zIndex={1200} footer={null} width={640} title="Find your fit." centered rootClassName="commerce-modal commerce-size-guide"><p className="commerce-muted">A general footwear conversion guide. Sizing varies between brands and styles; check the product details before choosing.</p><div className="commerce-guide-tabs" aria-label="Sizing guide">{["men","women","kids","apparel"].map(value=><button type="button" key={value} aria-pressed={tab===value} onClick={()=>setTab(value)}>{value}</button>)}</div>{tab==="apparel"?<div className="commerce-guide-apparel"><h3>Apparel sizing is product specific.</h3><p>Measure your chest, waist, and hips and compare them with any measurements in the product description. Generic XS–XXL labels are not consistent between brands.</p><Link href="/contact" onClick={onClose}>Ask our team about your fit →</Link></div>:<div className="commerce-guide-table"><table><caption className="sr-only">{tab}’s footwear size conversion</caption><thead><tr>{["US","UK","EU","Length (cm)"].map(label=><th key={label} scope="col">{label}</th>)}</tr></thead><tbody>{sizes.map(size=><tr key={`${size.us}-${size.eu}`}><td>{size.us}</td><td>{size.uk}</td><td>{size.eu}</td><td>{size.cm}</td></tr>)}</tbody></table></div>}</Modal>;
+}

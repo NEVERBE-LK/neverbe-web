@@ -7,31 +7,31 @@ const { Title, Paragraph, Text } = Typography;
 
 const AboutUsClient = () => {
   return (
-    <main className="w-full bg-[var(--v2-bg-surface,#141414)] text-[var(--v2-text-primary,#F5F5F5)] min-h-screen pt-28 md:pt-36 pb-20">
+    <div className="commerce-legacy w-full bg-surface text-primary min-h-screen pt-28 md:pt-36 pb-20">
       {/* 1. HERO MANIFESTO */}
       <section className="w-full px-4 md:px-8 mb-16">
         <div className="max-w-[1400px] mx-auto">
           <span className="v2-section-label mb-3">OUR STORY &amp; MANIFESTO</span>
-          <h1 className="v2-section-title text-[clamp(3rem,8vw,6rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-4">
+          <h1 className="v2-section-title text-[clamp(3rem,8vw,6rem)] font-black uppercase tracking-tight text-primary mb-4">
             We Are <br /> Neverbe.
           </h1>
-          <p className="text-[clamp(1rem,2vw,1.5rem)] font-extrabold uppercase tracking-wide text-[var(--v2-accent,#2EE66A)] max-w-3xl">
+          <p className="text-[clamp(1rem,2vw,1.5rem)] font-extrabold uppercase tracking-wide text-accent max-w-3xl">
             Redefining sneaker culture &amp; lifestyle apparel in Sri Lanka. Premium quality. Unbeatable prices. No compromises.
           </p>
         </div>
       </section>
 
       {/* 2. THE STORY (Split Layout) */}
-      <section className="w-full border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] px-4 md:px-8 py-16 md:py-24">
+      <section className="w-full border-t border-glass-border px-4 md:px-8 py-16 md:py-24">
         <div className="max-w-[1400px] mx-auto">
           <Row gutter={[48, 48]} justify="space-between">
             {/* Left: Headline */}
             <Col xs={24} md={8} lg={6}>
               <div className="sticky top-28 h-fit">
-                <h2 className="text-[clamp(1.5rem,3vw,2.5rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-3">
+                <h2 className="text-[clamp(1.5rem,3vw,2.5rem)] font-black uppercase tracking-tight text-primary mb-3">
                   The Mission
                 </h2>
-                <div className="h-2 w-20 bg-[var(--v2-accent,#2EE66A)] rounded-full"></div>
+                <div className="h-2 w-20 bg-accent rounded-full"></div>
               </div>
             </Col>
 
@@ -39,24 +39,24 @@ const AboutUsClient = () => {
             <Col xs={24} md={16} lg={14}>
               <Space direction="vertical" size={48} className="w-full">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-6">
+                  <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-primary mb-6">
                     Who We Are
                   </h2>
                   <div className="max-w-3xl space-y-6">
-                    <p className="text-base md:text-lg text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
-                      Based in Sri Lanka, we recognized a gap in the market for high-end, streetwear-inspired footwear and apparel that doesn't compromise on quality. Our mission is simple: to provide the local community with access to global sneaker culture through carefully curated drops.
+                    <p className="text-base md:text-lg text-secondary leading-relaxed m-0">
+                      Based in Sri Lanka, we recognized a gap in the market for high-end, streetwear-inspired footwear and apparel that doesn&apos;t compromise on quality. Our mission is simple: to provide the local community with access to global sneaker culture through carefully curated drops.
                     </p>
-                    <p className="text-base md:text-lg text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
-                      At Neverbe, we don't just sell shoes — we curate a lifestyle. We bridge the gap between high-end streetwear and affordability, offering premium products that rival top standards in look, feel, and durability.
+                    <p className="text-base md:text-lg text-secondary leading-relaxed m-0">
+                      At Neverbe, we don&apos;t just sell shoes — we curate a lifestyle. We bridge the gap between high-end streetwear and affordability, offering premium products that rival top standards in look, feel, and durability.
                     </p>
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-extrabold uppercase tracking-wider text-[var(--v2-accent,#2EE66A)] mb-3">
+                  <h3 className="text-lg font-extrabold uppercase tracking-wider text-accent mb-3">
                     Our Vision
                   </h3>
-                  <p className="text-base text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+                  <p className="text-base text-secondary leading-relaxed m-0">
                     Our vision is to become the undisputed leader in Sri Lankan streetwear and footwear. We operate with absolute transparency, focusing on ethical customer service and product quality. We believe style is a right, not a luxury reserved for the few.
                   </p>
                 </div>
@@ -67,7 +67,7 @@ const AboutUsClient = () => {
       </section>
 
       {/* 3. WHY US (Grid System) */}
-      <section className="w-full px-4 md:px-8 py-20 bg-[var(--v2-bg-surface,#141414)]">
+      <section className="w-full px-4 md:px-8 py-20 bg-surface">
         <div className="max-w-[1400px] mx-auto">
           <Row gutter={[24, 24]}>
             {[
@@ -89,11 +89,11 @@ const AboutUsClient = () => {
               },
             ].map((item, i) => (
               <Col xs={24} sm={12} lg={6} key={i}>
-                <div className="v2-glass p-8 rounded-3xl h-full flex flex-col justify-between border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] hover:border-[var(--v2-accent,#2EE66A)] transition-colors">
-                  <h3 className="text-xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-3">
+                <div className="v2-glass p-8 rounded-3xl h-full flex flex-col justify-between border border-glass-border hover:border-accent transition-colors">
+                  <h3 className="text-xl font-black uppercase tracking-tight text-primary mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+                  <p className="text-xs text-secondary leading-relaxed m-0">
                     {item.desc}
                   </p>
                 </div>
@@ -104,45 +104,45 @@ const AboutUsClient = () => {
       </section>
 
       {/* 4. STATS STRIP */}
-      <section className="w-full px-4 md:px-8 py-16 border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
+      <section className="w-full px-4 md:px-8 py-16 border-t border-glass-border">
         <div className="max-w-[1400px] mx-auto">
           <Row gutter={[32, 32]} justify="space-between" align="middle">
             <Col xs={12} md={6}>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[var(--v2-text-muted,#666666)] block mb-1">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-muted block mb-1">
                 Established
               </span>
-              <span className="text-4xl font-black text-[var(--v2-accent,#2EE66A)] font-display">
+              <span className="text-4xl font-black text-accent font-display">
                 2023
               </span>
             </Col>
             <Col xs={12} md={6}>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[var(--v2-text-muted,#666666)] block mb-1">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-muted block mb-1">
                 Customers
               </span>
-              <span className="text-4xl font-black text-[var(--v2-accent,#2EE66A)] font-display">
+              <span className="text-4xl font-black text-accent font-display">
                 10,000+
               </span>
             </Col>
             <Col xs={12} md={6}>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[var(--v2-text-muted,#666666)] block mb-1">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-muted block mb-1">
                 Products
               </span>
-              <span className="text-4xl font-black text-[var(--v2-accent,#2EE66A)] font-display">
+              <span className="text-4xl font-black text-accent font-display">
                 500+
               </span>
             </Col>
             <Col xs={12} md={6}>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[var(--v2-text-muted,#666666)] block mb-1">
+              <span className="text-xs font-extrabold uppercase tracking-widest text-muted block mb-1">
                 Location
               </span>
-              <span className="text-4xl font-black text-[var(--v2-accent,#2EE66A)] font-display">
+              <span className="text-4xl font-black text-accent font-display">
                 SRI LANKA
               </span>
             </Col>
           </Row>
         </div>
       </section>
-    </main>
+    </div>
   );
 };
 

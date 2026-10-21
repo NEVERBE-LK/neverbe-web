@@ -167,9 +167,10 @@ const bagSlice = createSlice({
       window.localStorage.setItem("NEVERBEBag", JSON.stringify(state.bag));
     },
     updateQuantity(state, action) {
-      const { itemId, quantity } = action.payload;
-      const item = state.bag.find((item) => item.itemId === itemId);
-      if (item) {
+      const { itemId, variantId, size, quantity } = action.payload;
+      const item = state.bag.find((item) => item.itemId === itemId && item.variantId === variantId && item.size === size);
+      if (item && Number.isInteger(quantity) && quantity >= 1 && quantity <= (item.maxQuantity || 10) && !item.isComboItem) {
+        item.discount = item.quantity > 0 ? Math.round((item.discount / item.quantity) * quantity) : 0;
         item.quantity = quantity;
       }
       window.localStorage.setItem("NEVERBEBag", JSON.stringify(state.bag));

@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 export const getPaginatedCombos = async (params: any = {}) => {
   try {
-    const q = new URLSearchParams(params).toString();
+    const q = new URLSearchParams({ size: "12", ...params }).toString();
     const res = await axiosInstance.get(`/web/combos?${q}`);
     return res.data;
   } catch (error) {

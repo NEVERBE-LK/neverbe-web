@@ -56,8 +56,8 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
               relative group cursor-pointer p-4 transition-all duration-300 rounded-2xl overflow-hidden v2-glass border
               ${
                 isSelected
-                  ? "border-[var(--v2-accent,#2EE66A)] bg-[var(--v2-accent,#2EE66A)]/10 ring-1 ring-[var(--v2-accent,#2EE66A)]/30"
-                  : "border-[var(--v2-glass-border,rgba(255,255,255,0.08))] hover:border-[var(--v2-accent,#2EE66A)]/50"
+                  ? "border-accent bg-accent/10 ring-1 ring-accent/30"
+                  : "border-glass-border hover:border-accent/50"
               }
             `}
           >
@@ -68,13 +68,13 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                   flex items-center justify-center h-5 w-5 shrink-0 border-2 rounded-full transition-all mt-0.5
                   ${
                     isSelected
-                      ? "border-[var(--v2-accent,#2EE66A)] bg-[var(--v2-accent,#2EE66A)] text-[var(--v2-accent-text,#0A0A0A)]"
-                      : "border-[var(--v2-glass-border,rgba(255,255,255,0.2))] group-hover:border-[var(--v2-accent,#2EE66A)]"
+                      ? "border-accent bg-accent text-accent-text"
+                      : "border-glass-border group-hover:border-accent"
                   }
                 `}
               >
                 {isSelected && (
-                  <IoCheckmark size={12} className="stroke-[3px] text-[var(--v2-accent-text,#0A0A0A)]" />
+                  <IoCheckmark size={12} className="stroke-[3px] text-accent-text" />
                 )}
               </div>
 
@@ -82,7 +82,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                 <div className="flex items-start justify-between gap-3 w-full">
                   <div className="flex items-start gap-3 min-w-0">
                     {option.imageUrl && (
-                      <div className="w-8 h-8 rounded-lg overflow-hidden bg-[var(--v2-bg-elevated,#1E1E1E)] border border-[var(--v2-glass-border,rgba(255,255,255,0.1))] flex items-center justify-center p-1 shrink-0">
+                      <div className="w-8 h-8 rounded-lg overflow-hidden bg-elevated border border-glass-border flex items-center justify-center p-1 shrink-0">
                         <img
                           src={option.imageUrl}
                           alt={option.name}
@@ -91,19 +91,19 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                       </div>
                     )}
                     <div className="min-w-0">
-                      <p className="text-xs font-black uppercase tracking-wider text-[var(--v2-text-primary,#F5F5F5)] m-0 leading-snug">
+                      <p className="text-xs font-black uppercase tracking-wider text-primary m-0 leading-snug">
                         {isCod && isHighRisk ? "COD (Prepaid Delivery Fee Required)" : option.name}
                       </p>
 
                       {/* Payment Description */}
                       {option.description && (
-                        <p className="text-[11px] font-medium text-[var(--v2-text-secondary,#A0A0A0)] mt-1 m-0 leading-relaxed">
+                        <p className="text-[11px] font-medium text-secondary mt-1 m-0 leading-relaxed">
                           {option.description}
                         </p>
                       )}
 
                       {isCod && isHighRisk && (
-                        <span className="inline-block text-[9px] font-black uppercase tracking-wider text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded-md mt-1.5">
+                        <span className="inline-block text-[9px] font-black uppercase tracking-wider text-error bg-error/10 border border-error/20 px-2 py-0.5 rounded-md mt-1.5">
                           LKR 450 Delivery Fee Online Prepayment Required
                         </span>
                       )}
@@ -111,7 +111,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
                   </div>
 
                   {hasFee && (
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] shrink-0">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-accent shrink-0">
                       + LKR {optionFeeAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </span>
                   )}

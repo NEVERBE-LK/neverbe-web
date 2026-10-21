@@ -33,7 +33,7 @@ export function useProductSearch(
 ): UseProductSearchReturn {
   const {
     indexName = "products_index",
-    hitsPerPage = 30,
+    hitsPerPage = 12,
     minQueryLength = 3,
     debounceMs = 500,
     isDynamic = false, // Default to FALSE to remove keystroke dynamic search

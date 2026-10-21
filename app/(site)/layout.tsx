@@ -3,7 +3,7 @@ import GlobalProvider from "@/app/(site)/components/GlobalProvider";
 import { getSeason } from "@/utils/getSeason";
 import { getNavigationConfig } from "@/actions/websiteAction";
 
-import SeasonalAnimationsWrapper from "@/app/(site)/components/SeasonalAnimationsWrapper";
+
 
 export default async function RootLayout({
   children,
@@ -26,7 +26,6 @@ export default async function RootLayout({
       footerNav={navConfig.footerNav}
       socialLinks={navConfig.socialLinks || []}
     >
-      <SeasonalAnimationsWrapper season={season} />
       {children}
     </GlobalProvider>
   );

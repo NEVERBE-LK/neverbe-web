@@ -9,7 +9,7 @@ const sectionLabel: React.CSSProperties = {
   fontWeight: 800,
   textTransform: "uppercase" as const,
   letterSpacing: "0.1em",
-  color: "var(--color-primary-dark)",
+  color: "var(--color-primary)",
   display: "block",
   marginBottom: 12,
 };
@@ -61,10 +61,11 @@ export const metadata: Metadata = {
 const CombosPage = async ({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) => {
-  const page = Number(searchParams?.page) || 1;
-  const pageSize = 6;
+  const params = await searchParams;
+  const page = Math.max(1, Number(params?.page) || 1);
+  const pageSize = 12;
   let combos: any[] = [];
   let total = 0;
   let totalPages = 0;
@@ -175,27 +176,27 @@ const CombosPage = async ({
   };
 
   return (
-    <main className="w-full min-h-screen bg-[var(--v2-bg-surface,#141414)]">
+    <main className="commerce-legacy w-full min-h-screen bg-surface">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(combosSchema) }}
       />
 
       {/* Hero Header */}
-      <div className="bg-[var(--v2-bg-surface,#141414)] border-b border-[var(--v2-glass-border,rgba(255,255,255,0.08))] pt-28 pb-10 md:pt-36 md:pb-14">
+      <div className="bg-surface border-b border-glass-border pt-28 pb-10 md:pt-36 md:pb-14">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[var(--v2-text-muted,#666666)] mb-3">
-            <Link href="/" className="hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+          <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-muted mb-3">
+            <Link href="/" className="hover:text-accent transition-colors">
               Home
             </Link>
             <span>/</span>
-            <span className="text-[var(--v2-text-primary,#F5F5F5)]">Bundle Deals</span>
+            <span className="text-primary">Bundle Deals</span>
           </nav>
           <span className="v2-section-label mb-2">BUNDLE &amp; SAVE</span>
-          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] mb-2">
+          <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary mb-2">
             Bundle Deals
           </h1>
-          <p className="text-[15px] font-medium text-[var(--v2-text-secondary,#A0A0A0)] m-0 max-w-xl">
+          <p className="text-[15px] font-medium text-secondary m-0 max-w-xl">
             BOGO offers &amp; exclusive combo packs — save more when you buy together.
           </p>
         </div>
@@ -219,26 +220,26 @@ const CombosPage = async ({
       </div>
 
       {/* SEO Footer */}
-      <div className="border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))] py-12 md:py-16 bg-[var(--v2-bg-surface,#141414)]">
+      <div className="border-t border-glass-border py-12 md:py-16 bg-surface">
         <div className="max-w-[1400px] mx-auto px-4 md:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Stack &amp; Save</span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Stack &amp; Save</span>
+              <p className="text-xs text-secondary leading-relaxed m-0">
                 Our bundle deals give you maximum value — BOGO or multi-buy, you always get premium quality for less.
               </p>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Popular Bundles</span>
-              <ul className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] space-y-1.5 list-none p-0 m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Popular Bundles</span>
+              <ul className="text-xs text-secondary space-y-1.5 list-none p-0 m-0">
                 <li>• Buy 2 Pairs, Get 15% Off</li>
                 <li>• Essential Socks Packs</li>
                 <li>• Complete Gym Kits</li>
               </ul>
             </div>
             <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[var(--v2-accent,#2EE66A)] block mb-2">Limited Time</span>
-              <p className="text-xs text-[var(--v2-text-secondary,#A0A0A0)] leading-relaxed m-0">
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Limited Time</span>
+              <p className="text-xs text-secondary leading-relaxed m-0">
                 Most bundle deals are available for a limited time only. Grab your favorites before the campaign ends.
               </p>
             </div>

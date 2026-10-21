@@ -1,104 +1,115 @@
 "use client";
 
-import React, { useState, useRef, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { LuArrowUpDown, LuChevronDown } from "react-icons/lu";
-import { useClickOutside } from "@/hooks/useClickOutside";
+import { useState, useRef, useEffect } from "react";
+import { ChevronDown, Check } from "lucide-react";
 import { sortingOptions } from "@/constants";
 
-interface SortDropdownProps {
+export interface SortDropdownProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
 }
 
-const SortDropdown: React.FC<SortDropdownProps> = ({
+export default function SortDropdown({
   value,
   onChange,
   className = "",
-}) => {
+}: SortDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const closeDropdown = useCallback(() => setIsOpen(false), []);
-  useClickOutside(dropdownRef, closeDropdown, isOpen);
+  // Close when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
 
-  const handleSelect = (optionValue: string) => {
-    onChange(optionValue);
-    setIsOpen(false);
-  };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
 
-  const activeOption = sortingOptions.find((opt) => opt.value === value);
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
+
+  const currentOption = sortingOptions.find((opt) => opt.value === value);
+  const currentLabel =
+    !currentOption || currentOption.value === "NO SELCT"
+      ? "Recommended"
+      : currentOption.name;
 
   return (
-    <div className={`relative ${className}`} ref={dropdownRef}>
-      {/* Sleek Pill Sort Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-[var(--v2-glass-bg,rgba(255,255,255,0.05))] border border-[var(--v2-glass-border,rgba(255,255,255,0.1))] hover:border-[var(--v2-accent,#2EE66A)] transition-all duration-300 text-[var(--v2-text-primary,#F5F5F5)] cursor-pointer text-xs font-extrabold uppercase tracking-wider"
-        aria-label="Sort options"
-      >
-        <LuArrowUpDown
-          size={15}
-          className={`transition-colors ${
-            isOpen ? "text-[var(--v2-accent,#2EE66A)]" : "text-[var(--v2-accent,#2EE66A)]"
-          }`}
-        />
-        <span className="hidden sm:inline">
-          {activeOption && activeOption.value !== "NO SELCT"
-            ? activeOption.name
-            : "Sort By"}
-        </span>
-        <span className="sm:hidden">Sort</span>
-        <LuChevronDown
-          size={14}
-          className={`transition-transform duration-300 text-[var(--v2-text-muted,#666666)] ${
-            isOpen ? "rotate-180 text-[var(--v2-accent,#2EE66A)]" : ""
-          }`}
-        />
-      </button>
+    <div
+      ref={containerRef}
+      className={`commerce-sort ${className}`.trim()}
+    >
+      <span className="commerce-sort-label">Sort by</span>
 
-      {/* DROPDOWN MENU */}
-      <AnimatePresence>
+      <div className="commerce-sort-dropdown">
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={`commerce-sort-trigger ${isOpen ? "is-open" : ""}`}
+          aria-haspopup="listbox"
+          aria-expanded={isOpen}
+          aria-label={`Sort by: ${currentLabel}`}
+        >
+          <span className="commerce-sort-value">{currentLabel}</span>
+          <ChevronDown
+            size={14}
+            className={`commerce-sort-chevron ${isOpen ? "is-flipped" : ""}`}
+          />
+        </button>
+
         {isOpen && (
-          <motion.ul
-            initial={{ opacity: 0, y: 8, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.96 }}
-            transition={{ type: "spring", damping: 22, stiffness: 350 }}
-            className="absolute right-0 mt-2 w-[210px] bg-[var(--v2-bg-surface,#141414)] border border-[var(--v2-glass-border,rgba(255,255,255,0.12))] shadow-2xl z-50 py-2 rounded-2xl overflow-hidden backdrop-blur-xl"
+          <div
+            className="commerce-sort-menu"
+            role="listbox"
+            aria-label="Sort options"
           >
-            {sortingOptions.map((opt, i) => {
-              const isSelected = value === opt.value;
-              return (
-                <li
-                  key={i}
-                  onClick={() => handleSelect(opt.value)}
-                  className={`
-                    px-4 py-2.5 cursor-pointer transition-all duration-200 flex items-center justify-between group
-                    ${isSelected ? "bg-[var(--v2-glass-bg-hover,rgba(255,255,255,0.08))]" : "hover:bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))]"}`}
-                >
-                  <span
-                    className={`text-[11px] uppercase tracking-wider transition-colors ${
-                      isSelected
-                        ? "text-[var(--v2-accent,#2EE66A)] font-extrabold"
-                        : "text-[var(--v2-text-secondary,#A0A0A0)] font-bold group-hover:text-[var(--v2-text-primary,#F5F5F5)]"
-                    }`}
-                  >
-                    {opt.name}
-                  </span>
+            {sortingOptions.map((option) => {
+              const label =
+                option.value === "NO SELCT" ? "Recommended" : option.name;
+              const isSelected =
+                value === option.value ||
+                (!value && option.value === "NO SELCT");
 
-                  {isSelected && (
-                    <div className="w-1.5 h-1.5 bg-[var(--v2-accent,#2EE66A)] rounded-full shadow-[0_0_8px_rgba(46,230,106,0.6)]" />
-                  )}
-                </li>
+              return (
+                <button
+                  type="button"
+                  key={option.value}
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => {
+                    onChange(option.value);
+                    setIsOpen(false);
+                  }}
+                  className={`commerce-sort-option ${
+                    isSelected ? "is-selected" : ""
+                  }`}
+                >
+                  <span>{label}</span>
+                  {isSelected && <Check size={14} className="shrink-0" />}
+                </button>
               );
             })}
-          </motion.ul>
+          </div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
-};
-
-export default SortDropdown;
+}

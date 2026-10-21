@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     locale: "en_LK",
     images: [
       {
-        url: "https://neverbe.lk/logo-og.png",
+        url: "https://neverbe.lk/main-og.png",
         width: 1200,
         height: 630,
         alt: "Neverbe Logo",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     title: "Privacy Policy - Neverbe Sri Lanka",
     description:
       "Read Neverbe's Privacy Policy outlining how we collect, use, and protect your data.",
-    images: ["https://neverbe.lk/logo-og.png"],
+    images: ["https://neverbe.lk/main-og.png"],
   },
   robots: {
     index: true,
@@ -62,7 +62,7 @@ const Page = () => {
       "@type": "Organization",
       name: "Neverbe",
       url: "https://neverbe.lk",
-      logo: "https://neverbe.lk/logo-og.png",
+      logo: "https://neverbe.lk/logo.png",
       contactPoint: {
         "@type": "ContactPoint",
         telephone: "+94 70 520 8999",

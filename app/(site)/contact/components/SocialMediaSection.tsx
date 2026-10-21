@@ -19,8 +19,8 @@ const SocialMediaSection = () => {
   };
 
   return (
-    <section className="flex flex-col gap-6 mt-8 pt-8 border-t border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
-      <h2 className="text-xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
+    <section className="flex flex-col gap-6 mt-8 pt-8 border-t border-glass-border">
+      <h2 className="text-xl font-black uppercase tracking-tight text-primary m-0">
         Follow Us
       </h2>
 
@@ -31,7 +31,7 @@ const SocialMediaSection = () => {
             href={`https://wa.me/${whatsappNumber}?text=${message}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-3 bg-[var(--v2-accent,#2EE66A)] text-[#0A0A0A] px-6 py-4 rounded-full font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all shadow-lg"
+            className="flex items-center justify-center gap-3 bg-accent text-accent-text px-6 py-4 rounded-full font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all shadow-lg"
           >
             <FaWhatsapp size={20} />
             <span>Chat on WhatsApp</span>
@@ -45,12 +45,12 @@ const SocialMediaSection = () => {
               href={media.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="v2-glass p-4 rounded-2xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] hover:border-[var(--v2-accent,#2EE66A)] flex items-center justify-center gap-3 group transition-all"
+              className="v2-glass p-4 rounded-2xl border border-glass-border hover:border-accent flex items-center justify-center gap-3 group transition-all"
             >
-              <span className="text-[var(--v2-text-secondary,#A0A0A0)] group-hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+              <span className="text-secondary group-hover:text-accent transition-colors">
                 {media.icon ? <media.icon size={18} /> : getIcon(media.url)}
               </span>
-              <span className="text-xs font-black uppercase tracking-wider text-[var(--v2-text-primary,#F5F5F5)] group-hover:text-[var(--v2-accent,#2EE66A)] transition-colors">
+              <span className="text-xs font-black uppercase tracking-wider text-primary group-hover:text-accent transition-colors">
                 {media.name}
               </span>
             </Link>

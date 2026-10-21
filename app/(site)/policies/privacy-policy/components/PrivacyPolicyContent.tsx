@@ -8,18 +8,18 @@ const PrivacyPolicyContent = () => {
     return (
       <div
         key={key}
-        className="v2-glass p-8 rounded-3xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))] hover:border-[var(--v2-accent,#2EE66A)] transition-all group mb-6"
+        className="v2-glass p-8 rounded-3xl border border-glass-border hover:border-accent transition-all group mb-6"
       >
         <div className="flex items-center gap-4 mb-4">
-          <span className="text-xs font-black uppercase tracking-widest text-[var(--v2-accent,#2EE66A)]">
+          <span className="text-xs font-black uppercase tracking-widest text-accent">
             {String(index).padStart(2, "0")}
           </span>
-          <h2 className="text-xl font-black uppercase tracking-tight text-[var(--v2-text-primary,#F5F5F5)] m-0">
+          <h2 className="text-xl font-black uppercase tracking-tight text-primary m-0">
             {value.title || key.replace(/([A-Z])/g, " $1")}
           </h2>
         </div>
 
-        <div className="space-y-3 text-xs md:text-sm font-medium leading-relaxed text-[var(--v2-text-secondary,#A0A0A0)]">
+        <div className="space-y-3 text-xs md:text-sm font-medium leading-relaxed text-secondary">
           {typeof value === "string" && <p className="m-0">{value}</p>}
 
           {value.description && <p className="m-0">{value.description}</p>}
@@ -28,7 +28,7 @@ const PrivacyPolicyContent = () => {
             <ul className="space-y-2 m-0 p-0 list-none">
               {value.map((item: string, idx: number) => (
                 <li key={idx} className="flex items-start gap-3">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--v2-accent,#2EE66A)] shrink-0" />
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-accent shrink-0" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -40,7 +40,7 @@ const PrivacyPolicyContent = () => {
             Object.entries(value).map(([subKey, subValue]) => (
               <div
                 key={subKey}
-                className="mt-4 p-4 rounded-2xl bg-[var(--v2-glass-bg,rgba(255,255,255,0.04))] border border-[var(--v2-glass-border,rgba(255,255,255,0.08))]"
+                className="mt-4 p-4 rounded-2xl bg-glass border border-glass-border"
               >
                 {typeof subValue === "string" && (
                   <p className="mb-2 m-0 text-xs">{subValue}</p>
@@ -52,7 +52,7 @@ const PrivacyPolicyContent = () => {
                         key={idx}
                         className="flex items-start gap-2 text-xs"
                       >
-                        <span className="text-[var(--v2-accent,#2EE66A)] font-bold">›</span>{" "}
+                        <span className="text-accent font-bold">›</span>{" "}
                         {item}
                       </li>
                     ))}
@@ -68,12 +68,12 @@ const PrivacyPolicyContent = () => {
   return (
     <article className="w-full">
       {/* Intro Paragraph */}
-      <div className="mb-10 max-w-3xl v2-glass p-8 rounded-3xl border border-[var(--v2-glass-border,rgba(255,255,255,0.08))]">
-        <p className="text-sm md:text-base font-medium text-[var(--v2-text-primary,#F5F5F5)] leading-relaxed m-0">
+      <div className="mb-10 max-w-3xl v2-glass p-8 rounded-3xl border border-glass-border">
+        <p className="text-sm md:text-base font-medium text-primary leading-relaxed m-0">
           {privacyPolicy.sections.intro}{" "}
           <a
             href={privacyPolicy.website}
-            className="text-[var(--v2-accent,#2EE66A)] underline hover:opacity-80 transition-colors"
+            className="text-accent underline hover:opacity-80 transition-colors"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -3,7 +3,7 @@ import { categoryLabelToSlug } from "@/utils/categorySlug";
 
 export const getProducts = async (params: any = {}) => {
   try {
-    const q = new URLSearchParams(params).toString();
+    const q = new URLSearchParams({ size: "12", ...params }).toString();
     const res = await axiosInstance.get(`/web/products?${q}`);
     return res.data;
   } catch (error) {
@@ -45,7 +45,7 @@ export const getSimilarItems = async (id: string, limit: number = 4) => {
   }
 };
 
-export const getNewArrivals = async (limit: number = 10) => {
+export const getNewArrivals = async (limit: number = 12) => {
   try {
     const res = await axiosInstance.get(`/web/products/new?size=${limit}`);
     return res.data;
@@ -57,7 +57,7 @@ export const getNewArrivals = async (limit: number = 10) => {
 
 export const getDealsProducts = async (params: any = {}) => {
   try {
-    const q = new URLSearchParams(params).toString();
+    const q = new URLSearchParams({ size: "12", ...params }).toString();
     const res = await axiosInstance.get(`/web/products/deals?${q}`);
     return res.data;
   } catch (error) {
@@ -152,12 +152,24 @@ export const getCategories = async () => {
   }
 };
 
+export const getSizes = async () => {
+  try {
+    const res = await axiosInstance.get("/web/sizes/dropdown");
+    const data = res.data;
+    return Array.isArray(data) ? data : data.data || [];
+  } catch (error) {
+    console.error("Failed to fetch sizes:", error);
+    return [];
+  }
+};
+
 export const getProductsByCategory = async (
   category: string,
   params: any = {},
 ) => {
   try {
     const q = new URLSearchParams({
+      size: "12",
       ...params,
       category,
     }).toString();

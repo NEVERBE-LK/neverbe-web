@@ -24,12 +24,12 @@ const TrustStrip = () => {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: 'easeOut' as const } },
   };
 
   return (
     <section 
-      className="bg-[var(--v2-bg-surface)] border-t border-[var(--v2-glass-border)] py-6 md:py-8"
+      className="bg-surface border-t border-glass-border py-6 md:py-8"
     >
       <div className="max-w-[1400px] mx-auto px-4 md:px-8">
         <motion.div
@@ -45,15 +45,15 @@ const TrustStrip = () => {
                 variants={itemVariants}
                 className="group flex items-center gap-3 cursor-pointer md:px-8"
               >
-                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[var(--v2-glass-bg)] border border-[var(--v2-glass-border)] text-[var(--v2-accent)] transition-colors duration-300 group-hover:border-[var(--v2-accent)]">
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-glass border border-glass-border text-accent transition-colors duration-300 group-hover:border-accent">
                   {item.icon}
                 </div>
-                <span className="text-[12px] font-bold uppercase tracking-wide text-[var(--v2-text-secondary)] transition-colors duration-300 group-hover:text-[var(--v2-text-primary)]">
+                <span className="text-[12px] font-bold uppercase tracking-wide text-secondary transition-colors duration-300 group-hover:text-primary">
                   {item.title}
                 </span>
               </motion.div>
               {index < items.length - 1 && (
-                <div className="hidden md:block w-px h-6 bg-[var(--v2-glass-border)]" />
+                <div className="hidden md:block w-px h-6 bg-glass-border" />
               )}
             </React.Fragment>
           ))}

@@ -17,15 +17,15 @@ const CTABanner = () => {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' as const } },
   };
 
   return (
-    <section className="relative overflow-hidden py-24 md:py-32 bg-[var(--v2-bg-void)] v2-grain">
+    <section className="relative overflow-hidden py-24 md:py-32 bg-void v2-grain">
       <div 
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(46,230,106,0.08), transparent 70%)'
+          background: 'radial-gradient(ellipse 80% 50% at 50% -20%, color-mix(in srgb, var(--color-accent) 8.0%, transparent), transparent 70%)'
         }}
       />
       
@@ -40,13 +40,13 @@ const CTABanner = () => {
             variants={itemVariants}
             className="font-display font-[900] uppercase tracking-[-0.04em] text-[clamp(3rem,10vw,7rem)] leading-none flex flex-col items-center justify-center"
           >
-            <span className="text-[var(--v2-text-primary)]">NEVER BE</span>
+            <span className="text-primary">NEVER BE</span>
             <span className="v2-shimmer-text">THE SAME</span>
           </motion.h2>
 
           <motion.p 
             variants={itemVariants}
-            className="text-[16px] text-[var(--v2-text-secondary)] max-w-lg mx-auto mt-6"
+            className="text-[16px] text-secondary max-w-lg mx-auto mt-6"
           >
             Join 10,000+ customers who trust Neverbe for premium style.
           </motion.p>
