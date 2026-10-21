@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { applyPromotions, removePromotion } from "@/redux/bagSlice/bagSlice";
 import { BagItem } from "@/interfaces/BagItem";
-import axiosInstance from "@/actions/axiosInstance";
+import { getPublicPromotions } from "@/actions/publicPromotions";
 import {
   calculateTotal,
   calculateTotalDiscount,
@@ -91,7 +91,7 @@ export const usePromotions = (): UsePromotionsReturn => {
   // Fetch active promotions
   const fetchPromotions = useCallback(async () => {
     // Don't fetch if combo items block promotions
-    if (hasComboItems) {
+    if (hasComboItems || bagItems.length === 0) {
       setPromotions([]);
       dispatch(removePromotion());
       return;
@@ -99,10 +99,8 @@ export const usePromotions = (): UsePromotionsReturn => {
 
     setIsLoading(true);
     try {
-      const res = await axiosInstance.get("/web/promotions");
-      if (res.data) {
-        const data = res.data;
-
+      const data = await getPublicPromotions<any>();
+      if (data) {
         // Process promotions to check eligibility
         const processedPromotions: ActivePromotion[] = (data || [])
           .map((promo: any) => {
@@ -562,7 +560,12 @@ export const usePromotions = (): UsePromotionsReturn => {
         (sum, item) => sum + item.price * item.quantity,
         0,
       );
-      return calculateDiscountAmount(action, eligibleTotal, eligibleItems, promo);
+      return calculateDiscountAmount(
+        action,
+        eligibleTotal,
+        eligibleItems,
+        promo,
+      );
     } else if (
       promo.applicableProducts &&
       promo.applicableProducts.length > 0
@@ -576,19 +579,26 @@ export const usePromotions = (): UsePromotionsReturn => {
         (sum, item) => sum + item.price * item.quantity,
         0,
       );
-      return calculateDiscountAmount(action, eligibleTotal, eligibleItems, promo);
+      return calculateDiscountAmount(
+        action,
+        eligibleTotal,
+        eligibleItems,
+        promo,
+      );
     } else if (
       (promo.applicableCategories && promo.applicableCategories.length > 0) ||
       (promo.applicableBrands && promo.applicableBrands.length > 0)
     ) {
       // PRIORITY 4: Category or Brand targeting
       const eligibleItems = items.filter((item) => {
-        const matchesCategory = promo.applicableCategories && promo.applicableCategories.length > 0
-          ? promo.applicableCategories.includes((item as any).category)
-          : true;
-        const matchesBrand = promo.applicableBrands && promo.applicableBrands.length > 0
-          ? promo.applicableBrands.includes((item as any).brand)
-          : true;
+        const matchesCategory =
+          promo.applicableCategories && promo.applicableCategories.length > 0
+            ? promo.applicableCategories.includes((item as any).category)
+            : true;
+        const matchesBrand =
+          promo.applicableBrands && promo.applicableBrands.length > 0
+            ? promo.applicableBrands.includes((item as any).brand)
+            : true;
         return matchesCategory && matchesBrand;
       });
 
@@ -596,7 +606,12 @@ export const usePromotions = (): UsePromotionsReturn => {
         (sum, item) => sum + item.price * item.quantity,
         0,
       );
-      return calculateDiscountAmount(action, eligibleTotal, eligibleItems, promo);
+      return calculateDiscountAmount(
+        action,
+        eligibleTotal,
+        eligibleItems,
+        promo,
+      );
     }
 
     // No specific product/category conditions - apply to entire cart
@@ -614,7 +629,12 @@ export const usePromotions = (): UsePromotionsReturn => {
       );
     }
 
-    return calculateDiscountAmount(action, applicableTotal, eligibleItems, promo);
+    return calculateDiscountAmount(
+      action,
+      applicableTotal,
+      eligibleItems,
+      promo,
+    );
   };
 
   // Helper: Calculate discount amount based on action type
@@ -634,11 +654,16 @@ export const usePromotions = (): UsePromotionsReturn => {
         break;
       case "FIXED_OFF":
         // Apply scaling multiplier if MIN_QUANTITY is present
-        const minQtyCondition = promo?.conditions?.find((c: any) => c.type === "MIN_QUANTITY");
+        const minQtyCondition = promo?.conditions?.find(
+          (c: any) => c.type === "MIN_QUANTITY",
+        );
         const minQtyValue = minQtyCondition ? Number(minQtyCondition.value) : 0;
 
         if (minQtyValue > 0) {
-          const totalEligibleQty = eligibleItems.reduce((sum, item) => sum + item.quantity, 0);
+          const totalEligibleQty = eligibleItems.reduce(
+            (sum, item) => sum + item.quantity,
+            0,
+          );
           const multiplier = Math.floor(totalEligibleQty / minQtyValue);
           grossDiscount = Math.min(action.value * multiplier, applicableTotal);
         } else {
@@ -662,14 +687,17 @@ export const usePromotions = (): UsePromotionsReturn => {
       case "BOGO":
         // Buy One Get One - calculate the value of the cheapest eligible items
         const flattenedItems: number[] = [];
-        eligibleItems.forEach(item => {
-          for (let i = 0; i < item.quantity; i++) flattenedItems.push(item.price);
+        eligibleItems.forEach((item) => {
+          for (let i = 0; i < item.quantity; i++)
+            flattenedItems.push(item.price);
         });
-        
+
         if (flattenedItems.length >= 2) {
           flattenedItems.sort((a, b) => a - b);
           const freeItemsCount = Math.floor(flattenedItems.length / 2); // 1 free for every pair
-          grossDiscount = flattenedItems.slice(0, freeItemsCount).reduce((acc, price) => acc + price, 0);
+          grossDiscount = flattenedItems
+            .slice(0, freeItemsCount)
+            .reduce((acc, price) => acc + price, 0);
         }
         break;
       default:
@@ -679,10 +707,16 @@ export const usePromotions = (): UsePromotionsReturn => {
     if (action.type === "FREE_SHIPPING") return grossDiscount;
 
     // To prevent double dipping, we calculate the total base item discounts already granted to these eligible items
-    const eligibleItemDiscounts = eligibleItems.reduce((sum, item) => sum + (item.discount || 0), 0);
-    
+    const eligibleItemDiscounts = eligibleItems.reduce(
+      (sum, item) => sum + (item.discount || 0),
+      0,
+    );
+
     // The promotion only grants the net extra savings value!
-    return Math.max(0, Math.round(grossDiscount) - Math.round(eligibleItemDiscounts));
+    return Math.max(
+      0,
+      Math.round(grossDiscount) - Math.round(eligibleItemDiscounts),
+    );
   };
 
   // Generate message for promotion
@@ -719,7 +753,7 @@ export const usePromotions = (): UsePromotionsReturn => {
     lastBagHash.current = currentHash;
 
     // Clear promotions if combo items added
-    if (hasComboItems) {
+    if (hasComboItems || bagItems.length === 0) {
       setPromotions([]);
       dispatch(removePromotion());
       return;

@@ -1,29 +1,31 @@
+import { notFound } from "next/navigation";
+import CollectionAdvice from "@/components/CollectionAdvice";
+import {
+  catalogPageExists,
+  catalogQuery,
+  type CatalogSearchParams,
+} from "@/utils/catalogQuery";
+import {
+  collectionMetadata,
+  collectionStructuredData,
+} from "@/utils/collectionSeo";
+import { getCatalogPage } from "@/actions/catalogPage";
+import { serializeJsonLd } from "@/utils/seo";
 import React, { Suspense } from "react";
 import Products from "@/app/(site)/collections/products/components/Products";
-import { getNewArrivals } from "@/actions/productAction";
 import ComponentLoader from "@/components/ComponentLoader";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-const sectionLabel: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 800,
-  textTransform: "uppercase",
-  letterSpacing: "0.1em",
-  color: "var(--color-primary)",
-  display: "block",
-  marginBottom: 12,
-};
-
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "New Arrivals | Latest Shoes, Clothing & Apparel | Neverbe Sri Lanka",
   description:
-    "Shop the latest shoe drops, clothing & fresh apparel at Neverbe. New sneakers, t-shirts, activewear & sportswear added weekly. Premium quality. Cash on Delivery island-wide.",
+    "Shop the latest shoe drops, clothing & fresh apparel at Neverbe. Explore new sneakers, t-shirts, activewear & sportswear. Cash on Delivery island-wide.",
   alternates: { canonical: "https://neverbe.lk/collections/new-arrivals" },
   keywords: [
     "new sneakers sri lanka",
     "latest shoe drops sri lanka",
-    "new arrivals footwear 2025",
+    "new arrivals footwear sri lanka",
     "new clothing sri lanka",
     "latest fashion sri lanka",
     "new t-shirts sri lanka",
@@ -34,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "New Arrivals | Latest Shoes, Clothing & Apparel | Neverbe",
     description:
-      "Latest shoe drops, clothing & fresh apparel added weekly at Neverbe Sri Lanka.",
+      "Explore the latest footwear and clothing added to NEVERBE Sri Lanka.",
     url: "https://neverbe.lk/collections/new-arrivals",
     type: "website",
     siteName: "Neverbe",
@@ -51,123 +53,48 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "New Arrivals | Neverbe Sri Lanka",
-    description: "Fresh shoe drops, clothing & apparel added weekly in Sri Lanka.",
+    description:
+      "Fresh shoe drops, clothing & apparel at NEVERBE in Sri Lanka.",
     images: ["/collections-og.png"],
   },
 };
 
-const NewArrivalsPage = async () => {
-  const { total, dataList } = await getNewArrivals(12);
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}): Promise<Metadata> {
+  return collectionMetadata(
+    baseMetadata,
+    "/collections/new-arrivals",
+    catalogQuery(await searchParams),
+  );
+}
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://neverbe.lk",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "New Arrivals",
-            item: "https://neverbe.lk/collections/new-arrivals",
-          },
-        ],
-      },
-      {
-        "@type": "CollectionPage",
-        name: "New Arrivals - Latest Shoes & Clothing Sri Lanka",
-        description:
-          "Shop the newest shoes & clothing in Sri Lanka. Latest sneakers, apparel & footwear.",
-        url: "https://neverbe.lk/collections/new-arrivals",
-        inLanguage: "en-LK",
-        mainEntity: {
-          "@type": "ItemList",
-          numberOfItems: dataList.length,
-          itemListElement: dataList
-            .slice(0, 15)
-            .map((product: any, index: number) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
-                "@type": "Product",
-                name: product.name,
-                image: product.thumbnail?.url
-                  ? (product.thumbnail.url.startsWith("http")
-                      ? product.thumbnail.url
-                      : `https://neverbe.lk${product.thumbnail.url.startsWith("/") ? "" : "/"}${product.thumbnail.url}`)
-                  : "https://neverbe.lk/collections-og.png",
-                url: `https://neverbe.lk/collections/products/${product.id}`,
-                description: product.description || `Shop ${product.name} online in Sri Lanka at Neverbe.`,
-                brand: { "@type": "Brand", name: product.brand || "Neverbe" },
-                offers: {
-                  "@type": "Offer",
-                  priceCurrency: "LKR",
-                  price: product.discount > 0
-                    ? Math.round((product.sellingPrice - (product.sellingPrice * product.discount) / 100) / 10) * 10
-                    : product.sellingPrice || "0.00",
-                  priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
-                  availability: product.inStock
-                    ? "https://schema.org/InStock"
-                    : "https://schema.org/OutOfStock",
-                  itemCondition: "https://schema.org/NewCondition",
-                  seller: {
-                    "@type": "Organization",
-                    name: "Neverbe",
-                  },
-                  shippingDetails: {
-                    "@type": "OfferShippingDetails",
-                    shippingDestination: {
-                      "@type": "DefinedRegion",
-                      addressCountry: "LK",
-                    },
-                    shippingRate: {
-                      "@type": "MonetaryAmount",
-                      value: `${((product.weight || 1000) / 1000 <= 1.0 ? 425 : 600).toFixed(2)}`,
-                      currency: "LKR",
-                    },
-                    deliveryTime: {
-                      "@type": "ShippingDeliveryTime",
-                      handlingTime: {
-                        "@type": "QuantitativeValue",
-                        minValue: 1,
-                        maxValue: 2,
-                        unitCode: "DAY",
-                      },
-                      transitTime: {
-                        "@type": "QuantitativeValue",
-                        minValue: 1,
-                        maxValue: 3,
-                        unitCode: "DAY",
-                      },
-                    },
-                  },
-                  hasMerchantReturnPolicy: {
-                    "@type": "MerchantReturnPolicy",
-                    applicableCountry: "LK",
-                    returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-                    merchantReturnDays: 7,
-                    returnMethod: "https://schema.org/ReturnByMail",
-                    returnFees: "https://schema.org/ReturnFeesCustomerPaying",
-                  },
-                },
-              },
-            })),
-        },
-      },
-    ],
-  };
+const NewArrivalsPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}) => {
+  const query = catalogQuery(await searchParams);
+  const initialData = await getCatalogPage("/web/products/new", query.key);
+  const dataList = initialData.products;
+  if (!initialData.error && !catalogPageExists(query, initialData.total))
+    notFound();
+
+  const structuredData = collectionStructuredData({
+    name: "New arrivals in Sri Lanka",
+    description: "Explore the latest footwear and clothing added to NEVERBE.",
+    path: "/collections/new-arrivals",
+    query,
+    items: dataList,
+  });
 
   return (
     <main className="commerce-legacy w-full min-h-screen bg-surface">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
 
       {/* Hero Header */}
@@ -193,37 +120,17 @@ const NewArrivalsPage = async () => {
       {/* Product Grid */}
       <div className="w-full py-4 md:py-8">
         <Suspense fallback={<ComponentLoader />}>
-          <Products items={dataList} apiEndpoint="/web/products/new" />
+          <Products
+            key={query.key}
+            items={dataList}
+            apiEndpoint="/web/products/new"
+            initialData={initialData}
+            initialKey={query.key}
+          />
         </Suspense>
       </div>
 
-      {/* SEO Footer */}
-      <div className="border-t border-glass-border py-12 md:py-16 bg-surface">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Fresh Drops Weekly</span>
-              <p className="text-xs text-secondary leading-relaxed m-0">
-                We update our collection with the latest releases from global sneaker culture. Premium quality guaranteed.
-              </p>
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Trending Now</span>
-              <ul className="text-xs text-secondary space-y-1.5 list-none p-0 m-0">
-                <li>• Retro High Tops</li>
-                <li>• Chunky Dad Shoes</li>
-                <li>• Minimalist Slides</li>
-              </ul>
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Limited Stock</span>
-              <p className="text-xs text-secondary leading-relaxed m-0">
-                Most new arrivals are limited runs. If you see your size, grab it before it&apos;s gone.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CollectionAdvice collection="new-arrivals" />
     </main>
   );
 };

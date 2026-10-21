@@ -2,9 +2,10 @@ import { MetadataRoute } from "next";
 import {
   getProductsForSitemap,
   getCategoriesForSitemap,
-  getBrandForSitemap,
 } from "@/actions/productAction";
 import { getCombosForSitemap } from "@/actions/promotionAction";
+
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://neverbe.lk";
@@ -23,17 +24,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/policies/privacy-policy",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
     changeFrequency: "weekly" as const,
     priority: route === "" ? 1.0 : 0.8,
   }));
 
   try {
     // Dynamically fetch catalog data
-    const [products, categories, brands, combos] = await Promise.all([
+    const [products, categories, combos] = await Promise.all([
       getProductsForSitemap(),
       getCategoriesForSitemap(),
-      getBrandForSitemap(),
       getCombosForSitemap(),
     ]);
 
@@ -42,8 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return items
         .filter(
           (item) =>
-            item.url &&
-            !String(item.url).toLowerCase().includes("undefined")
+            item.url && !String(item.url).toLowerCase().includes("undefined"),
         )
         .map((item) => {
           let path = String(item.url).replace(/^https?:\/\/[^\/]+/, "");
@@ -51,20 +49,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
           return {
             url: `${baseUrl}${path}`,
-            lastModified: item.lastModified || new Date(),
+            ...(item.lastModified &&
+            !Number.isNaN(new Date(item.lastModified).getTime())
+              ? { lastModified: new Date(item.lastModified) }
+              : {}),
             changeFrequency: item.changeFrequency || "weekly",
             priority: item.priority || 0.7,
           };
         });
     };
 
-    return [
+    const entries = [
       ...staticPages,
       ...processDynamicUrls(categories),
-      ...processDynamicUrls(brands),
       ...processDynamicUrls(products),
       ...processDynamicUrls(combos),
     ];
+    return [...new Map(entries.map((entry) => [entry.url, entry])).values()];
   } catch (error) {
     console.error(
       "Failed to generate dynamic sitemap, falling back to static:",

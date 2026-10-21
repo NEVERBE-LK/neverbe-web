@@ -16,7 +16,6 @@ import { NavigationItem, SocialMediaItem } from "@/actions/websiteAction";
 import { PromotionsProvider } from "@/components/PromotionsProvider";
 import QuickViewProvider from "@/components/QuickViewProvider";
 import RecentlyViewedProvider from "@/components/RecentlyViewedProvider";
-import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -45,33 +44,29 @@ const GlobalProvider = ({
   }, [dispatch]);
 
   return (
-    <GoogleReCaptchaProvider
-      reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""}
-      scriptProps={{
-        async: true,
-        defer: true,
-        appendTo: "body",
-      }}
-    >
-      <div className="w-full relative flex flex-col flex-1 min-h-screen">
-        <PromotionsProvider>
-          <RecentlyViewedProvider>
-            <QuickViewProvider>
-              <Header season={season} mainNav={mainNav} />
-              <main id="main-content" className="commerce-content flex-1 flex flex-col w-full">{children}</main>
-              <Footer footerNav={footerNav} socialLinks={socialLinks} />
-              <AnimatePresence>{showBag && <Bag />}</AnimatePresence>
-              <AnimatePresence>
-                {showMenu && <Menu mainNav={mainNav} />}
-              </AnimatePresence>
-              <MobileCheckoutBar />
-              <Analytics />
-              <SpeedInsights />
-            </QuickViewProvider>
-          </RecentlyViewedProvider>
-        </PromotionsProvider>
-      </div>
-    </GoogleReCaptchaProvider>
+    <div className="w-full relative flex flex-col flex-1 min-h-screen">
+      <PromotionsProvider>
+        <RecentlyViewedProvider>
+          <QuickViewProvider>
+            <Header season={season} mainNav={mainNav} />
+            <main
+              id="main-content"
+              className="commerce-content flex-1 flex flex-col w-full"
+            >
+              {children}
+            </main>
+            <Footer footerNav={footerNav} socialLinks={socialLinks} />
+            <AnimatePresence>{showBag && <Bag />}</AnimatePresence>
+            <AnimatePresence>
+              {showMenu && <Menu mainNav={mainNav} />}
+            </AnimatePresence>
+            <MobileCheckoutBar />
+            <Analytics />
+            <SpeedInsights />
+          </QuickViewProvider>
+        </RecentlyViewedProvider>
+      </PromotionsProvider>
+    </div>
   );
 };
 

@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Product } from "@/interfaces/Product";
 import { sortProductsByPrice } from "@/utils/formatting";
+import { catalogQuery, catalogSearchParams } from "@/utils/catalogQuery";
+import type { CatalogPageData } from "@/actions/catalogPage";
 import axiosInstance from "@/actions/axiosInstance";
 
 type SortOption = "NO SELCT" | "LOW TO HIGH" | "HIGH TO LOW" | "NEW ARRIVALS";
@@ -12,20 +14,26 @@ interface UseProductListingOptions {
   apiEndpoint: string;
   defaultSize?: number;
   defaultCategory?: string;
+  initialData?: CatalogPageData;
+  initialKey?: string;
 }
 
 export const useProductListing = ({
   apiEndpoint,
-  defaultSize = 12,
   defaultCategory,
+  initialData,
+  initialKey,
 }: UseProductListingOptions) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   // --- 1. Read State from URL ---
-  const page = Math.max(1, Number(searchParams.get("page")) || 1);
-  const size = Math.min(100, Math.max(1, Number(searchParams.get("size")) || defaultSize));
+  const query = catalogQuery(
+    catalogSearchParams(searchParams),
+    defaultCategory,
+  );
+  const { page, size } = query;
   const inStock = searchParams.get("inStock") === "true";
   const selectedGender = searchParams.get("gender") || "";
 
@@ -35,7 +43,10 @@ export const useProductListing = ({
     [searchParams],
   );
   const selectedCategories = useMemo(
-    () => defaultCategory ? [defaultCategory.toLowerCase()] : searchParams.get("category")?.split(",").filter(Boolean) || [],
+    () =>
+      defaultCategory
+        ? [defaultCategory.toLowerCase()]
+        : searchParams.get("category")?.split(",").filter(Boolean) || [],
     [searchParams, defaultCategory],
   );
   const selectedSizes = useMemo(
@@ -61,46 +72,33 @@ export const useProductListing = ({
   else if (sortParam === "new") selectedSort = "NEW ARRIVALS";
 
   // --- 2. Local Data State ---
-  const [products, setProducts] = useState<Product[]>([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [products, setProducts] = useState<Product[]>(
+    initialData?.products || [],
+  );
+  const [total, setTotal] = useState(initialData?.total || 0);
+  const [loading, setLoading] = useState(!initialData);
+  const [error, setError] = useState(initialData?.error || false);
   const [attempt, setAttempt] = useState(0);
 
   // --- 3. Data Fetching ---
+  const requestKey = query.key;
   useEffect(() => {
+    // Server-rendered products already match this URL; avoid a duplicate hydration request.
+    if (attempt === 0 && initialData && initialKey === requestKey) return;
     const controller = new AbortController();
     const fetchProducts = async () => {
       setLoading(true);
       setError(false);
       try {
-        const params = new URLSearchParams();
-        params.set("page", page.toString());
-        params.set("size", size.toString());
-
-        if (inStock) params.set("inStock", "true");
-        if (selectedGender) params.set("gender", selectedGender);
-        if (sortParam) params.set("sort", sortParam);
-
-        // API now handles brand and category separately for AND logic
-        if (selectedBrands[0]) params.set("brand", selectedBrands[0]);
-        if (selectedCategories[0])
-          params.set("category", selectedCategories[0]);
-
-        if (selectedSizes.length > 0)
-          params.set("sizes", selectedSizes.join(","));
-
-        if (selectedOccasions.length > 0)
-          params.set("occasion", selectedOccasions.join(","));
-
-        if (selectedStyles.length > 0)
-          params.set("style", selectedStyles.join(","));
+        const params = new URLSearchParams(requestKey);
 
         const endpoint = apiEndpoint.includes("/api/v1")
           ? apiEndpoint.split("/api/v1")[1]
           : apiEndpoint;
 
-        const res = await axiosInstance.get(`${endpoint}?${params}`, { signal: controller.signal });
+        const res = await axiosInstance.get(`${endpoint}?${params}`, {
+          signal: controller.signal,
+        });
         const data = res.data;
 
         // Client-side Sort (if API sort isn't sufficient or for consistency)
@@ -128,21 +126,7 @@ export const useProductListing = ({
 
     fetchProducts();
     return () => controller.abort();
-  }, [
-    attempt,
-    apiEndpoint,
-    page,
-    size,
-    inStock,
-    selectedGender,
-    selectedBrands,
-    selectedCategories,
-    selectedSizes,
-    selectedOccasions,
-    selectedStyles,
-    sortParam,
-    selectedSort,
-  ]);
+  }, [attempt, apiEndpoint, requestKey, initialData, initialKey, selectedSort]);
 
   // --- 4. URL Updaters (Actions) ---
   const updateURL = useCallback(
@@ -269,7 +253,7 @@ export const useProductListing = ({
     total,
     loading,
     error,
-    retry: () => setAttempt(value => value + 1),
+    retry: () => setAttempt((value) => value + 1),
 
     // State
     page,

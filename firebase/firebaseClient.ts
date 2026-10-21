@@ -1,7 +1,7 @@
 "use client";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { collection, getFirestore, getDocs } from "firebase/firestore";
-import { getAnalytics, isSupported } from "@firebase/analytics";
+
 import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
 // unused import removed
 
@@ -19,20 +19,18 @@ const clientApp = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(clientApp);
 export const db = getFirestore(clientApp, "default");
 
-let analytics: any;
-
-isSupported()
-  .then((supported) => {
-    if (supported) {
-      analytics = getAnalytics(clientApp);
-    }
-  })
-  .catch((error) => {
-    console.error("Analytics not supported:", error);
-  });
-
-
-export const getFirebaseAnalytics = () => analytics;
+let analyticsPromise:
+  Promise<import("firebase/analytics").Analytics | null> | undefined;
+export const getFirebaseAnalytics = () => {
+  if (!analyticsPromise) {
+    analyticsPromise = import("firebase/analytics")
+      .then(async ({ getAnalytics, isSupported }) =>
+        (await isSupported()) ? getAnalytics(clientApp) : null,
+      )
+      .catch(() => null);
+  }
+  return analyticsPromise;
+};
 export const signUser = async () => {
   let user = await signInAnonymously(auth);
   console.log("User Signed In: ", user.user.uid);

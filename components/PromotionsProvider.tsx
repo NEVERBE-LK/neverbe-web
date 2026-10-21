@@ -7,13 +7,17 @@ import React, {
   useState,
   useCallback,
 } from "react";
-import { Promotion, ProductVariantTarget, PromotionCondition } from "@/interfaces/Promotion";
+import {
+  Promotion,
+  ProductVariantTarget,
+  PromotionCondition,
+} from "@/interfaces/Promotion";
 import {
   isPromotionDateValid,
   checkVariantEligibility,
   isVariantEligibleForPromotion,
 } from "@/utils/promotionUtils";
-import axiosInstance from "@/actions/axiosInstance";
+import { getPublicPromotions } from "@/actions/publicPromotions";
 
 // Active promotion for context consumers
 export interface ActivePromotion extends Partial<Promotion> {
@@ -60,9 +64,8 @@ export const PromotionsProvider = ({
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
-        const res = await axiosInstance.get("/web/promotions");
-        if (res.data) {
-          const data = res.data;
+        const data = await getPublicPromotions<ActivePromotion>();
+        if (data) {
           setPromotions(data || []);
         }
       } catch (error) {
@@ -78,7 +81,9 @@ export const PromotionsProvider = ({
   // Precompute and sort active date-valid promotions once
   const validPromotions = React.useMemo(() => {
     return promotions
-      .filter((promo) => isPromotionDateValid(promo.startDate, promo.endDate).valid)
+      .filter(
+        (promo) => isPromotionDateValid(promo.startDate, promo.endDate).valid,
+      )
       .sort((a: any, b: any) => (b.priority || 0) - (a.priority || 0));
   }, [promotions]);
 

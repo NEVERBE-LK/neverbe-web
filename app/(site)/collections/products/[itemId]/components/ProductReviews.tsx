@@ -9,7 +9,9 @@ import toast from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 import { FcGoogle } from "react-icons/fc";
 import { IoCreateOutline, IoChevronDown, IoChevronUp } from "react-icons/io5";
-import ReviewForm from "@/components/ReviewForm";
+import dynamic from "next/dynamic";
+import ReCaptchaProviderWrapper from "@/app/(site)/components/ReCaptchaProvider";
+const ReviewForm = dynamic(() => import("@/components/ReviewForm"));
 import { Product } from "@/interfaces/Product";
 
 interface Review {
@@ -44,7 +46,9 @@ function ProductReviewCard({ review }: { review: Review }) {
             <span className="text-[10px] text-muted uppercase tracking-wider font-extrabold block mt-0.5">
               {review.source === "GOOGLE"
                 ? "Verified Google Review"
-                : formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                : formatDistanceToNow(new Date(review.createdAt), {
+                    addSuffix: true,
+                  })}
             </span>
           </div>
         </div>
@@ -71,7 +75,11 @@ function ProductReviewCard({ review }: { review: Review }) {
             className="mt-2 inline-flex items-center gap-1 text-[11px] font-extrabold text-accent hover:underline border-none bg-transparent cursor-pointer p-0 uppercase tracking-wider"
           >
             <span>{isExpanded ? "Show Less" : "Read More"}</span>
-            {isExpanded ? <IoChevronUp size={12} /> : <IoChevronDown size={12} />}
+            {isExpanded ? (
+              <IoChevronUp size={12} />
+            ) : (
+              <IoChevronDown size={12} />
+            )}
           </button>
         )}
       </div>
@@ -88,20 +96,28 @@ const ProductReviews = ({ product }: ProductReviewsProps) => {
   const fetchReviews = async () => {
     setLoading(true);
     try {
-      const res = await axiosInstance.get(`/web/reviews?itemId=${product.id}&limit=20`);
+      const res = await axiosInstance.get(
+        `/web/reviews?itemId=${product.id}&limit=20`,
+      );
       const rawData = Array.isArray(res.data)
         ? res.data
         : Array.isArray(res.data?.reviews)
-        ? res.data.reviews
-        : Array.isArray(res.data?.data)
-        ? res.data.data
-        : [];
+          ? res.data.reviews
+          : Array.isArray(res.data?.data)
+            ? res.data.data
+            : [];
 
       const mappedReviews: Review[] = rawData.map((r: any, idx: number) => ({
         reviewId: r.reviewId || r.id || r._id || `review-${idx}`,
         userName: r.userName || r.author_name || r.name || "Verified Customer",
         rating: typeof r.rating === "number" ? r.rating : 5,
-        review: r.review || r.text || r.comment || r.reviewText || r.content || "Great product and excellent quality!",
+        review:
+          r.review ||
+          r.text ||
+          r.comment ||
+          r.reviewText ||
+          r.content ||
+          "Great product and excellent quality!",
         source: r.source || "WEB",
         createdAt: r.createdAt || r.date || new Date().toISOString(),
       }));
@@ -131,7 +147,9 @@ const ProductReviews = ({ product }: ProductReviewsProps) => {
     <div className="w-full max-w-[1400px] mx-auto px-4 md:px-8 py-12 md:py-20 border-t border-glass-border">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
-          <span className="v2-section-label text-[10px] mb-1 block">VERIFIED FEEDBACK</span>
+          <span className="v2-section-label text-[10px] mb-1 block">
+            VERIFIED FEEDBACK
+          </span>
           <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-primary m-0">
             Customer Reviews
           </h2>
@@ -160,7 +178,7 @@ const ProductReviews = ({ product }: ProductReviewsProps) => {
       {/* Floating reviews container */}
       <div className="w-full">
         {loading ? (
-          <ComponentLoader/>
+          <ComponentLoader />
         ) : reviews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => (
@@ -182,15 +200,19 @@ const ProductReviews = ({ product }: ProductReviewsProps) => {
         )}
       </div>
 
-      <ReviewForm
-        open={isModalOpen}
-        productId={product.id}
-        onCancel={() => setIsModalOpen(false)}
-        onSuccess={() => {
-          setIsModalOpen(false);
-          fetchReviews();
-        }}
-      />
+      {isModalOpen && (
+        <ReCaptchaProviderWrapper>
+          <ReviewForm
+            open={isModalOpen}
+            productId={product.id}
+            onCancel={() => setIsModalOpen(false)}
+            onSuccess={() => {
+              setIsModalOpen(false);
+              fetchReviews();
+            }}
+          />
+        </ReCaptchaProviderWrapper>
+      )}
     </div>
   );
 };

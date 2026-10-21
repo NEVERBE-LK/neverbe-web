@@ -19,7 +19,10 @@ import { Button } from "antd";
 import { Order } from "@/interfaces/Order";
 import { BusinessInfo } from "@/config/BusinessInfo";
 import { axiosInstance } from "@/actions/axiosInstance";
-import { submitExternalForm, processDeliveryFeePrepayment } from "@/actions/orderAction";
+import {
+  submitExternalForm,
+  processDeliveryFeePrepayment,
+} from "@/actions/orderAction";
 import toast from "react-hot-toast";
 
 interface OrderDetailsModalProps {
@@ -92,16 +95,23 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     (sum, item) => sum + (item.price - (item.discount || 0)) * item.quantity,
     0,
   );
-  
+
   const couponDiscountSum = (order as any).couponDiscount || discount || 0;
   const promotionDiscountSum = (order as any).promotionDiscount || 0;
-  const total = subtotal - (couponDiscountSum + promotionDiscountSum) + (shippingFee || 0) + (fee || 0);
+  const total =
+    subtotal -
+    (couponDiscountSum + promotionDiscountSum) +
+    (shippingFee || 0) +
+    (fee || 0);
 
   const handlePayDeliveryFee = async () => {
     if (!order) return;
     setProcessingFee(true);
     try {
-      const payhereResponse = await processDeliveryFeePrepayment(order, order.customer);
+      const payhereResponse = await processDeliveryFeePrepayment(
+        order,
+        order.customer,
+      );
       submitExternalForm(payhereResponse.actionUrl, payhereResponse.payload);
     } catch (err: any) {
       console.error("Delivery fee prepayment launch error:", err);
@@ -133,7 +143,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 console.error("Failed to load thumbnail for", item.name, e);
               }
             }
-          })
+          }),
         );
       }
 
@@ -141,7 +151,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       // Add Logo
       const img = new (window as any).Image();
       img.src = "/logo.png";
-      
+
       // Header Section
       doc.setFont("helvetica", "bold");
       doc.setFontSize(24);
@@ -192,22 +202,33 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       doc.setFont("helvetica", "normal");
       doc.setTextColor(printPalette.secondary);
       doc.setFontSize(9);
-      
+
       // Billed To details
       doc.text(customer.name, 14, 64);
       const splitBilling = doc.splitTextToSize(customer.address || "", 80);
       doc.text(splitBilling, 14, 69);
-      const billingCityY = 69 + (splitBilling.length * 4.5);
+      const billingCityY = 69 + splitBilling.length * 4.5;
       doc.text(customer.city || "", 14, billingCityY);
-      doc.text(`Phone: ${customer.phone.startsWith("+") ? "" : "+"}${customer.phone}`, 14, billingCityY + 5);
+      doc.text(
+        `Phone: ${customer.phone.startsWith("+") ? "" : "+"}${customer.phone}`,
+        14,
+        billingCityY + 5,
+      );
 
       // Shipped To details
       doc.text(customer.shippingName || customer.name, 140, 64);
-      const splitShipping = doc.splitTextToSize(customer.shippingAddress || customer.address, 55); // Adjusted width for right side
+      const splitShipping = doc.splitTextToSize(
+        customer.shippingAddress || customer.address,
+        55,
+      ); // Adjusted width for right side
       doc.text(splitShipping, 140, 69);
-      const shippingCityY = 69 + (splitShipping.length * 4.5);
+      const shippingCityY = 69 + splitShipping.length * 4.5;
       doc.text(customer.shippingCity || customer.city, 140, shippingCityY);
-      doc.text(`Phone: ${((customer.shippingPhone || customer.phone).startsWith("+") ? "" : "+")}${(customer.shippingPhone || customer.phone)}`, 140, shippingCityY + 5);
+      doc.text(
+        `Phone: ${(customer.shippingPhone || customer.phone).startsWith("+") ? "" : "+"}${customer.shippingPhone || customer.phone}`,
+        140,
+        shippingCityY + 5,
+      );
 
       // 3. Items Table
       const tableColumn = [
@@ -238,11 +259,11 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         body: tableRows,
         startY: tableStartY,
         theme: "grid",
-        headStyles: { 
-          fillColor: printPalette.accent, 
+        headStyles: {
+          fillColor: printPalette.accent,
           textColor: printPalette.white,
           fontStyle: "bold",
-          halign: "center"
+          halign: "center",
         },
         columnStyles: {
           0: { cellWidth: 15, halign: "center" },
@@ -266,7 +287,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               }
             }
           }
-        }
+        },
       });
 
       const finalY = (doc as any).lastAutoTable.finalY + 15;
@@ -278,9 +299,11 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       doc.setFontSize(10);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(printPalette.secondary);
-      
+
       doc.text("Subtotal:", summaryX, finalY);
-      doc.text(`Rs. ${subtotal.toLocaleString()}`, valueX, finalY, { align: "right" });
+      doc.text(`Rs. ${subtotal.toLocaleString()}`, valueX, finalY, {
+        align: "right",
+      });
 
       let currentY = finalY + 7;
 
@@ -288,7 +311,12 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         doc.setTextColor(printPalette.accent);
         doc.setFont("helvetica", "bold");
         doc.text("Auto Promotion:", summaryX, currentY);
-        doc.text(`- Rs. ${promotionDiscountSum.toLocaleString()}`, valueX, currentY, { align: "right" });
+        doc.text(
+          `- Rs. ${promotionDiscountSum.toLocaleString()}`,
+          valueX,
+          currentY,
+          { align: "right" },
+        );
         currentY += 7;
       }
 
@@ -296,15 +324,22 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         doc.setTextColor(printPalette.accent);
         doc.setFont("helvetica", "bold");
         doc.text("Coupon Savings:", summaryX, currentY);
-        doc.text(`- Rs. ${couponDiscountSum.toLocaleString()}`, valueX, currentY, { align: "right" });
+        doc.text(
+          `- Rs. ${couponDiscountSum.toLocaleString()}`,
+          valueX,
+          currentY,
+          { align: "right" },
+        );
         currentY += 7;
       }
 
       doc.setTextColor(printPalette.secondary);
       doc.setFont("helvetica", "normal");
       doc.text("Shipping Fee:", summaryX, currentY);
-      doc.text(`Rs. ${(shippingFee || 0).toLocaleString()}`, valueX, currentY, { align: "right" });
-      
+      doc.text(`Rs. ${(shippingFee || 0).toLocaleString()}`, valueX, currentY, {
+        align: "right",
+      });
+
       currentY += 10;
       doc.setDrawColor(printPalette.border);
       doc.line(summaryX, currentY - 5, valueX, currentY - 5);
@@ -313,7 +348,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       doc.setFontSize(14);
       doc.setTextColor(printPalette.ink);
       doc.text("Grand Total:", summaryX, currentY);
-      doc.text(`Rs. ${total.toLocaleString()}`, valueX, currentY, { align: "right" });
+      doc.text(`Rs. ${total.toLocaleString()}`, valueX, currentY, {
+        align: "right",
+      });
 
       // 5. Footer & Terms
       const footerY = 270;
@@ -321,13 +358,23 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       doc.setTextColor(printPalette.muted);
       doc.setFont("helvetica", "italic");
       doc.text("Terms & Conditions:", 14, footerY);
-      doc.text("1. Items can be exchanged within 7 days of purchase.", 14, footerY + 5);
-      doc.text("2. Please present this invoice for any exchanges.", 14, footerY + 9);
+      doc.text(
+        "1. Items can be exchanged within 7 days of purchase.",
+        14,
+        footerY + 5,
+      );
+      doc.text(
+        "2. Please present this invoice for any exchanges.",
+        14,
+        footerY + 9,
+      );
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(10);
       doc.setTextColor(printPalette.accent);
-      doc.text("THANK YOU FOR SHOPPING WITH Neverbe!", 105, 285, { align: "center" });
+      doc.text("THANK YOU FOR SHOPPING WITH Neverbe!", 105, 285, {
+        align: "center",
+      });
 
       doc.save(`Neverbe-Invoice-${orderId}.pdf`);
     } catch (err) {
@@ -401,7 +448,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   className="flex items-center gap-2 px-6 py-4 bg-surface text-primary-dark border border-strong hover:border-primary transition-all text-xs! font-black! uppercase! tracking-widest! rounded-full shadow-sm h-auto"
                 >
                   <IoCloudDownloadOutline size={18} />
-                  {downloading ? "Generating..." : "Download Invoice"}
+                  {downloading ? null : "Download Invoice"}
                 </Button>
               </div>
             </div>
@@ -415,7 +462,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-primary-dark">
                       Shipping Progress (WB #{trackingNumber})
                     </h3>
-                    <a 
+                    <a
                       href={`https://domex.lk/Order-Details.php?wbno=${trackingNumber}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -453,7 +500,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 ) : (
                   <div className="text-center py-4 bg-surface-2/50 rounded-2xl border border-dashed border-default">
                     <p className="text-[10px] text-muted font-bold uppercase tracking-widest">
-                      Live tracking data is being updated or currently unavailable.
+                      Live tracking data is being updated or currently
+                      unavailable.
                     </p>
                   </div>
                 )}
@@ -492,7 +540,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                           <div className="flex items-center gap-4 mt-1">
                             <span className="text-[10px] font-bold uppercase text-muted tracking-widest">
                               Size:{" "}
-                              <span className="text-primary-dark">{item.size}</span>
+                              <span className="text-primary-dark">
+                                {item.size}
+                              </span>
                             </span>
                             <span className="text-[10px] font-bold uppercase text-muted tracking-widest">
                               Qty:{" "}
@@ -504,9 +554,12 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </div>
                         <div className="text-right">
                           <p className="font-display font-black text-primary-dark">
-                            Rs. {(item.price - (item.discount || 0)).toLocaleString()}
+                            Rs.{" "}
+                            {(
+                              item.price - (item.discount || 0)
+                            ).toLocaleString()}
                           </p>
-                          {((item.discount || 0) > 0) && (
+                          {(item.discount || 0) > 0 && (
                             <p className="text-[10px] text-accent font-bold uppercase line-through opacity-40">
                               Rs. {item.price.toLocaleString()}
                             </p>
@@ -520,7 +573,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             </div>
 
             {/* DELIVERY FEE PREPAYMENT */}
-            {order.riskStatus === 'HIGH_RISK' && (
+            {order.riskStatus === "HIGH_RISK" && (
               <div className="mt-6 mb-10">
                 {order.deliveryFeePrepaid ? (
                   <div className="bg-accent/10 border border-accent rounded-[2.5rem] p-6 md:p-8 flex items-center gap-5">
@@ -532,7 +585,10 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         Delivery Fee Paid
                       </h3>
                       <p className="text-muted text-sm mt-1">
-                        LKR {order.shippingFee} Delivery Fee has been confirmed. {(order as any).deliveryFeeTxnId ? `Transaction: ${(order as any).deliveryFeeTxnId}` : ""}
+                        LKR {order.shippingFee} Delivery Fee has been confirmed.{" "}
+                        {(order as any).deliveryFeeTxnId
+                          ? `Transaction: ${(order as any).deliveryFeeTxnId}`
+                          : ""}
                       </p>
                     </div>
                   </div>
@@ -547,7 +603,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                           Delivery Fee Required (LKR {order.shippingFee})
                         </h3>
                         <p className="text-primary-dark/70 text-sm mt-1 max-w-lg">
-                          To process this order and dispatch it immediately, please pay the prepaid delivery fee.
+                          To process this order and dispatch it immediately,
+                          please pay the prepaid delivery fee.
                         </p>
                       </div>
                     </div>
@@ -583,7 +640,11 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </p>
                     <p>{customer.shippingCity || customer.city}</p>
                     <p className="text-accent font-black mt-3">
-                      {(customer.shippingPhone || customer.phone).startsWith("+") ? "" : "+"}
+                      {(customer.shippingPhone || customer.phone).startsWith(
+                        "+",
+                      )
+                        ? ""
+                        : "+"}
                       {customer.shippingPhone || customer.phone}
                     </p>
                   </address>

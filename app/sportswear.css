@@ -90,7 +90,9 @@ input {
   white-space: nowrap;
   padding: 4px 0 6px;
   border-bottom: 2px solid transparent;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
 }
 .sport-desktop-nav a:hover,
 .sport-desktop-nav a[aria-current] {
@@ -163,8 +165,8 @@ input {
   position: relative;
   min-height: 580px;
   height: clamp(600px, 82svh, 760px);
-  color: #ffffff;
-  background: #0a0a0a;
+  color: var(--color-white);
+  background: var(--color-photo-ink);
   isolation: isolate;
   overflow: hidden;
 }
@@ -183,9 +185,9 @@ input {
   inset: 0;
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.75) 0%,
-    rgba(0, 0, 0, 0.45) 50%,
-    rgba(0, 0, 0, 0.12) 100%
+    color-mix(in srgb, var(--color-black) 75%, transparent) 0%,
+    color-mix(in srgb, var(--color-black) 45%, transparent) 50%,
+    color-mix(in srgb, var(--color-black) 12%, transparent) 100%
   );
   z-index: -1;
   pointer-events: none;
@@ -209,7 +211,7 @@ input {
   text-shadow: none !important;
 }
 .sport-hero-content .sport-eyebrow {
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--color-white) 90%, transparent);
   text-shadow: none !important;
 }
 .sport-hero h1 {
@@ -219,17 +221,17 @@ input {
   line-height: 0.92;
   letter-spacing: -0.03em;
   margin: 0 0 18px;
-  color: #ffffff;
+  color: var(--color-white);
   text-shadow: none !important;
 }
 .sport-hero h1 em {
-  color: #ffffff;
+  color: var(--color-white);
   font-style: italic;
 }
 .sport-hero-content > p:not(.sport-eyebrow) {
   font-size: clamp(13px, 1.1vw, 15px);
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--color-white) 90%, transparent);
   margin: 0 0 24px;
   max-width: 460px;
   font-weight: 500;
@@ -262,20 +264,20 @@ input {
 }
 .sport-button-white,
 a.sport-button-white {
-  background: #ffffff !important;
-  color: #0a0a0a !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  background: var(--color-white) !important;
+  color: var(--color-photo-ink) !important;
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--color-black) 35%, transparent);
 }
 .sport-button-white:hover,
 a.sport-button-white:hover {
-  background: #f5f5f5 !important;
-  color: #0a0a0a !important;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.45);
+  background: var(--color-neutral-soft) !important;
+  color: var(--color-photo-ink) !important;
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--color-black) 45%, transparent);
 }
 .sport-button-white svg,
 a.sport-button-white svg {
-  color: #0a0a0a !important;
-  stroke: #0a0a0a !important;
+  color: var(--color-photo-ink) !important;
+  stroke: var(--color-photo-ink) !important;
 }
 .sport-hero-link {
   display: inline-flex;
@@ -286,15 +288,17 @@ a.sport-button-white svg {
   min-height: 50px;
   padding: 14px 22px;
   border-radius: 30px;
-  color: #ffffff;
-  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-white);
+  background: color-mix(in srgb, var(--color-black) 60%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: background 0.2s, transform 0.2s;
+  border: 1px solid color-mix(in srgb, var(--color-white) 25%, transparent);
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 .sport-hero-link:hover {
-  background: rgba(0, 0, 0, 0.85);
+  background: color-mix(in srgb, var(--color-black) 85%, transparent);
   transform: translateY(-2px);
 }
 .sport-hero-bottom {
@@ -309,36 +313,38 @@ a.sport-button-white svg {
 .sport-hero-bottom a {
   width: 42px;
   height: 42px;
-  background: rgba(0, 0, 0, 0.62);
+  background: color-mix(in srgb, var(--color-black) 62%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: 1px solid color-mix(in srgb, var(--color-white) 25%, transparent);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #ffffff;
-  transition: background 0.2s, transform 0.2s;
+  color: var(--color-white);
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 .sport-hero-bottom a:hover {
-  background: rgba(0, 0, 0, 0.85);
+  background: color-mix(in srgb, var(--color-black) 85%, transparent);
   transform: translateY(2px);
 }
 .sport-hero-dots {
   display: flex;
   gap: 8px;
   align-items: center;
-  background: rgba(0, 0, 0, 0.62);
+  background: color-mix(in srgb, var(--color-black) 62%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   padding: 8px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid color-mix(in srgb, var(--color-white) 20%, transparent);
 }
 .sport-hero-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.45);
+  background: color-mix(in srgb, var(--color-white) 45%, transparent);
   border: none;
   cursor: pointer;
   padding: 0;
@@ -347,7 +353,7 @@ a.sport-button-white svg {
 .sport-hero-dot.active {
   width: 24px;
   border-radius: 99px;
-  background: #ffffff;
+  background: var(--color-white);
 }
 .sport-benefits {
   display: flex;
@@ -416,7 +422,11 @@ a.sport-button-white svg {
 .sport-category-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(0deg, color-mix(in srgb, var(--color-black) 70.0%, transparent), transparent 65%);
+  background: linear-gradient(
+    0deg,
+    color-mix(in srgb, var(--color-black) 70%, transparent),
+    transparent 65%
+  );
 }
 .sport-category-copy {
   position: absolute;
@@ -441,7 +451,8 @@ a.sport-button-white svg {
   align-items: center;
   font-size: 11px;
   font-weight: 600;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-white) 43.92%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-white) 43.92%, transparent);
   padding-bottom: 7px;
 }
 .sport-text-link {
@@ -547,14 +558,17 @@ a.sport-button-white svg {
 a.sport-button-ink {
   background: var(--v2-accent) !important;
   color: var(--v2-accent-text) !important;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
-  transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--color-black) 15%, transparent);
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
 }
 .sport-button-ink:hover,
 a.sport-button-ink:hover {
   background: var(--v2-accent-dim) !important;
   color: var(--v2-accent-text) !important;
-  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 6px 22px color-mix(in srgb, var(--color-black) 25%, transparent);
   transform: translateY(-2px);
 }
 .sport-button-ink svg,
@@ -614,8 +628,8 @@ a.sport-button-ink svg {
 .sport-footer {
   position: relative;
   background: var(--sport-footer);
-  color: #ffffff;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-white);
+  border-top: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
 }
 .sport-footer-inner {
   max-width: 1440px;
@@ -641,7 +655,7 @@ a.sport-button-ink svg {
 .sport-footer-motto {
   font-size: 12px;
   line-height: 1.6;
-  color: #8e8e8e;
+  color: var(--color-neutral-mid);
   margin: 0 0 20px;
   max-width: 320px;
 }
@@ -655,14 +669,16 @@ a.sport-button-ink svg {
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--color-white);
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition:
+    color 0.15s ease,
+    transform 0.15s ease;
 }
 .sport-footer-bold-link:hover {
-  color: #a3a3a3;
+  color: var(--color-neutral-muted);
   transform: translateX(2px);
 }
 .sport-footer-heading {
@@ -670,7 +686,7 @@ a.sport-button-ink svg {
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--color-white);
   margin: 0 0 16px;
 }
 .sport-footer-links {
@@ -680,7 +696,7 @@ a.sport-button-ink svg {
 }
 .sport-footer-link {
   font-size: 11px;
-  color: #8e8e8e;
+  color: var(--color-neutral-mid);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
@@ -689,7 +705,7 @@ a.sport-button-ink svg {
   transition: color 0.15s ease;
 }
 .sport-footer-link:hover {
-  color: #ffffff;
+  color: var(--color-white);
 }
 .sport-footer-socials {
   display: flex;
@@ -701,19 +717,19 @@ a.sport-button-ink svg {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: color-mix(in srgb, var(--color-white) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-white) 12%, transparent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--color-white);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .sport-footer-social-btn:hover {
-  background: #ffffff;
-  color: #000000;
+  background: var(--color-white);
+  color: var(--color-black);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-white) 20%, transparent);
 }
 .sport-footer-contacts {
   display: flex;
@@ -725,21 +741,21 @@ a.sport-button-ink svg {
   align-items: center;
   gap: 8px;
   font-size: 11px;
-  color: #8e8e8e;
+  color: var(--color-neutral-mid);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 .sport-footer-contact-item:hover {
-  color: #ffffff;
+  color: var(--color-white);
 }
 .sport-footer-hours {
   font-size: 10px;
-  color: #666666;
+  color: var(--v2-accent);
   margin-top: 4px;
   letter-spacing: 0.02em;
 }
 .sport-footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid color-mix(in srgb, var(--color-white) 8%, transparent);
   padding: 22px 0 26px;
   display: flex;
   align-items: center;
@@ -747,7 +763,7 @@ a.sport-button-ink svg {
   flex-wrap: wrap;
   gap: 20px;
   font-size: 10px;
-  color: #737373;
+  color: var(--color-neutral-dim);
 }
 .sport-footer-sub-left {
   display: flex;
@@ -759,18 +775,18 @@ a.sport-button-ink svg {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #ffffff;
+  color: var(--color-white);
   font-weight: 600;
   font-size: 11px;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 .sport-footer-location:hover {
-  color: #a3a3a3;
+  color: var(--color-neutral-muted);
 }
 .sport-footer-copyright {
   font-size: 10px;
-  color: #737373;
+  color: var(--color-neutral-dim);
 }
 .sport-footer-sub-links {
   display: flex;
@@ -779,13 +795,13 @@ a.sport-button-ink svg {
   gap: 20px;
 }
 .sport-footer-sub-links a {
-  color: #737373;
+  color: var(--color-neutral-dim);
   font-size: 10px;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 .sport-footer-sub-links a:hover {
-  color: #ffffff;
+  color: var(--color-white);
 }
 /* Keep existing product interactions usable with touch and keyboard. */
 @media (hover: none) {
@@ -937,7 +953,7 @@ a.sport-button-ink svg {
   .sport-hero-content > p:not(.sport-eyebrow) {
     font-size: 13px;
     max-width: 320px;
-    color: #ffffff;
+    color: var(--color-white);
     margin-bottom: 20px;
   }
   .sport-hero-buttons {
@@ -1178,16 +1194,46 @@ a.sport-button-ink svg {
 }
 
 /* Outlined apparel identity; inherits ink/white from its surrounding theme. */
-.neverbe-brand-logo { display:block; height:26px; width:auto; max-width:100%; flex-shrink:0; }
-.neverbe-brand-logo.neverbe-brand-mark { height:26px; width:auto; }
-.sport-footer .neverbe-brand-logo { height:34px; width:auto; }
-@media(max-width:640px) {
-  .neverbe-brand-logo { height:22px; width:auto; }
-  .neverbe-brand-logo.neverbe-brand-mark { height:22px; width:auto; }
-  .sport-footer .neverbe-brand-logo { height:30px; width:auto; }
+.neverbe-brand-logo {
+  display: block;
+  height: 26px;
+  width: auto;
+  max-width: 100%;
+  flex-shrink: 0;
 }
-@media(max-width:360px) {
-  .neverbe-brand-logo { height:20px; width:auto; }
-  .neverbe-brand-logo.neverbe-brand-mark { height:20px; width:auto; }
-  .sport-footer .neverbe-brand-logo { height:26px; width:auto; }
+.neverbe-brand-logo.neverbe-brand-mark {
+  height: 26px;
+  width: auto;
+}
+.sport-footer .neverbe-brand-logo {
+  height: 34px;
+  width: auto;
+}
+@media (max-width: 640px) {
+  .neverbe-brand-logo {
+    height: 22px;
+    width: auto;
+  }
+  .neverbe-brand-logo.neverbe-brand-mark {
+    height: 22px;
+    width: auto;
+  }
+  .sport-footer .neverbe-brand-logo {
+    height: 30px;
+    width: auto;
+  }
+}
+@media (max-width: 360px) {
+  .neverbe-brand-logo {
+    height: 20px;
+    width: auto;
+  }
+  .neverbe-brand-logo.neverbe-brand-mark {
+    height: 20px;
+    width: auto;
+  }
+  .sport-footer .neverbe-brand-logo {
+    height: 26px;
+    width: auto;
+  }
 }

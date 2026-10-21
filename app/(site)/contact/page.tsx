@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/utils/seo";
 import React from "react";
 import { Metadata } from "next";
 import ContactDetailsSection from "@/app/(site)/contact/components/ContactDetailsSection";
@@ -71,22 +72,10 @@ const ContactPage = () => {
     },
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      name: "Neverbe",
-      url: "https://neverbe.lk",
-      logo: "/main-og.png",
-      contactPoint: {
-        "@type": "ContactPoint",
-        telephone: "+94 70 520 8999",
-        contactType: "Customer Service",
-        areaServed: "LK",
-        availableLanguage: ["English", "Sinhala", "Tamil"],
-      },
-      sameAs: [
-        "https://www.facebook.com/neverbe196",
-        "https://www.instagram.com/neverbe196",
-        "https://tiktok.com/@neverbe196",
-      ],
+      "@type": "ContactPage",
+      name: "Contact NEVERBE",
+      url: "https://neverbe.lk/contact",
+      about: { "@id": "https://neverbe.lk/#organization" },
     },
   ];
 
@@ -95,7 +84,7 @@ const ContactPage = () => {
       {/* Structured Data JSON-LD */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
 
       {/* --- Header Section --- */}
@@ -105,7 +94,8 @@ const ContactPage = () => {
           Contact Us
         </h1>
         <p className="text-xs sm:text-sm font-medium text-secondary mt-4 m-0">
-          Whether you have a question about sizing, order tracking, or feedback — we&apos;re ready to assist.
+          Whether you have a question about sizing, order tracking, or feedback
+          — we&apos;re ready to assist.
         </p>
       </header>
 

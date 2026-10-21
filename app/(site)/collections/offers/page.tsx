@@ -1,11 +1,23 @@
+import { notFound } from "next/navigation";
+import CollectionAdvice from "@/components/CollectionAdvice";
+import {
+  catalogPageExists,
+  catalogQuery,
+  type CatalogSearchParams,
+} from "@/utils/catalogQuery";
+import {
+  collectionMetadata,
+  collectionStructuredData,
+} from "@/utils/collectionSeo";
+import { getCatalogPage } from "@/actions/catalogPage";
+import { serializeJsonLd } from "@/utils/seo";
 import React, { Suspense } from "react";
 import {
   getActivePromotions,
   getActiveCoupons,
 } from "@/actions/promotionAction";
-import { getDealsProducts } from "@/actions/productAction";
 import CouponCard from "./components/CouponCard";
-import DealsProducts from "./components/DealsProducts";
+import Products from "../products/components/Products";
 import CampaignCarousel from "./components/CampaignCarousel";
 import ComponentLoader from "@/components/ComponentLoader";
 import Image from "next/image";
@@ -13,17 +25,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 import { Button } from "antd";
 
-const sectionLabel: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 800,
-  textTransform: "uppercase" as const,
-  letterSpacing: "0.1em",
-  color: "var(--color-primary)",
-  display: "block",
-  marginBottom: 12,
-};
-
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Exclusive Deals, Coupons & Promotions | Neverbe Sri Lanka",
   description:
     "Unlock exclusive promotions, seasonal coupons and markdown deals at Neverbe. Best discounts on sneakers, clothing & apparel in Sri Lanka. Cash on Delivery available.",
@@ -59,138 +61,58 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Deals & Promotions | Neverbe",
-    description: "Exclusive coupons & markdown deals on sneakers & clothing in Sri Lanka.",
+    description:
+      "Exclusive coupons & markdown deals on sneakers & clothing in Sri Lanka.",
     images: ["/offers-og.png"],
   },
 };
 
 export const revalidate = 600;
 
-const OffersPage = async () => {
-  const [promotions, coupons] = await Promise.all([
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}): Promise<Metadata> {
+  return collectionMetadata(
+    baseMetadata,
+    "/collections/offers",
+    catalogQuery(await searchParams),
+  );
+}
+
+const OffersPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}) => {
+  const query = catalogQuery(await searchParams);
+  const [promotions, coupons, initialData] = await Promise.all([
     getActivePromotions(),
     getActiveCoupons(),
+    getCatalogPage("/web/products/deals", query.key),
   ]);
-
   const bannerPromotions = promotions.filter(
     (p: any) => p.bannerUrl && p.isActive,
   );
+  const dealsList = initialData.products;
+  if (!initialData.error && !catalogPageExists(query, initialData.total))
+    notFound();
 
-  let dealsList: any[] = [];
-  try {
-    const dealsResult = await getDealsProducts({ page: 1, size: 12 });
-    dealsList = dealsResult?.dataList || [];
-  } catch (e) {
-    console.error("Error fetching deal items:", e);
-  }
-
-  const offersSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://neverbe.lk",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Offers",
-            item: "https://neverbe.lk/collections/offers",
-          },
-        ],
-      },
-      {
-        "@type": "CollectionPage",
-        name: "Offers & Deals - Neverbe Sri Lanka",
-        description:
-          "Exclusive deals and discounts on premium footwear at Neverbe.",
-        url: "https://neverbe.lk/collections/offers",
-        inLanguage: "en-LK",
-        mainEntity: {
-          "@type": "ItemList",
-          numberOfItems: dealsList.length,
-          itemListElement: dealsList
-            .slice(0, 15)
-            .map((product: any, index: number) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
-                "@type": "Product",
-                name: product?.name,
-                image: product?.thumbnail?.url
-                  ? (product.thumbnail.url.startsWith("http")
-                      ? product.thumbnail.url
-                      : `https://neverbe.lk${product.thumbnail.url.startsWith("/") ? "" : "/"}${product.thumbnail.url}`)
-                  : "https://neverbe.lk/collections-og.png",
-                url: `https://neverbe.lk/collections/products/${product?.id}`,
-                description: product?.description || `Shop ${product?.name} online in Sri Lanka at Neverbe.`,
-                brand: {
-                  "@type": "Brand",
-                  name: product?.brand || "Neverbe",
-                },
-                offers: {
-                  "@type": "Offer",
-                  priceCurrency: "LKR",
-                  price: product?.discount > 0
-                    ? Math.round((product.sellingPrice - (product.sellingPrice * product.discount) / 100) / 10) * 10
-                    : product?.sellingPrice || "0.00",
-                  priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
-                  availability: product?.inStock
-                    ? "https://schema.org/InStock"
-                    : "https://schema.org/OutOfStock",
-                  shippingDetails: {
-                    "@type": "OfferShippingDetails",
-                    shippingDestination: {
-                      "@type": "DefinedRegion",
-                      addressCountry: "LK",
-                    },
-                    shippingRate: {
-                      "@type": "MonetaryAmount",
-                      value: `${((product.weight || 1000) / 1000 <= 1.0 ? 425 : 600).toFixed(2)}`,
-                      currency: "LKR",
-                    },
-                    deliveryTime: {
-                      "@type": "ShippingDeliveryTime",
-                      handlingTime: {
-                        "@type": "QuantitativeValue",
-                        minValue: 1,
-                        maxValue: 2,
-                        unitCode: "DAY",
-                      },
-                      transitTime: {
-                        "@type": "QuantitativeValue",
-                        minValue: 1,
-                        maxValue: 3,
-                        unitCode: "DAY",
-                      },
-                    },
-                  },
-                  hasMerchantReturnPolicy: {
-                    "@type": "MerchantReturnPolicy",
-                    applicableCountry: "LK",
-                    returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-                    merchantReturnDays: 7,
-                    returnMethod: "https://schema.org/ReturnByMail",
-                    returnFees: "https://schema.org/ReturnFeesCustomerPaying",
-                  },
-                },
-              },
-            })),
-        },
-      },
-    ],
-  };
+  const offersSchema = collectionStructuredData({
+    name: "Offers & deals in Sri Lanka",
+    description:
+      "Browse current product markdowns, promotions and coupons at NEVERBE.",
+    path: "/collections/offers",
+    query,
+    items: dealsList,
+  });
 
   return (
     <main className="commerce-legacy w-full min-h-screen bg-surface">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(offersSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(offersSchema) }}
       />
 
       {/* Hero Header */}
@@ -208,7 +130,8 @@ const OffersPage = async () => {
             Offers &amp; Promotions
           </h1>
           <p className="text-[15px] font-medium text-secondary m-0 max-w-xl">
-            Exclusive discounts, active coupons &amp; markdown deals on sneakers and apparel.
+            Exclusive discounts, active coupons &amp; markdown deals on sneakers
+            and apparel.
           </p>
         </div>
       </div>
@@ -292,38 +215,18 @@ const OffersPage = async () => {
             </Link>
           </div>
           <Suspense fallback={<ComponentLoader />}>
-            <DealsProducts items={dealsList} />
+            <Products
+              key={query.key}
+              items={dealsList}
+              apiEndpoint="/web/products/deals"
+              initialData={initialData}
+              initialKey={query.key}
+            />
           </Suspense>
         </section>
       </div>
 
-      {/* SEO Footer */}
-      <div className="border-t border-glass-border py-12 md:py-16 bg-surface">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Member Benefits</span>
-              <p className="text-xs text-secondary leading-relaxed m-0">
-                Sign up to unlock early access, exclusive deals, and the best prices on premium products in Sri Lanka.
-              </p>
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Ways to Save</span>
-              <ul className="text-xs text-secondary space-y-1.5 list-none p-0 m-0">
-                <li>• Seasonal Markdown Deals</li>
-                <li>• Exclusive Coupon Codes</li>
-                <li>• Bundle &amp; Save Combos</li>
-              </ul>
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-2">Price Match Promise</span>
-              <p className="text-xs text-secondary leading-relaxed m-0">
-                Found a better price elsewhere? Let us know and we&apos;ll do our best to match it.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CollectionAdvice collection="offers" />
     </main>
   );
 };

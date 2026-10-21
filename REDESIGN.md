@@ -1,33 +1,47 @@
 # NEVERBE storefront redesign
 
-The storefront uses an editorial sportswear direction with bold type, full-width photography, neutral surfaces and a restrained green/lime accent. NEVERBE remains the brand throughout.
+The storefront uses one sportswear design system for the landing page, collections, product detail, filters, quick view, shopping bag, mobile menu, search, checkout controls, account, authentication, reviews, size guides and secondary content pages.
 
-## Scope
+## Shared design source
 
-- New homepage, responsive header, footer, collection introduction and shared product-card styling.
-- Mobile navigation, horizontal category discovery and two-column product grids; desktop and tablet layouts have their own breakpoints.
-- Theme preference applies before rendering, follows the operating system until a preference is saved, and is available from the mobile header.
-- Existing catalog APIs, authentication, promotions, bag, checkout and account routes remain connected.
-- Homepage and editorial sections render on the server. No scroll-hijacking engine, entrance-animation dependencies or idle animation loops on the new landing page.
-- Bag, mobile menu and product quick view load on demand. Only the hero image is preloaded; supporting photography uses responsive image sizes and lazy loading.
-- Sri Lankan page copy, locale, local business information, canonical home URL and working social preview images. Placeholder verification and unverified opening hours/coordinates were removed. Search-result pages are noindexed and omitted from the sitemap.
+`config/design-tokens.json` is the source for light/dark interface colors, status colors, image overlays, scrollbars, social cards and printed invoices. `config/theme.ts` produces the server-rendered CSS properties; Ant Design reads the same palette. Run `npm run check:theme` to prevent color literals from returning to components and stylesheets. Static raster and vector brand exports retain their own exported pixel/vector colors.
 
-## Photography
+All busy indicators use `components/Spinner.tsx`: a simple CSS ring with an accessible loading label and no visible text or branding. Existing account, inventory, coupon, promotion and payment integrations are preserved.
 
-The hero uses the first configured slider when available. Unsplash editorial images provide the fallback hero and category/lifestyle imagery; replace these with owned campaign photography for the final brand campaign. These images are not presented as inventory. All products and prices come from the existing API.
+## Sri Lanka SEO
+
+- English/Sri Lanka locale, Sri Lankan copy, canonical URLs, local organization/store details and LKR product offers.
+- Product structured data uses the catalog price, stock, images and description. Fixed ratings, sample reviews, invented price expiry dates and fixed delivery quotes were removed.
+- Product JSON-LD escapes markup delimiters from catalog content.
+- The hourly sitemap fetches the complete paginated catalog with bounded concurrency, includes known category routes and excludes redundant brand query URLs, search, account, cart and checkout pages.
+- Private routes remain noindexed. Crawlers can fetch product social images under `/api/og/`.
+- Social images use the centralized palette and product discount price. The manifest uses the same theme source.
+
+## Performance
+
+- Native scrolling replaces idle GSAP/Lenis tickers.
+- Cart, mobile menu, quick view and review form load on demand.
+- reCAPTCHA loads when the review form opens instead of on every storefront page.
+- Firebase Analytics loads after the initial page render, with cancellation during navigation.
+- Public promotion requests share a short-lived cache and pending request; empty carts skip eligibility requests. Authenticated requests and inventory responses are not stored in this cache.
+- Product selection fetches inventory for the active variant, and stale listing requests are cancelled.
+- Responsive image sizes, AVIF/WebP, bounded image widths and preload of the primary image reduce unnecessary image work. Stable brand filenames revalidate instead of remaining immutable for a year.
 
 ## Verification
 
-Run `npm ci`, `npm run typecheck`, `npm run lint`, and `npm run build`. The existing Next.js configuration skips TypeScript errors during builds; run the standalone type check to see issues in legacy pages as well.
+- `npm test`: six regression tests covering product pricing/stock metadata, absent invented ratings, JSON-LD escaping, complete theme roles, exact cart variant/size quantity changes and quantity/combo limits; plus the color-source guard.
+- `npm run typecheck`: passed.
+- `npm run lint`: no errors; existing warnings remain in legacy hook dependencies and unoptimized image elements.
+- `npm run build -- --webpack`: production compilation and type validation checked.
 
-Manual responsive checks should cover 320, 375, 390, 640, 768, 1024 and 1440 CSS-pixel widths in both themes, navigation drawer keyboard/escape behavior, category swipe, search submission, product quick view and bag. Checkout requires the configured API and payment environment. No measured Core Web Vitals improvement or search ranking is implied by these changes.
+Earlier screenshots under `docs/previews/` record the first design iteration. Current browser verification was blocked when automatic approval review could not complete after the browser-use allowance was reached. The final changes have build and source validation; an updated visual pass, live API checkout verification and measured Core Web Vitals remain to be performed.
 
-### Checks completed
+Implementation references: [Next.js sitemaps](https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap), [Google product structured data](https://developers.google.com/search/docs/appearance/structured-data/product-snippet).
 
-- `npm run build -- --webpack`: passed (Next.js 16.0.8).
-- Focused ESLint checks on the new homepage, header, footer, theme controls, root layout and providers: passed.
-- Browser layout checks at 320, 390, 768 and 1440 CSS pixels: no page-level horizontal overflow. Mobile navigation opened and closed; theme switching and saved preference were exercised.
-- `npm run typecheck`: still reports 20 errors in pre-existing checkout, account, legacy animation and utility code. The rewritten components pass type checking. The production build retains the repository's existing `ignoreBuildErrors` setting.
-- The development catalog API at `localhost:8080` was unavailable. Live catalog, checkout and payment integration could not be verified end to end. Empty product rails are intentionally omitted rather than populated with fake inventory.
+## Further search improvements
 
-Previews are saved in `docs/previews/`.
+Collection pagination now renders matching products and crawlable links on the server, with distinct paginated canonicals and titles. Filtered/sorted browsing states are noindexed. Shared collection schema removes guessed policy/offer details from all collection types, while product detail pages retain factual offers. Category guidance and internal links replace sample marketing claims. Contact, about and policy schema reference the root organization consistently.
+
+Production Web Vitals reporting uses the existing Firebase analytics integration; optional Search Console verification reads a real `GOOGLE_SITE_VERIFICATION` token. See [SEO deployment and measurement steps](docs/SEO.md) for the remaining domain/account work. These changes do not establish an improvement in measured Google rankings.
+
+The regression suite now includes thirteen tests, covering pagination links, SSR initial products, query normalization, canonical/indexing behavior and collection schema in addition to the original cart/theme/product checks.

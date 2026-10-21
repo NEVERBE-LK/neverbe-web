@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { categoryLabelToSlug } from "@/utils/categorySlug";
+import { getCategoryBySlug, categoryLabelToSlug } from "@/utils/categorySlug";
 
 export const getProducts = async (params: any = {}) => {
   try {
@@ -106,12 +106,14 @@ export const getCategoriesForSitemap = async () => {
     return categories
       .filter(
         (c: any) =>
-          c.label && c.label !== "undefined" && String(c.label).trim() !== "",
+          c.label &&
+          c.label !== "undefined" &&
+          String(c.label).trim() !== "" &&
+          !!getCategoryBySlug(categoryLabelToSlug(c.label)),
       )
       .map((c: any) => ({
         url: `${baseUrl}/collections/${categoryLabelToSlug(c.label)}`,
         priority: 0.7,
-        lastModified: new Date(),
         changeFrequency: "weekly",
       }));
   } catch (error) {
@@ -122,8 +124,22 @@ export const getCategoriesForSitemap = async () => {
 
 export const getProductsForSitemap = async () => {
   try {
-    const res = await axiosInstance.get("/web/products?size=200");
-    const products = res.data.dataList || [];
+    const first = await axiosInstance.get("/web/products?page=1&size=200");
+    const products = [...(first.data.dataList || [])];
+    const pages = Math.ceil(
+      (Number(first.data.total) || products.length) / 200,
+    );
+    // Bound concurrency while including the complete catalog in the sitemap.
+    for (let page = 2; page <= pages; page += 4) {
+      const responses = await Promise.all(
+        Array.from({ length: Math.min(4, pages - page + 1) }, (_, index) =>
+          axiosInstance.get(`/web/products?page=${page + index}&size=200`),
+        ),
+      );
+      responses.forEach((response) =>
+        products.push(...(response.data.dataList || [])),
+      );
+    }
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://neverbe.lk";
     return products
       .filter(
@@ -132,7 +148,9 @@ export const getProductsForSitemap = async () => {
       .map((p: any) => ({
         url: `${baseUrl}/collections/products/${p.id}`,
         priority: 0.8,
-        lastModified: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+        ...(p.updatedAt && !Number.isNaN(new Date(p.updatedAt).getTime())
+          ? { lastModified: new Date(p.updatedAt) }
+          : {}),
         changeFrequency: "daily",
       }));
   } catch (error) {
@@ -180,4 +198,3 @@ export const getProductsByCategory = async (
     return { dataList: [], total: 0 };
   }
 };
-

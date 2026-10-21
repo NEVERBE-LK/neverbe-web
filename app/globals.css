@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-display:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
   --max-width-content: 1400px;
 
   /* Surfaces & Backgrounds */
@@ -43,28 +49,24 @@
 
   /* Inverted / Fixed */
   --color-inverse: var(--v2-bg-void);
-  --color-white: #ffffff;
-  --color-black: #000000;
-  --color-on-image: #ffffff;
-  --color-image-muted: rgba(255, 255, 255, 0.9);
-  --color-image-surface: #171717;
-  --color-on-image-hover: #e5e5e5;
 
   /* Semantic Feedback States */
   --color-success: var(--status-success);
   --color-error: var(--status-error);
   --color-warning: var(--status-warning);
   --color-info: var(--status-info);
-  --sport-highlight: var(--color-highlight, #ffffff);
-  --color-sport-highlight: var(--color-highlight, #ffffff);
-  --color-sport-footer: var(--color-dark-surface, #141414);
+  --sport-highlight: var(--color-highlight);
+  --color-sport-highlight: var(--color-highlight);
+  --color-sport-footer: var(--color-dark-surface);
 }
 
 html,
 body {
   background-color: var(--v2-bg-void) !important;
   color: var(--v2-text-primary) !important;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
   font-family: var(--font-sans), sans-serif;
   overflow-x: hidden !important;
   max-width: 100vw !important;
@@ -76,7 +78,11 @@ body {
 a {
   text-decoration: none;
 }
-:where(a:not([class*="commerce-"]):not([class*="sport-"]):not([class*="btn"]):not([class*="button"]):not([role="button"])) {
+:where(
+  a:not([class*="commerce-"]):not([class*="sport-"]):not([class*="btn"]):not(
+      [class*="button"]
+    ):not([role="button"])
+) {
   color: inherit;
 }
 
@@ -232,7 +238,7 @@ h5.ant-typography {
   background: var(--v2-accent-dim);
   color: var(--v2-accent-text);
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--color-black) 15%, transparent);
 }
 .v2-btn-accent:active {
   transform: translateY(0);
@@ -328,17 +334,11 @@ h5.ant-typography {
 :root,
 html.light,
 [data-theme="light"] {
-  --color-scroll-thumb: rgba(10, 10, 10, 0.22);
-  --color-scroll-thumb-hover: rgba(10, 10, 10, 0.55);
-  --color-scroll-thumb-active: rgba(10, 10, 10, 0.85);
   --color-scroll-track: transparent;
 }
 
 html.dark,
 [data-theme="dark"] {
-  --color-scroll-thumb: rgba(255, 255, 255, 0.22);
-  --color-scroll-thumb-hover: rgba(255, 255, 255, 0.55);
-  --color-scroll-thumb-active: rgba(255, 255, 255, 0.85);
   --color-scroll-track: transparent;
 }
 
@@ -454,16 +454,28 @@ body::-webkit-scrollbar-thumb {
 
 /* Keyframe Animations */
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 @keyframes marquee-reverse {
-  0% { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 @keyframes v2-text-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .animate-marquee {
@@ -509,7 +521,8 @@ body::-webkit-scrollbar-thumb {
 }
 
 /* Lenis Smooth Scroll */
-html.lenis, html.lenis body {
+html.lenis,
+html.lenis body {
   height: auto;
 }
 .lenis.lenis-smooth {

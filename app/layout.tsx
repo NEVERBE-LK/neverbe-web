@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/utils/seo";
 import { designTokens, themeCss } from "@/config/theme";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
@@ -16,6 +17,9 @@ export const metadata: Metadata = {
   description:
     "Neverbe is an online store in Sri Lanka for shoes, clothing & apparel. Shop sneakers, t-shirts, activewear, sportswear & fashion accessories. Island-wide delivery & Cash on Delivery.",
   applicationName: "Neverbe",
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
   keywords: [
     "Neverbe",
     "shoes sri lanka",
@@ -90,8 +94,14 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: designTokens.light["v2-bg-void"] },
-    { media: "(prefers-color-scheme: dark)", color: designTokens.dark["v2-bg-void"] },
+    {
+      media: "(prefers-color-scheme: light)",
+      color: designTokens.light["v2-bg-void"],
+    },
+    {
+      media: "(prefers-color-scheme: dark)",
+      color: designTokens.dark["v2-bg-void"],
+    },
   ],
   colorScheme: "light dark",
 };
@@ -109,9 +119,10 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": "https://neverbe.lk/#organization",
     name: "Neverbe",
     url: "https://neverbe.lk",
-    logo: "https://neverbe.lk/logo.png",
+    logo: "https://neverbe.lk/brand/neverbe-logo-black.svg",
     contactPoint: [
       {
         "@type": "ContactPoint",
@@ -145,6 +156,7 @@ export default function RootLayout({
   const websiteLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://neverbe.lk/#website",
     name: "Neverbe",
     alternateName: ["Neverbe", "Neverbe Shoes & Clothing"],
     url: "https://neverbe.lk",
@@ -155,7 +167,8 @@ export default function RootLayout({
     "@type": "LocalBusiness",
     name: "Neverbe",
     image: "https://neverbe.lk/main-og.png",
-    "@id": "https://neverbe.lk",
+    "@id": "https://neverbe.lk/#store",
+    areaServed: { "@type": "Country", name: "Sri Lanka" },
     url: "https://neverbe.lk",
     telephone: "+94729249999",
     address: {
@@ -170,7 +183,10 @@ export default function RootLayout({
   return (
     <html lang="en-LK" suppressHydrationWarning>
       <head>
-        <style id="neverbe-theme" dangerouslySetInnerHTML={{ __html: themeCss }} />
+        <style
+          id="neverbe-theme"
+          dangerouslySetInnerHTML={{ __html: themeCss }}
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var t=localStorage.getItem('neverbe_theme');if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;document.documentElement.classList.add(t)}catch(e){document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}})()`,
@@ -192,15 +208,15 @@ export default function RootLayout({
       <body className="antialiased min-h-screen flex flex-col font-sans">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(websiteLd) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(localBusinessLd) }}
         />
         <a href="#main-content" className="sport-skip-link">
           Skip to content

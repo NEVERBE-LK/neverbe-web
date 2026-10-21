@@ -26,7 +26,21 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
 
   const handleDownloadInvoice = async () => {
     setDownloading(true);
-    const { orderId, createdAt, status, items, customer, paymentMethod, paymentStatus, shippingFee, fee, discount, couponDiscount, promotionDiscount, total: backendTotal } = order;
+    const {
+      orderId,
+      createdAt,
+      status,
+      items,
+      customer,
+      paymentMethod,
+      paymentStatus,
+      shippingFee,
+      fee,
+      discount,
+      couponDiscount,
+      promotionDiscount,
+      total: backendTotal,
+    } = order;
 
     try {
       const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
@@ -48,7 +62,7 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
                 console.error("Failed to load thumbnail for", item.name, e);
               }
             }
-          })
+          }),
         );
       }
 
@@ -69,7 +83,7 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       doc.setFontSize(24);
       doc.setTextColor(printPalette.ink); // slate-900
       doc.text("INVOICE", 30, 18);
-      
+
       doc.setFont("helvetica", "bold");
       doc.setFontSize(9);
       doc.setTextColor(printPalette.muted); // slate-400
@@ -79,7 +93,7 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       doc.setFontSize(14);
       doc.setTextColor(printPalette.ink);
       doc.text("neverbe.", 196, 16, { align: "right" });
-      
+
       doc.setFont("helvetica", "normal");
       doc.setFontSize(9);
       doc.setTextColor(printPalette.secondary); // slate-500
@@ -97,12 +111,12 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       doc.setFont("helvetica", "bold");
       doc.setTextColor(printPalette.muted); // slate-400
       doc.text("INVOICE TO", 14, y);
-      
+
       y += 5;
       doc.setFontSize(10);
       doc.setTextColor(printPalette.ink); // slate-900
       doc.text(customer?.name || "Walk-in Customer", 14, y);
-      
+
       if (customer) {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(9);
@@ -156,7 +170,9 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       yOrder += 4.5;
       doc.setFontSize(9);
       doc.setTextColor(printPalette.ink); // slate-700
-      doc.text(toSafeLocaleString(createdAt) || "", 196, yOrder, { align: "right" });
+      doc.text(toSafeLocaleString(createdAt) || "", 196, yOrder, {
+        align: "right",
+      });
 
       yOrder += 8;
       doc.setFontSize(8);
@@ -168,18 +184,26 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       doc.text(paymentStatus || "PENDING", 196, yOrder, { align: "right" });
 
       const finalMetadataY = Math.max(y + 10, yShip + 10, yOrder + 10);
-      
+
       doc.setDrawColor(printPalette.surface);
       doc.line(14, finalMetadataY - 5, 196, finalMetadataY - 5);
 
       // 3. TABLE
-      const tableColumn = ["", "Item Description", "Size", "Qty", "Price", "Discount", "Amount"];
+      const tableColumn = [
+        "",
+        "Item Description",
+        "Size",
+        "Qty",
+        "Price",
+        "Discount",
+        "Amount",
+      ];
       const tableRows = items.map((item: any) => {
         const originalTotal = (item.price || 0) * (item.quantity || 1);
         const discountTotal = (item.discount || 0) * (item.quantity || 1);
         const finalTotal = originalTotal - discountTotal;
         return [
-          "", 
+          "",
           item.variantName ? `${item.name}\n(${item.variantName})` : item.name,
           item.size || "—",
           (item.quantity || 1).toString(),
@@ -195,10 +219,10 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
         body: tableRows,
         startY: tableStartY,
         theme: "plain",
-        headStyles: { 
+        headStyles: {
           fillColor: printPalette.surface, // slate-50
           textColor: printPalette.secondary, // slate-500
-          fontStyle: "bold", 
+          fontStyle: "bold",
           fontSize: 8,
         },
         bodyStyles: {
@@ -208,14 +232,14 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
         alternateRowStyles: {
           fillColor: printPalette.surface,
         },
-        columnStyles: { 
+        columnStyles: {
           0: { cellWidth: 15, halign: "center" },
           1: { fontStyle: "bold" },
-          2: { halign: "center", textColor: printPalette.ink }, 
-          3: { halign: "center", textColor: printPalette.ink }, 
+          2: { halign: "center", textColor: printPalette.ink },
+          3: { halign: "center", textColor: printPalette.ink },
           4: { halign: "right", textColor: printPalette.ink },
-          5: { halign: "right", textColor: printPalette.error }, 
-          6: { halign: "right", fontStyle: "bold" }, 
+          5: { halign: "right", textColor: printPalette.error },
+          6: { halign: "right", fontStyle: "bold" },
         },
         styles: { cellPadding: 4, minCellHeight: 12 },
         didDrawCell: (data: any) => {
@@ -233,7 +257,7 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
               }
             }
           }
-        }
+        },
       });
 
       // 4. TOTALS
@@ -241,28 +265,42 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       const summaryX = 130;
       const valueX = 196;
 
-      const rawSubtotal = items.reduce((sum: number, item: any) => sum + (item.price || 0) * (item.quantity || 1), 0);
-      const itemDiscountTotal = items.reduce((sum: number, item: any) => sum + (item.discount || 0) * (item.quantity || 1), 0);
+      const rawSubtotal = items.reduce(
+        (sum: number, item: any) =>
+          sum + (item.price || 0) * (item.quantity || 1),
+        0,
+      );
+      const itemDiscountTotal = items.reduce(
+        (sum: number, item: any) =>
+          sum + (item.discount || 0) * (item.quantity || 1),
+        0,
+      );
       const totalDiscount = discount || 0;
-      const grandTotal = backendTotal || (rawSubtotal - totalDiscount + (shippingFee || 0) + (fee || 0));
+      const grandTotal =
+        backendTotal ||
+        rawSubtotal - totalDiscount + (shippingFee || 0) + (fee || 0);
 
       let currentY = finalY;
 
       doc.setFontSize(9);
       doc.setFont("helvetica", "normal");
-      doc.setTextColor(printPalette.secondary); 
+      doc.setTextColor(printPalette.secondary);
       doc.text("Subtotal", summaryX, currentY);
       doc.setFont("helvetica", "bold");
-      doc.setTextColor(printPalette.ink); 
-      doc.text(`Rs ${rawSubtotal.toLocaleString()}`, valueX, currentY, { align: "right" });
+      doc.setTextColor(printPalette.ink);
+      doc.text(`Rs ${rawSubtotal.toLocaleString()}`, valueX, currentY, {
+        align: "right",
+      });
 
       if (totalDiscount > 0) {
         currentY += 6;
         doc.setFont("helvetica", "normal");
-        doc.setTextColor(printPalette.error); 
+        doc.setTextColor(printPalette.error);
         doc.text("Total Discount", summaryX, currentY);
         doc.setFont("helvetica", "bold");
-        doc.text(`-Rs ${totalDiscount.toLocaleString()}`, valueX, currentY, { align: "right" });
+        doc.text(`-Rs ${totalDiscount.toLocaleString()}`, valueX, currentY, {
+          align: "right",
+        });
       }
       if (shippingFee && shippingFee > 0) {
         currentY += 6;
@@ -271,7 +309,9 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
         doc.text("Shipping Fee", summaryX, currentY);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(printPalette.ink); // slate-900
-        doc.text(`Rs ${shippingFee.toLocaleString()}`, valueX, currentY, { align: "right" });
+        doc.text(`Rs ${shippingFee.toLocaleString()}`, valueX, currentY, {
+          align: "right",
+        });
       }
 
       if (fee && fee > 0) {
@@ -281,7 +321,9 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
         doc.text("Processing Fee", summaryX, currentY);
         doc.setFont("helvetica", "bold");
         doc.setTextColor(printPalette.ink); // slate-900
-        doc.text(`Rs ${fee.toLocaleString()}`, valueX, currentY, { align: "right" });
+        doc.text(`Rs ${fee.toLocaleString()}`, valueX, currentY, {
+          align: "right",
+        });
       }
 
       currentY += 8;
@@ -292,7 +334,9 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       doc.setTextColor(printPalette.ink);
       doc.text("GRAND TOTAL", summaryX, currentY);
       doc.setTextColor(printPalette.accent); // emerald-700
-      doc.text(`Rs ${grandTotal.toLocaleString()}`, valueX, currentY, { align: "right" });
+      doc.text(`Rs ${grandTotal.toLocaleString()}`, valueX, currentY, {
+        align: "right",
+      });
 
       // 5. FOOTER
       doc.setFontSize(7);
@@ -300,7 +344,12 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       doc.setTextColor(printPalette.muted); // slate-400
       doc.setDrawColor(printPalette.surface); // slate-100
       doc.line(14, 280, 196, 280);
-      doc.text("Thank you for choosing NeverBe! For support queries, contact info@neverbe.lk", 105, 285, { align: "center" });
+      doc.text(
+        "Thank you for choosing NeverBe! For support queries, contact info@neverbe.lk",
+        105,
+        285,
+        { align: "center" },
+      );
 
       doc.save(`NeverBe-Invoice-${orderId}.pdf`);
     } catch (err) {
@@ -318,10 +367,9 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
       className="flex items-center gap-2 px-6 py-4 bg-surface text-primary border border-strong hover:border-accent hover:text-accent transition-all text-xs font-black uppercase tracking-widest rounded-full shadow-sm h-auto"
     >
       <IoCloudDownloadOutline size={18} />
-      {downloading ? "Generating..." : "Download PDF"}
+      {downloading ? null : "Download PDF"}
     </Button>
   );
 };
 
 export default EBillDownloadButton;
-

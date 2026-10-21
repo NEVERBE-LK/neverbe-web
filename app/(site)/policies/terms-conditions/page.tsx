@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/utils/seo";
 import { Metadata } from "next";
 import TermsClient from "./components/TermsClient";
 
@@ -52,29 +53,11 @@ const Page = () => {
     {
       "@context": "https://schema.org",
       "@type": "WebPage",
+      publisher: { "@id": "https://neverbe.lk/#organization" },
       name: "Terms & Conditions",
       description:
         "Neverbe Terms & Conditions outlining the rules and guidelines for using our website and purchasing our products.",
       url: "https://neverbe.lk/policies/terms-conditions",
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      name: "Neverbe",
-      url: "https://neverbe.lk",
-      logo: "https://neverbe.lk/logo.png",
-      contactPoint: {
-        "@type": "ContactPoint",
-        telephone: "+94 70 520 8999",
-        contactType: "Customer Service",
-        areaServed: "LK",
-        availableLanguage: ["English", "Sinhala", "Tamil"],
-      },
-      sameAs: [
-        "https://www.facebook.com/neverbe196",
-        "https://www.instagram.com/neverbe196",
-        "https://tiktok.com/@neverbe196",
-      ],
     },
   ];
 
@@ -82,7 +65,7 @@ const Page = () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
       <TermsClient />
     </>

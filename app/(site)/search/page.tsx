@@ -1,3 +1,4 @@
+import { serializeJsonLd } from "@/utils/seo";
 import React from "react";
 import { Metadata } from "next";
 import axiosInstance from "@/actions/axiosInstance";
@@ -9,15 +10,20 @@ interface SearchPageProps {
   searchParams: Promise<{ q?: string }>;
 }
 
-const WEB_BASE_URL = process.env.NEXT_PUBLIC_WEB_BASE_URL || "https://neverbe.lk";
+const WEB_BASE_URL =
+  process.env.NEXT_PUBLIC_WEB_BASE_URL || "https://neverbe.lk";
 
-export async function generateMetadata(props: SearchPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  props: SearchPageProps,
+): Promise<Metadata> {
   const searchParams = await props.searchParams;
   const query = searchParams.q || "";
   const canonicalUrl = `${WEB_BASE_URL}/search?q=${encodeURIComponent(query)}`;
 
   return {
-    title: query ? `Search results for "${query}" | Neverbe` : "Search | Neverbe",
+    title: query
+      ? `Search results for "${query}" | Neverbe`
+      : "Search | Neverbe",
     description: query
       ? `Browse search results for "${query}" at Neverbe. Discover our curated collection of premium apparel including linen shirts, trousers, and more.`
       : "Search for premium apparel and accessories at Neverbe. Find high-quality linen shirts, casual wear, and luxury gear.",
@@ -56,8 +62,8 @@ export default async function SearchPage(props: SearchPageProps) {
       const response = await axiosInstance.get("/web/products/search", {
         params: {
           q: query.trim(),
-          hitsPerPage: 12
-        }
+          hitsPerPage: 12,
+        },
       });
       products = response.data.hits || [];
     } catch (error) {
@@ -69,13 +75,13 @@ export default async function SearchPage(props: SearchPageProps) {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    "numberOfItems": products.length,
-    "itemListElement": products.map((product, index) => ({
+    numberOfItems: products.length,
+    itemListElement: products.map((product, index) => ({
       "@type": "ListItem",
-      "position": index + 1,
-      "url": `${WEB_BASE_URL}/collections/products/${product.id}`,
-      "name": product.name,
-      "image": product.thumbnail?.url,
+      position: index + 1,
+      url: `${WEB_BASE_URL}/collections/products/${product.id}`,
+      name: product.name,
+      image: product.thumbnail?.url,
     })),
   };
 
@@ -84,7 +90,7 @@ export default async function SearchPage(props: SearchPageProps) {
       <Script
         id="search-json-ld"
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
       />
       <SearchPageClient query={query} products={products} />
     </>

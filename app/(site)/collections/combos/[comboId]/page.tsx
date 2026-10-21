@@ -1,3 +1,4 @@
+import { absoluteUrl, plainDescription, serializeJsonLd } from "@/utils/seo";
 import { cache } from "react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -41,6 +42,11 @@ export async function generateMetadata(context: {
 
   return {
     metadataBase: new URL("https://neverbe.lk"),
+    alternates: {
+      canonical: absoluteUrl(
+        `/collections/combos/${encodeURIComponent(combo.id)}`,
+      ),
+    },
     title: `${combo.name} - Save Rs. ${savings} | neverbe.`,
     description:
       combo.description ||
@@ -67,7 +73,7 @@ export async function generateMetadata(context: {
       images: [ogImg],
     },
     other: {
-      "image_src": ogImg,
+      image_src: ogImg,
       "og:image:secure_url": ogImg,
     },
   };
@@ -86,14 +92,21 @@ const ComboDetailPage = async (context: {
     "@context": "https://schema.org",
     "@type": "Product",
     name: combo.name,
-    description: combo.description,
+    url: absoluteUrl(`/collections/combos/${encodeURIComponent(combo.id)}`),
+    description: plainDescription(combo.description || combo.name),
     image: getAbsoluteUrl(combo.thumbnail?.url),
-    offers: {
-      "@type": "Offer",
-      price: combo.comboPrice,
-      priceCurrency: "LKR",
-      availability: "https://schema.org/InStock",
-    },
+    ...(Number.isFinite(combo.comboPrice) && combo.comboPrice > 0
+      ? {
+          offers: {
+            "@type": "Offer",
+            price: combo.comboPrice,
+            priceCurrency: "LKR",
+            url: absoluteUrl(
+              `/collections/combos/${encodeURIComponent(combo.id)}`,
+            ),
+          },
+        }
+      : {}),
   };
 
   // Build breadcrumb items
@@ -106,7 +119,7 @@ const ComboDetailPage = async (context: {
     <main className="commerce-legacy w-full relative bg-void text-primary">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
 
       {/* Container with Nike-style spacing */}

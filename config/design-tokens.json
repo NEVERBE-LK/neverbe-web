@@ -19,7 +19,10 @@
     "color-error": "#dc2626",
     "color-success": "#16a34a",
     "color-warning": "#d97706",
-    "color-info": "#2563eb"
+    "color-info": "#2563eb",
+    "color-scroll-thumb": "rgba(10, 10, 10, 0.22)",
+    "color-scroll-thumb-hover": "rgba(10, 10, 10, 0.55)",
+    "color-scroll-thumb-active": "rgba(10, 10, 10, 0.85)"
   },
   "dark": {
     "v2-bg-void": "#0a0a0a",
@@ -41,14 +44,17 @@
     "color-error": "#f87171",
     "color-success": "#4ade80",
     "color-warning": "#fbbf24",
-    "color-info": "#60a5fa"
+    "color-info": "#60a5fa",
+    "color-scroll-thumb": "rgba(255, 255, 255, 0.22)",
+    "color-scroll-thumb-hover": "rgba(255, 255, 255, 0.55)",
+    "color-scroll-thumb-active": "rgba(255, 255, 255, 0.85)"
   },
   "fixed": {
     "color-white": "#ffffff",
     "color-black": "#000000",
     "color-ink": "#0a0a0a",
     "color-on-image": "#ffffff",
-    "color-image-muted": "#f5f5f5",
+    "color-image-muted": "rgba(255, 255, 255, 0.9)",
     "color-image-surface": "#171717",
     "color-image-surface-alt": "#262626",
     "color-image-contrast": "#0f0f0f",
@@ -59,7 +65,13 @@
     "color-on-image-hover": "#e5e5e5",
     "color-shadow": "#000000",
     "color-auth-overlay-start": "rgba(0, 0, 0, 0.85)",
-    "color-auth-overlay-end": "rgba(0, 0, 0, 0.1)"
+    "color-auth-overlay-end": "rgba(0, 0, 0, 0.1)",
+    "color-photo-ink": "#0a0a0a",
+    "color-neutral-soft": "#f5f5f5",
+    "color-neutral-mid": "#8e8e8e",
+    "color-neutral-muted": "#a3a3a3",
+    "color-neutral-dim": "#737373",
+    "color-neutral-hover": "#e5e5e5"
   },
   "print": {
     "ink": "#0a0a0a",
@@ -71,5 +83,20 @@
     "white": "#ffffff",
     "error": "#dc2626",
     "warning": "#d97706"
+  },
+  "social": {
+    "background": "#090a09",
+    "image": "#141714",
+    "frame": "#283328",
+    "corner": "#333b33",
+    "speed": "#151915",
+    "badge": "#141814",
+    "badgeBorder": "#384638",
+    "category": "#a4b8a4",
+    "muted": "#9eaba0",
+    "subtle": "#8e9a8e",
+    "discountBg": "#182218",
+    "discountBorder": "#3d573d",
+    "discountText": "#6ee7b7"
   }
 }

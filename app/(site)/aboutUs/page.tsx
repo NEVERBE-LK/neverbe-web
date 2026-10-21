@@ -1,9 +1,10 @@
+import { serializeJsonLd } from "@/utils/seo";
 import React from "react";
 import type { Metadata } from "next";
 import AboutUsClient from "./components/AboutUsClient";
 
 export const metadata: Metadata = {
-  title: "About Us - Neverbe | Sri Lanka's #1 Shoe & Clothing Store",
+  title: "About NEVERBE | Shoes & Clothing in Sri Lanka",
   description:
     "Learn about Neverbe, Sri Lanka's trusted destination for premium shoes, clothing & apparel. Discover our mission, vision, and commitment to style, quality, and affordability.",
   keywords:
@@ -56,25 +57,8 @@ const AboutUs = () => {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
-        name: "Neverbe",
-        url: "https://neverbe.lk",
-        logo: "/main-og.png",
-        sameAs: [
-          "https://www.facebook.com/neverbe196",
-          "https://www.instagram.com/neverbe196",
-          "https://tiktok.com/@neverbe196",
-        ],
-        contactPoint: {
-          "@type": "ContactPoint",
-          telephone: "+94 70 520 8999",
-          contactType: "Customer Service",
-          areaServed: "LK",
-          availableLanguage: ["English", "Sinhala", "Tamil"],
-        },
-      },
-      {
         "@type": "AboutPage",
+        about: { "@id": "https://neverbe.lk/#organization" },
         name: "About Neverbe",
         description:
           "Learn about Neverbe, Sri Lanka's trusted destination for premium shoes, clothing & apparel. Discover our mission, vision, and commitment to style, quality, and affordability.",
@@ -88,7 +72,7 @@ const AboutUs = () => {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
       />
       <AboutUsClient />
     </>

@@ -1,4 +1,5 @@
 "use client";
+import Spinner from "@/components/Spinner";
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -105,7 +106,8 @@ const FALLBACK_PAYMENT_METHODS: PaymentMethod[] = [
     name: "CASH ON DELIVERY",
     fee: 0,
     customerFee: 0,
-    description: "Cash on Delivery allows customers to pay in cash upon receiving their order.",
+    description:
+      "Cash on Delivery allows customers to pay in cash upon receiving their order.",
     status: "Active",
     available: ["Website", "Store"],
     createdAt: new Date().toISOString(),
@@ -116,7 +118,8 @@ const FALLBACK_PAYMENT_METHODS: PaymentMethod[] = [
     name: "KOKO",
     fee: 12,
     customerFee: 13.5,
-    description: "Pay in 3 interest-free instalments with Koko for a flexible and affordable shopping experience.",
+    description:
+      "Pay in 3 interest-free instalments with Koko for a flexible and affordable shopping experience.",
     status: "Active",
     available: ["Store", "Website"],
     createdAt: new Date().toISOString(),
@@ -145,7 +148,9 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   shippingCost,
   isHighRisk,
 }) => {
-  const [paymentOptions, setPaymentOptions] = useState<PaymentMethod[]>(FALLBACK_PAYMENT_METHODS);
+  const [paymentOptions, setPaymentOptions] = useState<PaymentMethod[]>(
+    FALLBACK_PAYMENT_METHODS,
+  );
   const [isPaymentLoading, setIsPaymentLoading] = useState(true);
 
   const bagItems = useSelector((state: RootState) => state.bag.bag);
@@ -193,37 +198,49 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         const rawList: any[] = Array.isArray(data)
           ? data
           : Array.isArray(data?.paymentMethods)
-          ? data.paymentMethods
-          : Array.isArray(data?.payments)
-          ? data.payments
-          : Array.isArray(data?.data)
-          ? data.data
-          : [];
+            ? data.paymentMethods
+            : Array.isArray(data?.payments)
+              ? data.payments
+              : Array.isArray(data?.data)
+                ? data.data
+                : [];
 
-        const mappedList: (PaymentMethod & { isActive?: boolean })[] = rawList.map((p: any) => {
-          const isItemActive =
-            p.status === true ||
-            p.status === "Active" ||
-            p.isActive === true ||
-            (p.status !== false && p.isDeleted !== true);
+        const mappedList: (PaymentMethod & { isActive?: boolean })[] =
+          rawList.map((p: any) => {
+            const isItemActive =
+              p.status === true ||
+              p.status === "Active" ||
+              p.isActive === true ||
+              (p.status !== false && p.isDeleted !== true);
 
-          return {
-            paymentId: p.paymentId || p.id || p.name || "",
-            name: p.name || p.title || "Payment Method",
-            fee: typeof p.fee === "number" ? p.fee : 0,
-            customerFee: typeof p.customerFee === "number" ? p.customerFee : (typeof p.fee === "number" ? p.fee : 0),
-            description: p.description || p.details || p.subtitle || p.instructions || "",
-            imageUrl: p.imageUrl || p.icon || p.logo || p.bannerUrl || "",
-            status: isItemActive ? "Active" : "Inactive",
-            isActive: isItemActive,
-            available: p.available || ["LK"],
-            createdAt: p.createdAt || new Date().toISOString(),
-            updatedAt: p.updatedAt || new Date().toISOString(),
-          };
-        });
+            return {
+              paymentId: p.paymentId || p.id || p.name || "",
+              name: p.name || p.title || "Payment Method",
+              fee: typeof p.fee === "number" ? p.fee : 0,
+              customerFee:
+                typeof p.customerFee === "number"
+                  ? p.customerFee
+                  : typeof p.fee === "number"
+                    ? p.fee
+                    : 0,
+              description:
+                p.description ||
+                p.details ||
+                p.subtitle ||
+                p.instructions ||
+                "",
+              imageUrl: p.imageUrl || p.icon || p.logo || p.bannerUrl || "",
+              status: isItemActive ? "Active" : "Inactive",
+              isActive: isItemActive,
+              available: p.available || ["LK"],
+              createdAt: p.createdAt || new Date().toISOString(),
+              updatedAt: p.updatedAt || new Date().toISOString(),
+            };
+          });
 
         const activeList = mappedList.filter((p) => p.isActive !== false);
-        const finalList = activeList.length > 0 ? activeList : FALLBACK_PAYMENT_METHODS;
+        const finalList =
+          activeList.length > 0 ? activeList : FALLBACK_PAYMENT_METHODS;
 
         setPaymentOptions(finalList);
         if (finalList.length > 0) {
@@ -233,7 +250,10 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
           if (setMerchantFee) setMerchantFee(finalList[0].fee || 0);
         }
       } catch (err) {
-        console.error("Failed to fetch payment methods from /web/payment-methods:", err);
+        console.error(
+          "Failed to fetch payment methods from /web/payment-methods:",
+          err,
+        );
         setPaymentOptions(FALLBACK_PAYMENT_METHODS);
         setPaymentType(FALLBACK_PAYMENT_METHODS[0].name);
         setPaymentTypeId(FALLBACK_PAYMENT_METHODS[0].paymentId);
@@ -251,7 +271,10 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
   const shipping = shippingCost;
 
   // Fee calculation: customerFee percentage applied to (Total item cost after discounts/promotions + shipping)
-  const netItemTotal = Math.max(0, rawSubTotal - itemDiscount - couponDiscount - promotionDiscount);
+  const netItemTotal = Math.max(
+    0,
+    rawSubTotal - itemDiscount - couponDiscount - promotionDiscount,
+  );
   const taxableBase = netItemTotal + shipping;
   const feePercent = selectedPaymentFee || 0;
   const fee = parseFloat((taxableBase * (feePercent / 100)).toFixed(2));
@@ -262,146 +285,156 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
     <div className="w-full">
       {/* Header */}
       <div className="mb-6 border-b border-glass-border pb-4">
-        <span className="v2-section-label text-[9px] mb-0.5">ORDER SUMMARY</span>
+        <span className="v2-section-label text-[9px] mb-0.5">
+          ORDER SUMMARY
+        </span>
         <h2 className="text-xl font-black uppercase tracking-tight text-primary m-0">
           Payment &amp; Review
         </h2>
       </div>
 
-        {/* Promotion Banner */}
-        <PromotionBanner variant="inline" className="mb-6" />
+      {/* Promotion Banner */}
+      <PromotionBanner variant="inline" className="mb-6" />
 
-        {/* Bag Items */}
-        <div className="space-y-3 mb-6">
-          {bundles.map((bundle) => (
-            <BundleCard key={bundle.comboId} bundle={bundle} />
-          ))}
-          {regularItems.map((item, index) => (
-            <BagItemCard
-              key={`${item.itemId}-${item.variantId}-${item.size}-${index}`}
-              item={item}
-              compact
-              showRemove
-            />
-          ))}
-        </div>
-
-        {/* Payment Selection */}
-        <div className="mb-6 pt-4 border-t border-glass-border">
-          <span className="text-[10px] font-black uppercase tracking-widest text-secondary block mb-3">
-            Select Payment Method
-          </span>
-          {isPaymentLoading ? (
-            <div className="p-6 rounded-2xl bg-glass border border-glass-border flex items-center justify-center gap-3">
-              <AiOutlineLoading3Quarters size={18} className="text-accent animate-spin shrink-0" />
-              <span className="text-xs font-black uppercase tracking-wider text-secondary">
-                Loading Payment Methods...
-              </span>
-            </div>
-          ) : (
-            <PaymentOptions
-              paymentOptions={paymentOptions}
-              paymentType={paymentType}
-              setPaymentType={setPaymentType}
-              setPaymentTypeId={setPaymentTypeId}
-              setPaymentFee={setPaymentFee}
-              setMerchantFee={setMerchantFee}
-              bagItems={bagItems}
-              taxableBase={taxableBase}
-              isHighRisk={isHighRisk}
-            />
-          )}
-        </div>
-
-        {/* Coupon Section */}
-        <div className="mb-6 pt-4 border-t border-glass-border">
-          <span className="text-[10px] font-black uppercase tracking-widest text-secondary block mb-3">
-            Promo Code
-          </span>
-          <CouponInput />
-        </div>
-
-        {/* Financial Breakdown */}
-        <div className="space-y-3 py-4 border-t border-glass-border text-xs font-bold uppercase tracking-wider">
-          <div className="flex justify-between text-secondary">
-            <span>Subtotal</span>
-            <span className="text-primary font-black">
-              LKR {rawSubTotal.toLocaleString()}
-            </span>
-          </div>
-
-          {itemDiscount > 0 && (
-            <div className="flex justify-between text-accent">
-              <span>Discounts</span>
-              <span className="font-black">- LKR {itemDiscount.toLocaleString()}</span>
-            </div>
-          )}
-
-          {promotionDiscount > 0 && (
-            <div className="flex justify-between text-accent">
-              <span>Promotion</span>
-              <span className="font-black">- LKR {promotionDiscount.toLocaleString()}</span>
-            </div>
-          )}
-
-          {couponDiscount > 0 && (
-            <div className="flex justify-between text-accent">
-              <span>Coupon</span>
-              <span className="font-black">- LKR {couponDiscount.toLocaleString()}</span>
-            </div>
-          )}
-
-          <div className="flex justify-between text-secondary">
-            <span>Shipping</span>
-            <span className="text-primary font-black">
-              {shipping === 0 ? <span className="text-accent">FREE</span> : `LKR ${shipping}`}
-            </span>
-          </div>
-
-          {fee > 0 && (
-            <div className="flex justify-between text-warning">
-              <span>Handling Fee</span>
-              <span className="font-black">+ LKR {fee.toFixed(2)}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Total Section */}
-        <div className="border-t border-glass-border pt-4 mb-8 flex justify-between items-end">
-          <span className="text-xs font-black uppercase tracking-widest text-primary">
-            Total Due
-          </span>
-          <span className="text-3xl font-black tracking-tight text-accent leading-none">
-            LKR {finalTotal.toLocaleString()}
-          </span>
-        </div>
-
-        {/* Submit Button */}
-        <Button
-          type="primary"
-          htmlType="submit"
-          disabled={bagItems.length === 0 || !paymentType}
-          className="w-full h-14 rounded-full bg-accent! text-accent-text! font-black uppercase tracking-widest text-xs border-none flex items-center justify-between px-6 cursor-pointer shadow-lg hover:opacity-90 active:scale-95 transition-all"
-        >
-          <span className="text-accent-text font-black">Complete Order</span>
-          <div className="w-8 h-8 rounded-full bg-accent-text text-accent flex items-center justify-center">
-            <IoArrowForward size={16} />
-          </div>
-        </Button>
-
-        {/* Security Footer */}
-        <div className="mt-6 text-center space-y-1">
-          <div className="flex items-center justify-center gap-1.5 text-muted">
-            <IoLockClosedOutline size={12} />
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted">
-              SSL Encrypted Checkout
-            </span>
-          </div>
-          <p className="text-[9px] text-muted leading-relaxed max-w-[280px] mx-auto m-0">
-            By placing this order, you agree to Neverbe&apos;s Terms &amp; Conditions.
-          </p>
-        </div>
+      {/* Bag Items */}
+      <div className="space-y-3 mb-6">
+        {bundles.map((bundle) => (
+          <BundleCard key={bundle.comboId} bundle={bundle} />
+        ))}
+        {regularItems.map((item, index) => (
+          <BagItemCard
+            key={`${item.itemId}-${item.variantId}-${item.size}-${index}`}
+            item={item}
+            compact
+            showRemove
+          />
+        ))}
       </div>
+
+      {/* Payment Selection */}
+      <div className="mb-6 pt-4 border-t border-glass-border">
+        <span className="text-[10px] font-black uppercase tracking-widest text-secondary block mb-3">
+          Select Payment Method
+        </span>
+        {isPaymentLoading ? (
+          <div className="commerce-loader">
+            <Spinner />
+          </div>
+        ) : (
+          <PaymentOptions
+            paymentOptions={paymentOptions}
+            paymentType={paymentType}
+            setPaymentType={setPaymentType}
+            setPaymentTypeId={setPaymentTypeId}
+            setPaymentFee={setPaymentFee}
+            setMerchantFee={setMerchantFee}
+            bagItems={bagItems}
+            taxableBase={taxableBase}
+            isHighRisk={isHighRisk}
+          />
+        )}
+      </div>
+
+      {/* Coupon Section */}
+      <div className="mb-6 pt-4 border-t border-glass-border">
+        <span className="text-[10px] font-black uppercase tracking-widest text-secondary block mb-3">
+          Promo Code
+        </span>
+        <CouponInput />
+      </div>
+
+      {/* Financial Breakdown */}
+      <div className="space-y-3 py-4 border-t border-glass-border text-xs font-bold uppercase tracking-wider">
+        <div className="flex justify-between text-secondary">
+          <span>Subtotal</span>
+          <span className="text-primary font-black">
+            LKR {rawSubTotal.toLocaleString()}
+          </span>
+        </div>
+
+        {itemDiscount > 0 && (
+          <div className="flex justify-between text-accent">
+            <span>Discounts</span>
+            <span className="font-black">
+              - LKR {itemDiscount.toLocaleString()}
+            </span>
+          </div>
+        )}
+
+        {promotionDiscount > 0 && (
+          <div className="flex justify-between text-accent">
+            <span>Promotion</span>
+            <span className="font-black">
+              - LKR {promotionDiscount.toLocaleString()}
+            </span>
+          </div>
+        )}
+
+        {couponDiscount > 0 && (
+          <div className="flex justify-between text-accent">
+            <span>Coupon</span>
+            <span className="font-black">
+              - LKR {couponDiscount.toLocaleString()}
+            </span>
+          </div>
+        )}
+
+        <div className="flex justify-between text-secondary">
+          <span>Shipping</span>
+          <span className="text-primary font-black">
+            {shipping === 0 ? (
+              <span className="text-accent">FREE</span>
+            ) : (
+              `LKR ${shipping}`
+            )}
+          </span>
+        </div>
+
+        {fee > 0 && (
+          <div className="flex justify-between text-warning">
+            <span>Handling Fee</span>
+            <span className="font-black">+ LKR {fee.toFixed(2)}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Total Section */}
+      <div className="border-t border-glass-border pt-4 mb-8 flex justify-between items-end">
+        <span className="text-xs font-black uppercase tracking-widest text-primary">
+          Total Due
+        </span>
+        <span className="text-3xl font-black tracking-tight text-accent leading-none">
+          LKR {finalTotal.toLocaleString()}
+        </span>
+      </div>
+
+      {/* Submit Button */}
+      <Button
+        type="primary"
+        htmlType="submit"
+        disabled={bagItems.length === 0 || !paymentType}
+        className="w-full h-14 rounded-full bg-accent! text-accent-text! font-black uppercase tracking-widest text-xs border-none flex items-center justify-between px-6 cursor-pointer shadow-lg hover:opacity-90 active:scale-95 transition-all"
+      >
+        <span className="text-accent-text font-black">Complete Order</span>
+        <div className="w-8 h-8 rounded-full bg-accent-text text-accent flex items-center justify-center">
+          <IoArrowForward size={16} />
+        </div>
+      </Button>
+
+      {/* Security Footer */}
+      <div className="mt-6 text-center space-y-1">
+        <div className="flex items-center justify-center gap-1.5 text-muted">
+          <IoLockClosedOutline size={12} />
+          <span className="text-[10px] font-black uppercase tracking-widest text-muted">
+            SSL Encrypted Checkout
+          </span>
+        </div>
+        <p className="text-[9px] text-muted leading-relaxed max-w-[280px] mx-auto m-0">
+          By placing this order, you agree to Neverbe&apos;s Terms &amp;
+          Conditions.
+        </p>
+      </div>
+    </div>
   );
 };
 

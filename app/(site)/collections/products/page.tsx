@@ -1,23 +1,25 @@
+import { notFound } from "next/navigation";
+import CollectionAdvice from "@/components/CollectionAdvice";
+import {
+  catalogPageExists,
+  catalogQuery,
+  type CatalogSearchParams,
+} from "@/utils/catalogQuery";
+import {
+  collectionMetadata,
+  collectionStructuredData,
+} from "@/utils/collectionSeo";
+import { getCatalogPage } from "@/actions/catalogPage";
+import { serializeJsonLd } from "@/utils/seo";
 import React, { Suspense } from "react";
 import Products from "@/app/(site)/collections/products/components/Products";
-import { getProducts } from "@/actions/productAction";
 import ComponentLoader from "@/components/ComponentLoader";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-const sectionLabel: React.CSSProperties = {
-  fontSize: 11,
-  fontWeight: 800,
-  textTransform: "uppercase" as const,
-  letterSpacing: "0.1em",
-  color: "var(--color-primary)",
-  display: "block",
-  marginBottom: 12,
-};
-
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: "Shop Shoes, Clothing & Apparel | Neverbe Sri Lanka",
   description:
     "Browse the full Neverbe collection — sneakers, t-shirts, activewear, sportswear, slides, accessories and more. Premium quality. Cash on Delivery island-wide.",
@@ -61,138 +63,51 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Shop Neverbe | Shoes, Clothing & Apparel",
-    description: "Premium quality shoes & clothing. Cash on Delivery island-wide.",
+    description:
+      "Premium quality shoes & clothing. Cash on Delivery island-wide.",
     images: ["/collections-og.png"],
   },
   metadataBase: new URL("https://neverbe.lk"),
 };
 
-const Page = async () => {
-  let items: any = {};
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}): Promise<Metadata> {
+  return collectionMetadata(
+    baseMetadata,
+    "/collections/products",
+    catalogQuery(await searchParams),
+  );
+}
 
-  try {
-    // Initial fetch to 12 for 12 products per page
-    items = await getProducts({ page: 1, size: 12 });
-  } catch (e) {
-    console.error("Error fetching items:", e);
-    items = { dataList: [] };
-  }
+const Page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<CatalogSearchParams>;
+}) => {
+  const query = catalogQuery(await searchParams);
+  const initialData = await getCatalogPage("/web/products", query.key);
+  const productList = initialData.products;
+  if (!initialData.error && !catalogPageExists(query, initialData.total))
+    notFound();
 
-  const productList = items?.dataList || [];
-
-  const productListingSchema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        itemListElement: [
-          {
-            "@type": "ListItem",
-            position: 1,
-            name: "Home",
-            item: "https://neverbe.lk",
-          },
-          {
-            "@type": "ListItem",
-            position: 2,
-            name: "Products",
-            item: "https://neverbe.lk/collections/products",
-          },
-        ],
-      },
-      {
-        "@type": "CollectionPage",
-        name: "Buy Shoes & Clothing Online Sri Lanka | Neverbe Collection",
-        description:
-          "Shop sneakers, clothing, activewear, sportswear & accessories in Sri Lanka. Cash on Delivery available.",
-        url: "https://neverbe.lk/collections/products",
-        inLanguage: "en-LK",
-        isPartOf: {
-          "@id": "https://neverbe.lk/#website",
-        },
-        mainEntity: {
-          "@type": "ItemList",
-          numberOfItems: productList.length,
-          itemListElement: productList
-            .slice(0, 20)
-            .map((product: any, index: number) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              item: {
-                "@type": "Product",
-                name: product?.name,
-                image: product?.thumbnail?.url
-                  ? (product.thumbnail.url.startsWith("http")
-                      ? product.thumbnail.url
-                      : `https://neverbe.lk${product.thumbnail.url.startsWith("/") ? "" : "/"}${product.thumbnail.url}`)
-                  : "https://neverbe.lk/collections-og.png",
-                url: `https://neverbe.lk/collections/products/${product?.id}`,
-                description: product?.description || `Shop ${product?.name} online in Sri Lanka at Neverbe.`,
-                brand: { "@type": "Brand", name: product?.brand || "Neverbe" },
-                offers: {
-                  "@type": "Offer",
-                  priceCurrency: "LKR",
-                  price: product?.discount > 0
-                    ? Math.round((product.sellingPrice - (product.sellingPrice * product.discount) / 100) / 10) * 10
-                    : product?.sellingPrice || "0.00",
-                  priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
-                  availability: product?.inStock
-                    ? "https://schema.org/InStock"
-                    : "https://schema.org/OutOfStock",
-                  itemCondition: "https://schema.org/NewCondition",
-                  seller: {
-                    "@type": "Organization",
-                    name: "Neverbe",
-                  },
-                  shippingDetails: {
-                    "@type": "OfferShippingDetails",
-                    shippingDestination: {
-                      "@type": "DefinedRegion",
-                      addressCountry: "LK",
-                    },
-                    shippingRate: {
-                      "@type": "MonetaryAmount",
-                      value: `${((product.weight || 1000) / 1000 <= 1.0 ? 425 : 600).toFixed(2)}`,
-                      currency: "LKR",
-                    },
-                    deliveryTime: {
-                      "@type": "ShippingDeliveryTime",
-                      handlingTime: {
-                        "@type": "QuantitativeValue",
-                        minValue: 1,
-                        maxValue: 2,
-                        unitCode: "DAY",
-                      },
-                      transitTime: {
-                        "@type": "QuantitativeValue",
-                        minValue: 1,
-                        maxValue: 3,
-                        unitCode: "DAY",
-                      },
-                    },
-                  },
-                  hasMerchantReturnPolicy: {
-                    "@type": "MerchantReturnPolicy",
-                    applicableCountry: "LK",
-                    returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-                    merchantReturnDays: 7,
-                    returnMethod: "https://schema.org/ReturnByMail",
-                    returnFees: "https://schema.org/ReturnFeesCustomerPaying",
-                  },
-                },
-              },
-            })),
-        },
-      },
-    ],
-  };
+  const productListingSchema = collectionStructuredData({
+    name: "Shop shoes, clothing & apparel in Sri Lanka",
+    description:
+      "Browse sneakers, activewear, clothing and accessories. Compare styles, sizes and prices in LKR.",
+    path: "/collections/products",
+    query,
+    items: productList,
+  });
 
   return (
     <main className="commerce-legacy v2-landing w-full min-h-screen bg-void text-primary transition-colors duration-300">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(productListingSchema),
+          __html: serializeJsonLd(productListingSchema),
         }}
       />
 
@@ -215,7 +130,8 @@ const Page = async () => {
             All Products
           </h1>
           <p className="text-[15px] font-medium text-secondary max-w-xl">
-            Sneakers, activewear, slides, accessories &amp; lifestyle essentials delivered island-wide.
+            Sneakers, activewear, slides, accessories &amp; lifestyle essentials
+            delivered island-wide.
           </p>
         </div>
       </div>
@@ -223,44 +139,16 @@ const Page = async () => {
       {/* Product Grid & Filter Layout */}
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-10 md:py-16">
         <Suspense fallback={<ComponentLoader />}>
-          <Products items={productList} />
+          <Products
+            key={query.key}
+            items={productList}
+            initialData={initialData}
+            initialKey={query.key}
+          />
         </Suspense>
       </div>
 
-      {/* SEO Footer */}
-      <div className="border-t border-glass-border py-16 bg-surface">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-3">
-                Premium Fashion in Sri Lanka
-              </span>
-              <p className="text-xs text-secondary leading-relaxed">
-                Neverbe offers shoes, clothing, activewear, and accessories — all with island-wide Cash on Delivery.
-              </p>
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-3">
-                Popular Collections
-              </span>
-              <ul className="text-xs text-secondary space-y-2 list-none p-0 m-0">
-                <li>Men&apos;s Sneakers</li>
-                <li>Women&apos;s Activewear</li>
-                <li>Slides &amp; Sandals</li>
-                <li>High-Ankle Boots</li>
-              </ul>
-            </div>
-            <div>
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-accent block mb-3">
-                Quality Guaranteed
-              </span>
-              <p className="text-xs text-secondary leading-relaxed">
-                Size exchanges within 7 days. Every product is Premium Grade quality — durability and comfort guaranteed.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <CollectionAdvice collection="products" />
     </main>
   );
 };
