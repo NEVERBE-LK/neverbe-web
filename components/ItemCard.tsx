@@ -1,4 +1,5 @@
 "use client";
+import { formatVariantName } from "@/utils/formatting";
 
 import { useState, memo } from "react";
 import Image from "next/image";
@@ -105,14 +106,14 @@ function ItemCard({
               <button
                 type="button"
                 key={option.variantId}
-                title={option.variantName}
-                aria-label={option.variantName || "Product option"}
+                title={formatVariantName(option.variantName)}
+                aria-label={formatVariantName(option.variantName) || "Product option"}
                 aria-pressed={variant?.variantId === option.variantId}
                 onClick={() => setVariant(option)}
               >
                 <Image
                   src={option.images?.[0]?.url || image}
-                  alt={option.variantName || item.name}
+                  alt={formatVariantName(option.variantName) || item.name}
                   fill
                   sizes="32px"
                 />

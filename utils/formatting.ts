@@ -19,6 +19,15 @@ export function formatDiscount(value: number): string {
   return `- Rs. ${value.toLocaleString()}`;
 }
 
+/** Capitalize variant words for display, preserving acronyms and stored catalog values. */
+export function formatVariantName(value?: string | null): string {
+  return (value || "").replace(
+    /(^|[\s/()&-]+)([^\s/()&-])/g,
+    (_match, separator: string, initial: string) =>
+      separator + initial.toLocaleUpperCase("en-LK"),
+  );
+}
+
 /**
  * Sort products by price
  * Consolidates duplicate sorting logic from Products, CollectionProducts, DealsProducts

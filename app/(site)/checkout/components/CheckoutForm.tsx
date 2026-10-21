@@ -1,4 +1,5 @@
 "use client";
+import { formatVariantName } from "@/utils/formatting";
 
 import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -604,7 +605,7 @@ const CheckoutForm = () => {
                     <p className="text-xs font-black text-primary truncate m-0">{item.name}</p>
                     <p className="text-[11px] text-secondary font-medium m-0">Size: {item.size}</p>
                     {item.variantName && item.variantName !== item.size && (
-                      <p className="text-[10px] text-muted m-0">{item.variantName}</p>
+                      <p className="text-[10px] text-muted m-0">{formatVariantName(item.variantName)}</p>
                     )}
                   </div>
                   <div className="text-right shrink-0">
@@ -1191,7 +1192,7 @@ const CheckoutForm = () => {
                       <p className="text-xs font-black text-primary truncate m-0 leading-snug">{item.name}</p>
                       <p className="text-[11px] text-secondary font-medium m-0 mt-0.5">Size: {item.size}</p>
                       {item.variantName && item.variantName !== item.size && (
-                        <p className="text-[10px] text-muted m-0">{item.variantName}</p>
+                        <p className="text-[10px] text-muted m-0">{formatVariantName(item.variantName)}</p>
                       )}
                     </div>
                     <div className="text-right shrink-0">

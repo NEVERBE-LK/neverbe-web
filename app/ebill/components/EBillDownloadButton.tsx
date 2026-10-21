@@ -1,4 +1,5 @@
 "use client";
+import { formatVariantName } from "@/utils/formatting";
 import { printPalette } from "@/config/theme";
 
 import React from "react";
@@ -204,7 +205,7 @@ const EBillDownloadButton: React.FC<EBillDownloadButtonProps> = ({ order }) => {
         const finalTotal = originalTotal - discountTotal;
         return [
           "",
-          item.variantName ? `${item.name}\n(${item.variantName})` : item.name,
+          item.variantName ? `${item.name}\n(${formatVariantName(item.variantName)})` : item.name,
           item.size || "—",
           (item.quantity || 1).toString(),
           `Rs ${originalTotal.toLocaleString()}`,

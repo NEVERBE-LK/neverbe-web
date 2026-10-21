@@ -1,4 +1,5 @@
 "use client";
+import { formatVariantName } from "@/utils/formatting";
 
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
@@ -316,6 +317,7 @@ const ComboHero: React.FC<ComboHeroProps> = ({ combo }) => {
       bagItemsToAdd.push({
         itemId: slot.productId,
         variantId: selection.variantId,
+        variantName: variant?.variantName,
         size: selection.size,
         quantity: 1,
         price: slot.product.sellingPrice,
@@ -626,6 +628,8 @@ const ComboHero: React.FC<ComboHeroProps> = ({ combo }) => {
                         <Button
                           type="text"
                           key={v.variantId}
+                          title={formatVariantName(v.variantName)}
+                          aria-label={formatVariantName(v.variantName) || "Product option"}
                           onClick={() =>
                             handleVariantSelect(activeSlot.slotId, v.variantId)
                           }

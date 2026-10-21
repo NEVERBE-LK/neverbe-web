@@ -1,4 +1,5 @@
 "use client";
+import { formatVariantName } from "@/utils/formatting";
 
 import React, { useState } from "react";
 import { BusinessInfo } from "@/config/BusinessInfo";
@@ -154,7 +155,7 @@ const EBillView: React.FC<EBillViewProps> = ({ order, daysRemaining }) => {
                       )}
                       <div>
                         <p className="font-bold">{item.name}</p>
-                        {item.variantName && <p className={`text-[10px] uppercase ${isDarkMode ? "text-muted" : "text-muted"}`}>{item.variantName}</p>}
+                        {item.variantName && <p className={`text-[10px] ${isDarkMode ? "text-muted" : "text-muted"}`}>{formatVariantName(item.variantName)}</p>}
                       </div>
                     </td>
                     <td className={`py-3 px-3 text-center ${isDarkMode ? "text-muted" : "text-primary-dark"}`}>{item.size || "—"}</td>
