@@ -26,6 +26,7 @@ function ItemCard({
   const price = calculateFinalPrice(item, promotion);
   const original = getOriginalPrice(item);
   const kokoInstallment = Math.round(price / 3);
+  const hasItemDiscount = Boolean((item.discount || 0) > 0);
 
   const image =
     variant?.images?.[0]?.url ||
@@ -73,8 +74,10 @@ function ItemCard({
         >
           <h3 className="text-primary group-hover:text-secondary transition-colors">{item.name}</h3>
         </Link>
-        <div className="commerce-item-price">
-          <strong>LKR {price.toLocaleString("en-LK")}</strong>
+        <div className={`commerce-item-price ${hasItemDiscount ? "has-discount" : ""}`}>
+          <strong className={hasItemDiscount ? "text-error" : ""}>
+            LKR {price.toLocaleString("en-LK")}
+          </strong>
           {original > price && (
             <del>LKR {original.toLocaleString("en-LK")}</del>
           )}

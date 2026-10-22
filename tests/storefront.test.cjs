@@ -359,3 +359,41 @@ test("server-rendered listings expose the selected page immediately without a lo
   assert.ok(html.includes("Everyday Runner"));
   assert.equal(html.includes("Loading"), false);
 });
+
+const pricing = loadTs("utils/pricing.ts");
+test("pricing logic displays our real sellingPrice as higher price for item discounts, and marketPrice when no item discount", () => {
+  const itemWithDiscount = {
+    ...sample,
+    sellingPrice: 7500,
+    marketPrice: 13990,
+    discount: 20,
+  };
+  // Item discount: original higher price must be our real sellingPrice (7500), not marketPrice (13990)
+  assert.equal(pricing.getOriginalPrice(itemWithDiscount), 7500);
+  assert.equal(pricing.calculateFinalPrice(itemWithDiscount), 6000);
+  assert.equal(pricing.calculateSavings(itemWithDiscount), 1500);
+  assert.equal(pricing.calculateSavingsPercent(itemWithDiscount), 20);
+
+  const itemWithoutDiscount = {
+    ...sample,
+    sellingPrice: 7500,
+    marketPrice: 13990,
+    discount: 0,
+  };
+  // No item discount: show marketPrice (13990) as higher price and our real price (7500) as current
+  assert.equal(pricing.getOriginalPrice(itemWithoutDiscount), 13990);
+  assert.equal(pricing.calculateFinalPrice(itemWithoutDiscount), 7500);
+  assert.equal(pricing.calculateSavings(itemWithoutDiscount), 6490);
+  assert.equal(pricing.calculateSavingsPercent(itemWithoutDiscount), 46);
+
+  const regularItem = {
+    ...sample,
+    sellingPrice: 7500,
+    marketPrice: 7500,
+    discount: 0,
+  };
+  assert.equal(pricing.getOriginalPrice(regularItem), 7500);
+  assert.equal(pricing.calculateFinalPrice(regularItem), 7500);
+  assert.equal(pricing.calculateSavings(regularItem), 0);
+});
+

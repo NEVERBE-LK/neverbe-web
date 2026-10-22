@@ -1,5 +1,6 @@
 import { serializeJsonLd } from "@/utils/seo";
 import { designTokens, themeCss } from "@/config/theme";
+import { BusinessInfo } from "@/config/BusinessInfo";
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./sportswear.css";
@@ -171,6 +172,10 @@ export default function RootLayout({
     areaServed: { "@type": "Country", name: "Sri Lanka" },
     url: "https://neverbe.lk",
     telephone: "+94729249999",
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      ...BusinessInfo.openingHours,
+    },
     address: {
       "@type": "PostalAddress",
       streetAddress: "330/4/10, New Kandy Road",

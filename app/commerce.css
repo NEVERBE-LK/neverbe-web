@@ -915,6 +915,9 @@ button.commerce-primary:disabled {
   font-size: 20px;
   font-weight: 650;
 }
+.commerce-product-price.has-discount strong {
+  color: var(--color-error);
+}
 .commerce-product-price del {
   font-size: 14px;
   color: var(--v2-text-secondary);
@@ -1856,6 +1859,9 @@ button.commerce-primary:disabled {
 }
 .commerce-item-price strong {
   font-weight: 650;
+}
+.commerce-item-price.has-discount strong {
+  color: var(--color-error);
 }
 .commerce-item-price del {
   font-size: 10px;

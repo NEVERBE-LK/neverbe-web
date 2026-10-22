@@ -70,10 +70,15 @@ export function hasDiscount(
 }
 
 /**
- * Get the original price to show with strikethrough
+ * Get the original price to show with strikethrough.
+ * For items with an item-level discount, the original price is our real selling price.
+ * For items without an item discount, show market price if higher than selling price.
  */
 export function getOriginalPrice(product: Product): number {
-  return product.marketPrice > product.sellingPrice
+  if ((product.discount || 0) > 0) {
+    return product.sellingPrice;
+  }
+  return (product.marketPrice || 0) > product.sellingPrice
     ? product.marketPrice
     : product.sellingPrice;
 }

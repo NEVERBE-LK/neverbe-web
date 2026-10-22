@@ -1,4 +1,5 @@
 import BrandLogo from "@/components/BrandLogo";
+import { BusinessInfo } from "@/config/BusinessInfo";
 import Link from "next/link";
 import { ArrowUpRight, MapPin, Phone, Mail, Clock } from "lucide-react";
 import {
@@ -159,7 +160,11 @@ export default function Footer({
               </a>
               <span className="sport-footer-hours">
                 <Clock size={13} className="shrink-0" />
-                <span>Mon – Sun · 9:00 AM – 7:00 PM (Thursday Closed)</span>
+                <span>
+                  {BusinessInfo.openingHoursLabel}
+                  <br />
+                  {BusinessInfo.closedDaysLabel}
+                </span>
               </span>
             </div>
           </div>

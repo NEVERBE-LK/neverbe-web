@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { contactInfo } from "@/constants";
+import { BusinessInfo } from "@/config/BusinessInfo";
 import Link from "next/link";
 
 const ContactDetailsSection = () => {
@@ -17,6 +18,14 @@ const ContactDetailsSection = () => {
       <p className="text-xs md:text-sm font-medium leading-relaxed text-secondary m-0 max-w-md">
         For inquiries regarding online orders, shipping, or product sizing, contact our team directly. We respond within 24 hours.
       </p>
+
+      <div className="text-sm leading-relaxed">
+        <h3 className="text-[10px] font-black uppercase tracking-widest text-accent mb-1">
+          Store Opening Hours
+        </h3>
+        <p className="text-primary m-0">{BusinessInfo.openingHoursLabel}</p>
+        <p className="text-secondary m-0">{BusinessInfo.closedDaysLabel}</p>
+      </div>
 
       <div className="space-y-4">
         {contactInfo.map((info, idx) => (
