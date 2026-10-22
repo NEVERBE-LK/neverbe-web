@@ -1,6 +1,6 @@
 import BrandLogo from "@/components/BrandLogo";
 import Link from "next/link";
-import { ArrowUpRight, MapPin, Phone, Mail } from "lucide-react";
+import { ArrowUpRight, MapPin, Phone, Mail, Clock } from "lucide-react";
 import {
   IoLogoFacebook,
   IoLogoInstagram,
@@ -158,7 +158,8 @@ export default function Footer({
                 <span>info@neverbe.lk</span>
               </a>
               <span className="sport-footer-hours">
-                Fri – Wed · 9:00 AM – 7:00 PM (Thursday Closed)
+                <Clock size={13} className="shrink-0" />
+                <span>Mon – Sun · 9:00 AM – 7:00 PM (Thursday Closed)</span>
               </span>
             </div>
           </div>
@@ -174,7 +175,7 @@ export default function Footer({
               className="sport-footer-location"
               aria-label="Store Location"
             >
-              <MapPin size={13} className="shrink-0" />
+              <MapPin size={12} className="shrink-0" />
               <span>Sri Lanka</span>
             </a>
             <span className="sport-footer-copyright">
