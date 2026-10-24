@@ -54,6 +54,8 @@ export async function generateMetadata(context: {
     };
   }
 
+  const query = catalogQuery(await context.searchParams, mapping.label);
+  const catalog = await getCatalogPage("/web/products", query.key);
   return collectionMetadata(
     {
       title: /neverbe/i.test(mapping.title) ? mapping.title : `${mapping.title} | NEVERBE`,
@@ -76,7 +78,8 @@ export async function generateMetadata(context: {
       twitter: { card: "summary_large_image", images: ["/collections-og.png"] },
     },
     `/collections/${mapping.slug}`,
-    catalogQuery(await context.searchParams, mapping.label),
+    query,
+    { empty: !catalog.error && catalog.total === 0 },
   );
 }
 
@@ -148,7 +151,7 @@ const CategoryPage = async (context: {
             <span className="text-primary">{mapping.h1}</span>
           </nav>
 
-          <span className="v2-section-label mb-2">Category Spotlight</span>
+          <span className="v2-section-label mb-2">Shop online in Sri Lanka</span>
           <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary mb-3">
             {mapping.h1}
           </h1>

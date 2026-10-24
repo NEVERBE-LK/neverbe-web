@@ -22,9 +22,9 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
   {
     slug: "sneakers",
     label: "Sneakers",
-    title: "Sneakers in Sri Lanka | Buy Sneakers Online",
+    title: "Sneakers Sri Lanka — Sizes & Prices | NEVERBE",
     description:
-      "Shop the best sneakers in Sri Lanka at Neverbe. Premium quality sneakers for men & women with Cash on Delivery island-wide.",
+      "Shop sneakers online in Sri Lanka. Compare men's and women's styles, prices in LKR, colours and available sizes at NEVERBE. Cash on delivery available.",
     keywords: [
       "sneakers sri lanka",
       "buy sneakers online",
@@ -34,14 +34,14 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
       "best sneakers 2026",
     ],
     h1: "Sneakers",
-    subtitle: "Premium sneakers for every style and occasion.",
+    subtitle: "Compare everyday sneakers by size, colour and price in LKR. Shop online with delivery across Sri Lanka.",
   },
   {
     slug: "running-shoes",
     label: "Running Shoes",
-    title: "Running Shoes in Sri Lanka | Buy Running Shoes Online",
+    title: "Running Shoes Sri Lanka — Sizes & Prices | NEVERBE",
     description:
-      "Shop running shoes in Sri Lanka at Neverbe. High-performance running footwear for men & women. Cash on Delivery island-wide.",
+      "Compare running shoes in Sri Lanka at NEVERBE. Browse current prices in LKR, available sizes and colours, with island-wide delivery and cash on delivery.",
     keywords: [
       "running shoes sri lanka",
       "buy running shoes online",
@@ -50,14 +50,14 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
       "sports shoes sri lanka",
     ],
     h1: "Running Shoes",
-    subtitle: "High-performance running footwear for every terrain.",
+    subtitle: "Browse running shoes, compare current prices in LKR and choose an available size. Delivery across Sri Lanka, with cash on delivery available.",
   },
   {
     slug: "slides-sandals",
     label: "Sandals & Slippers & Slides",
-    title: "Slides & Sandals in Sri Lanka | Casual Footwear Online",
+    title: "Slides, Sandals & Slippers Sri Lanka | NEVERBE",
     description:
-      "Shop slides, sandals & slippers in Sri Lanka at Neverbe. Comfortable casual footwear for men & women. Cash on Delivery island-wide.",
+      "Shop slides, sandals and slippers in Sri Lanka. Compare available sizes, colours and prices in LKR at NEVERBE. Island-wide delivery and cash on delivery.",
     keywords: [
       "slides sri lanka",
       "sandals sri lanka",
@@ -65,8 +65,8 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
       "casual footwear colombo",
       "mens slides sri lanka",
     ],
-    h1: "Slides & Sandals",
-    subtitle: "Comfort-first casual footwear for everyday wear.",
+    h1: "Slides, Sandals & Slippers",
+    subtitle: "Find everyday slides, sandals and slippers. Compare sizes, colours and prices in Sri Lankan rupees before choosing your pair.",
   },
   {
     slug: "boots",
@@ -151,9 +151,9 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
   {
     slug: "casual-shoes",
     label: "Casual Shoes",
-    title: "Casual Shoes Sri Lanka | Buy Casual Footwear Online - Neverbe",
+    title: "Casual Shoes Sri Lanka — Shop Online | NEVERBE",
     description:
-      "Shop casual shoes in Sri Lanka at Neverbe. Premium quality men's and women's casual footwear, loafers, and daily wear with Cash on Delivery island-wide.",
+      "Browse casual shoes for men and women in Sri Lanka. Compare everyday footwear, available sizes and prices in LKR. Shop NEVERBE with cash on delivery.",
     keywords: [
       "casual shoes sri lanka",
       "buy casual shoes online",
@@ -166,9 +166,9 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
   {
     slug: "chunky-shoes",
     label: "Chunky Shoes",
-    title: "Chunky Shoes Sri Lanka | Chunky Sneakers Online - Neverbe",
+    title: "Chunky Shoes & Sneakers Sri Lanka | NEVERBE",
     description:
-      "Shop the best chunky shoes and chunky sneakers in Sri Lanka at Neverbe. Premium quality ladies chunky sneakers and dad shoes with Cash on Delivery island-wide.",
+      "Shop chunky shoes and sneakers in Sri Lanka. Explore available colours, sizes and current prices in LKR at NEVERBE. Delivery across the island.",
     keywords: [
       "chunky shoes sri lanka",
       "ladies chunky shoes",
@@ -197,9 +197,9 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
   {
     slug: "sports-shoes",
     label: "Sports Shoes",
-    title: "Sports Shoes Sri Lanka | Athletic & Gym Footwear - Neverbe",
+    title: "Sports & Gym Shoes Sri Lanka | NEVERBE",
     description:
-      "Shop sports shoes in Sri Lanka at Neverbe. High-quality athletic footwear, training shoes, and gym sneakers with Cash on Delivery island-wide.",
+      "Explore sports and gym shoes in Sri Lanka. Compare product details, prices in LKR and available sizes at NEVERBE. Cash on delivery available.",
     keywords: [
       "sports shoes sri lanka",
       "athletic shoes colombo",
@@ -207,7 +207,7 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
       "training sneakers online",
     ],
     h1: "Sports Shoes",
-    subtitle: "Designed for peak performance, training, and athletic activities.",
+    subtitle: "Compare sports footwear by fit, size and price. Check each product's intended use before choosing shoes for your training.",
   },
   {
     slug: "outdoor-hiking-shoes",
@@ -225,6 +225,11 @@ export const CATEGORY_MAPPINGS: CategoryMapping[] = [
     subtitle: "Rugged and durable footwear built for adventure and hiking trails.",
   },
 ];
+
+/** Main shopping paths: established footwear collections, not faceted search URLs. */
+export const FEATURED_COLLECTION_SLUGS = [
+  "running-shoes", "sneakers", "casual-shoes", "slides-sandals", "sports-shoes", "chunky-shoes",
+] as const;
 
 /**
  * Find a category mapping by its URL slug.

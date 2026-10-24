@@ -1,3 +1,4 @@
+import { SHIPPING_TIMES } from "@/config/shipping";
 import {
   PayHereWhiteLongBanner,
 } from "@/assets/images";
@@ -185,7 +186,7 @@ export const shippingReturnPolicy = [
   {
     title: "Shipping Times",
     description:
-      "Orders are typically processed and shipped within 1-2 business days. Delivery times may vary depending on your location, but most orders are delivered within 2-6 business days.",
+      SHIPPING_TIMES,
   },
   {
     title: "Order Tracking",
@@ -299,7 +300,7 @@ export const faqs = [
   },
   {
     question: "What is the delivery time?",
-    answer: "We deliver the product within 6-10 days of purchase.",
+    answer: SHIPPING_TIMES,
   },
   {
     question: "What is the shipping policy?",

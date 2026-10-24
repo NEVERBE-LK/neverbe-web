@@ -1,5 +1,6 @@
 import axiosInstance from "./axiosInstance";
 import { getCategoryBySlug, categoryLabelToSlug } from "@/utils/categorySlug";
+import { catalogSitemapEntries } from "@/utils/catalogSitemap";
 
 export const getProducts = async (params: any = {}) => {
   try {
@@ -122,7 +123,7 @@ export const getCategoriesForSitemap = async () => {
   }
 };
 
-export const getProductsForSitemap = async () => {
+export const getCatalogForSitemap = async () => {
   try {
     const first = await axiosInstance.get("/web/products?page=1&size=200");
     const products = [...(first.data.dataList || [])];
@@ -140,19 +141,7 @@ export const getProductsForSitemap = async () => {
         products.push(...(response.data.dataList || [])),
       );
     }
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://neverbe.lk";
-    return products
-      .filter(
-        (p: any) => p.id && p.id !== "undefined" && String(p.id).trim() !== "",
-      )
-      .map((p: any) => ({
-        url: `${baseUrl}/collections/products/${p.id}`,
-        priority: 0.8,
-        ...(p.updatedAt && !Number.isNaN(new Date(p.updatedAt).getTime())
-          ? { lastModified: new Date(p.updatedAt) }
-          : {}),
-        changeFrequency: "daily",
-      }));
+    return catalogSitemapEntries(products);
   } catch (error) {
     console.error("Failed to fetch products for sitemap:", error);
     return [];

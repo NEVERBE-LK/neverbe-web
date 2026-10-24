@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import CollectionAdvice from "@/components/CollectionAdvice";
+import ShopByCategory from "@/components/ShopByCategory";
 import {
   catalogPageExists,
   catalogQuery,
@@ -20,9 +21,9 @@ import Link from "next/link";
 export const revalidate = 3600;
 
 const baseMetadata: Metadata = {
-  title: "Shop Shoes, Clothing & Apparel | Neverbe Sri Lanka",
+  title: "Buy Shoes Online Sri Lanka — Sizes & Prices | NEVERBE",
   description:
-    "Browse the full Neverbe collection — sneakers, t-shirts, activewear, sportswear, slides, accessories and more. Premium quality. Cash on Delivery island-wide.",
+    "Shop shoes online in Sri Lanka. Compare sneakers, running shoes, slides and accessories by size and price in LKR. Cash on delivery available at NEVERBE.",
   keywords: [
     "buy shoes online sri lanka",
     "buy clothing online sri lanka",
@@ -44,9 +45,9 @@ const baseMetadata: Metadata = {
   ],
   alternates: { canonical: "https://neverbe.lk/collections/products" },
   openGraph: {
-    title: "Shop Shoes, Clothing & Apparel | Neverbe Sri Lanka",
+    title: "Buy Shoes Online Sri Lanka | NEVERBE",
     description:
-      "Browse the full Neverbe collection. Sneakers, clothing, activewear, sportswear and more at best prices. Cash on Delivery island-wide.",
+      "Compare sneakers, running shoes, slides and accessories by size and price in LKR. Shop online with cash on delivery across Sri Lanka.",
     url: "https://neverbe.lk/collections/products",
     type: "website",
     siteName: "Neverbe",
@@ -62,9 +63,9 @@ const baseMetadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shop Neverbe | Shoes, Clothing & Apparel",
+    title: "Buy Shoes Online Sri Lanka | NEVERBE",
     description:
-      "Premium quality shoes & clothing. Cash on Delivery island-wide.",
+      "Compare shoes, sizes and prices in LKR. Cash on delivery across Sri Lanka.",
     images: ["/collections-og.png"],
   },
   metadataBase: new URL("https://neverbe.lk"),
@@ -94,9 +95,9 @@ const Page = async ({
     notFound();
 
   const productListingSchema = collectionStructuredData({
-    name: "Shop shoes, clothing & apparel in Sri Lanka",
+    name: "Shop shoes online in Sri Lanka",
     description:
-      "Browse sneakers, activewear, clothing and accessories. Compare styles, sizes and prices in LKR.",
+      "Browse sneakers, running shoes, slides and accessories. Compare styles, sizes and prices in LKR.",
     path: "/collections/products",
     query,
     items: productList,
@@ -127,14 +128,16 @@ const Page = async ({
 
           <span className="v2-section-label mb-2">Exclusive Lineup</span>
           <h1 className="v2-section-title text-[clamp(2.5rem,6vw,4.5rem)] font-black uppercase tracking-tight text-primary mb-3">
-            All Products
+            Shoes &amp; Accessories
           </h1>
           <p className="text-[15px] font-medium text-secondary max-w-xl">
-            Sneakers, activewear, slides, accessories &amp; lifestyle essentials
+            Sneakers, running shoes, slides, accessories &amp; everyday footwear
             delivered island-wide.
           </p>
         </div>
       </div>
+
+      <ShopByCategory />
 
       {/* Product Grid & Filter Layout */}
       <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-10 md:py-16">

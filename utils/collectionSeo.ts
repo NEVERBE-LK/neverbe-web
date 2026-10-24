@@ -6,6 +6,7 @@ export function collectionMetadata(
   base: Metadata,
   path: string,
   query: CatalogQuery,
+  options: { empty?: boolean } = {},
 ): Metadata {
   // Facets and sorting are browsing states; curated collections have their own indexable URLs.
   const canonical = absoluteUrl(
@@ -20,7 +21,7 @@ export function collectionMetadata(
     alternates: { ...base.alternates, canonical },
     openGraph: { ...base.openGraph, title: pageTitle, url: canonical },
     twitter: { ...base.twitter, title: pageTitle },
-    robots: { index: !query.filtered, follow: true },
+    robots: { index: !query.filtered && !options.empty, follow: true },
   };
 }
 

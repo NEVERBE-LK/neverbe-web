@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Rate } from "antd";
 import ComponentLoader from "@/components/ComponentLoader";
 import axiosInstance from "@/actions/axiosInstance";
@@ -13,15 +13,7 @@ import dynamic from "next/dynamic";
 import ReCaptchaProviderWrapper from "@/app/(site)/components/ReCaptchaProvider";
 const ReviewForm = dynamic(() => import("@/components/ReviewForm"));
 import { Product } from "@/interfaces/Product";
-
-interface Review {
-  reviewId: string;
-  userName: string;
-  rating: number;
-  review: string;
-  source?: "GOOGLE" | "WEB";
-  createdAt: string;
-}
+import { normalizeProductReviews, displayedReviewAverage, type ProductReview as Review } from "@/utils/productReviews";
 
 interface ProductReviewsProps {
   product: Product;
@@ -45,10 +37,10 @@ function ProductReviewCard({ review }: { review: Review }) {
             </span>
             <span className="text-[10px] text-muted uppercase tracking-wider font-extrabold block mt-0.5">
               {review.source === "GOOGLE"
-                ? "Verified Google Review"
-                : formatDistanceToNow(new Date(review.createdAt), {
+                ? "Google Review"
+                : review.createdAt ? formatDistanceToNow(new Date(review.createdAt), {
                     addSuffix: true,
-                  })}
+                  }) : "Customer review"}
             </span>
           </div>
         </div>
@@ -60,13 +52,13 @@ function ProductReviewCard({ review }: { review: Review }) {
           className="mb-3 block"
         />
 
-        <p
+        {review.review && <p
           className={`text-xs text-secondary leading-relaxed font-medium italic m-0 transition-all ${
             !isExpanded && isLong ? "line-clamp-3" : ""
           }`}
         >
           &ldquo;{review.review}&rdquo;
-        </p>
+        </p>}
 
         {isLong && (
           <button
@@ -90,49 +82,36 @@ function ProductReviewCard({ review }: { review: Review }) {
 const ProductReviews = ({ product }: ProductReviewsProps) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { user } = useSelector((state: RootState) => state.authSlice);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async (signal?: AbortSignal) => {
     setLoading(true);
+    setLoadError(false);
     try {
       const res = await axiosInstance.get(
-        `/web/reviews?itemId=${product.id}&limit=20`,
+        `/web/reviews?itemId=${encodeURIComponent(product.id)}&limit=20`,
+        { signal },
       );
-      const rawData = Array.isArray(res.data)
-        ? res.data
-        : Array.isArray(res.data?.reviews)
-          ? res.data.reviews
-          : Array.isArray(res.data?.data)
-            ? res.data.data
-            : [];
-
-      const mappedReviews: Review[] = rawData.map((r: any, idx: number) => ({
-        reviewId: r.reviewId || r.id || r._id || `review-${idx}`,
-        userName: r.userName || r.author_name || r.name || "Verified Customer",
-        rating: typeof r.rating === "number" ? r.rating : 5,
-        review:
-          r.review ||
-          r.text ||
-          r.comment ||
-          r.reviewText ||
-          r.content ||
-          "Great product and excellent quality!",
-        source: r.source || "WEB",
-        createdAt: r.createdAt || r.date || new Date().toISOString(),
-      }));
-
-      setReviews(mappedReviews);
+      if (!signal?.aborted) setReviews(normalizeProductReviews(res.data));
     } catch (error) {
-      console.error("Failed to fetch reviews", error);
+      if (!signal?.aborted) {
+        setReviews([]);
+        setLoadError(true);
+        console.error("Failed to fetch reviews", error);
+      }
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
-  };
+  }, [product.id]);
 
   useEffect(() => {
-    fetchReviews();
-  }, [product.id]);
+    const controller = new AbortController();
+    void fetchReviews(controller.signal);
+    return () => controller.abort();
+  }, [fetchReviews]);
+  const average = displayedReviewAverage(reviews);
 
   const handleWriteReview = () => {
     if (!user) {
@@ -148,22 +127,22 @@ const ProductReviews = ({ product }: ProductReviewsProps) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
           <span className="v2-section-label text-[10px] mb-1 block">
-            VERIFIED FEEDBACK
+            CUSTOMER FEEDBACK
           </span>
           <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-primary m-0">
             Customer Reviews
           </h2>
-          <div className="flex items-center gap-3 mt-2">
-            <Rate
+          {!loading && !loadError && <div className="flex items-center gap-3 mt-2">
+            {average !== null && <Rate
               disabled
               allowHalf
-              defaultValue={4.5}
+              value={average}
               style={{ color: "var(--color-accent)", fontSize: 14 }}
-            />
+            />}
             <span className="text-xs font-black uppercase tracking-wider text-secondary">
-              {reviews.length} {reviews.length === 1 ? "Review" : "Reviews"}
+              {average !== null ? `${average.toFixed(1)} / 5 · ${reviews.length} displayed ${reviews.length === 1 ? "review" : "reviews"}` : "No reviews yet"}
             </span>
-          </div>
+          </div>}
         </div>
 
         <button
@@ -179,6 +158,8 @@ const ProductReviews = ({ product }: ProductReviewsProps) => {
       <div className="w-full">
         {loading ? (
           <ComponentLoader />
+        ) : loadError ? (
+          <p role="status" className="text-sm text-secondary">Reviews could not be loaded. <button type="button" className="underline" onClick={() => void fetchReviews()}>Try again</button></p>
         ) : reviews.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {reviews.map((review) => (

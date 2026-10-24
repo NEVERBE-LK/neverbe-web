@@ -5,18 +5,19 @@ import { ArrowUpRight, Truck, CreditCard, MapPin } from "lucide-react";
 import Hero from "./components/Hero";
 import ProductShowcase from "./components/ProductShowcase";
 import SEOContent from "./components/SEOContent";
+import ShopByCategory from "@/components/ShopByCategory";
 import { getRecentItems, getHotProducts } from "@/actions/productAction";
 import { getSliders } from "@/actions/slideAction";
 
 export const metadata: Metadata = {
-  title: { absolute: "NEVERBE | Sneakers, Sportswear & Clothing Sri Lanka" },
+  title: { absolute: "NEVERBE | Shoes, Sneakers & Slides Online Sri Lanka" },
   description:
-    "Find your next move at NEVERBE. Shop sneakers, running shoes, sportswear and everyday clothing online in Sri Lanka. Island-wide delivery and cash on delivery.",
+    "Shop sneakers, running shoes, slides and everyday footwear online at NEVERBE Sri Lanka. Compare sizes and prices in LKR, with island-wide cash on delivery.",
   alternates: { canonical: "https://neverbe.lk" },
   openGraph: {
     title: "NEVERBE — Never stand still",
     description:
-      "Sneakers, sportswear and everyday essentials. Shop online with delivery across Sri Lanka.",
+      "Sneakers, running shoes, slides and everyday footwear. Compare sizes and prices with delivery across Sri Lanka.",
     url: "https://neverbe.lk",
     siteName: "Neverbe",
     locale: "en_LK",
@@ -36,7 +37,7 @@ const categories = [
   {
     name: "The everyday rotation.",
     label: "SNEAKERS & FOOTWEAR",
-    href: "/collections/products",
+    href: "/collections/sneakers",
     image:
       "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80",
     alt: "Red sports sneaker on a bold red background",
@@ -44,8 +45,8 @@ const categories = [
   },
   {
     name: "Made to move.",
-    label: "SPORT & ACTIVEWEAR",
-    href: "/collections/activewear",
+    label: "RUNNING SHOES",
+    href: "/collections/running-shoes",
     image:
       "https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&w=900&q=80",
     alt: "Athlete stretching outdoors in activewear",
@@ -54,10 +55,10 @@ const categories = [
   {
     name: "Off-duty. On point.",
     label: "EVERYDAY STYLE",
-    href: "/collections/products?gender=men",
+    href: "/collections/casual-shoes",
     image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
-    alt: "White everyday cotton t-shirt",
+      "https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=900&q=80",
+    alt: "Sneakers styled for everyday wear",
     className: "sport-category-style",
   },
 ];
@@ -81,6 +82,7 @@ export default async function Home() {
           <MapPin size={19} /> From our island. For your journey.
         </span>
       </div>
+      <ShopByCategory />
       <section
         id="discover"
         className="sport-section"

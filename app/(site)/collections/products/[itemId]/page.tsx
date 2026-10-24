@@ -1,6 +1,7 @@
 import {
   absoluteUrl,
-  plainDescription,
+  productSearchName,
+  productSearchDescription,
   productStructuredData,
   serializeJsonLd,
 } from "@/utils/seo";
@@ -42,14 +43,10 @@ export async function generateMetadata(context: {
     };
   }
 
-  const safeTitle = `${item.name}`;
+  const safeTitle = productSearchName(item);
   const categoryLabel = item.category || "apparel";
   const ogImageUrl = `https://neverbe.lk/api/og/product/${item.id}`;
-  const description = plainDescription(
-    item.description ||
-      `Shop ${item.name}, ${categoryLabel}, online at NEVERBE Sri Lanka. View available sizes, colours and current pricing in LKR.`,
-    160,
-  );
+  const description = productSearchDescription(item);
 
   return {
     metadataBase: new URL("https://neverbe.lk"),

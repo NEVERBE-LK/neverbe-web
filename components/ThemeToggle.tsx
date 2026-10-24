@@ -9,7 +9,11 @@ function applyTheme(theme: "light" | "dark") {
   document.documentElement.classList.toggle("light", theme === "light");
 }
 
-export default function ThemeToggle() {
+export default function ThemeToggle({
+  className = "",
+}: {
+  className?: string;
+} = {}) {
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const followSystem = () => {
@@ -37,7 +41,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="sport-icon sport-theme-toggle"
+      className={`sport-icon sport-theme-toggle ${className}`.trim()}
       aria-label="Toggle light and dark mode"
       title="Toggle light and dark mode"
     >

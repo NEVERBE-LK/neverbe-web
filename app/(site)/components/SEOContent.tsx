@@ -9,14 +9,14 @@ export default function SEOContent() {
       <div>
         <p className="sport-eyebrow">YOUR LOCAL DESTINATION</p>
         <h2 id="local-heading">
-          Sneakers & sportswear.
+          Shoes, sneakers & slides.
           <br />
           Delivered across Sri Lanka.
         </h2>
       </div>
       <div>
         <p>
-          Discover sneakers, running shoes, activewear and everyday clothing at
+          Discover sneakers, running shoes, slides and everyday footwear at
           NEVERBE. Shop online from Colombo, Kandy, Galle, Jaffna and across the
           island, with prices in Sri Lankan rupees and cash on delivery
           available.
@@ -28,7 +28,9 @@ export default function SEOContent() {
         </p>
         <div className="sport-local-links">
           <Link href="/collections/new-arrivals">New arrivals</Link>
-          <Link href="/collections/products">Shoes & clothing</Link>
+          <Link href="/collections/running-shoes">Running shoes</Link>
+          <Link href="/collections/slides-sandals">Slides &amp; sandals</Link>
+          <Link href="/collections/products">All footwear &amp; accessories</Link>
           <Link href="/policies/shipping-return-policy">
             Delivery & returns
           </Link>

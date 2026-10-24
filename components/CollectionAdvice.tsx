@@ -1,17 +1,31 @@
 import Link from "next/link";
+import { FEATURED_COLLECTION_SLUGS, getCategoryBySlug } from "@/utils/categorySlug";
 
-const guides: Record<string, { title: string; body: string }> = {
+const guides: Record<string, { title: string; body: string; questions?: { title: string; answer: string }[] }> = {
   sneakers: {
     title: "Choose sneakers for your routine",
     body: "Think about where you will wear your sneakers most: commuting, casual outings or everyday walking. Compare the listed sizes and colour options, and use the size guide before selecting a pair.",
+    questions: [
+      { title: "How can I compare sneaker prices?", answer: "Each product shows its current price in LKR. Open a style to compare colours and available sizes, then review the delivery charge at checkout when comparing your total cost." },
+      { title: "Are the same styles available for men and women?", answer: "Check the product's listed sizing and available options rather than relying only on its gender label. Size availability varies by colour, and different styles can fit differently." },
+    ],
   },
   "running-shoes": {
     title: "Find the right fit for your runs",
     body: "Consider your usual running surface, distance and preferred fit. Check each product's description for its intended use; casual sneakers and running footwear can serve different needs. Contact us if a fit or construction detail is missing.",
+    questions: [
+      { title: "What are the running shoe prices in Sri Lanka?", answer: "The products above show current NEVERBE prices in Sri Lankan rupees. Open a pair to see available colours and sizes. Delivery charges are shown at checkout so you can compare the full order cost." },
+      { title: "How do I choose a running shoe size?", answer: "Measure both feet and compare the longer measurement with the product size guide. Check which sizing system is shown, allow for the socks you will wear, and select your colour before checking size availability. Ask us if a product's measurements are unclear." },
+      { title: "Can I use the same shoes for running and the gym?", answer: "Match footwear to the activity described on its product page. A casual style or a shoe intended for running may not suit every gym activity. Compare the sports-shoe collection and ask about the exact model before ordering." },
+    ],
   },
   "slides-sandals": {
     title: "Choose your everyday slides or sandals",
     body: "Compare the available sizes, strap shape and coverage in the product photos. Think about how you plan to wear the pair, and check the size guide instead of assuming all brands fit alike.",
+    questions: [
+      { title: "What is the difference between slides and sandals?", answer: "Slides usually have an open back and a band across the foot; sandals can have additional straps or a heel fastening. Compare the actual product photos for coverage and fastening, as designs vary." },
+      { title: "How do I check slide and slipper sizes?", answer: "Choose a style and colour to see its size options. Compare the size guide with your foot measurement and contact us if you need dimensions. Do not assume your sneaker size will fit every slide." },
+    ],
   },
   boots: {
     title: "Check the fit before choosing boots",
@@ -64,6 +78,12 @@ export default function CollectionAdvice({
       <div>
         <h2 id="collection-advice-title">{guide.title}</h2>
         <p>{guide.body}</p>
+        {guide.questions?.map((question) => (
+          <details key={question.title} className="collection-question">
+            <summary>{question.title}</summary>
+            <p>{question.answer}</p>
+          </details>
+        ))}
       </div>
       <div>
         <h2>Ordering in Sri Lanka</h2>
@@ -82,11 +102,11 @@ export default function CollectionAdvice({
       <div>
         <h2>Explore collections</h2>
         <div className="collection-advice-links">
-          <Link href="/collections/sneakers">Sneakers</Link>
-          <Link href="/collections/running-shoes">Running shoes</Link>
-          <Link href="/collections/mens-clothing">Clothing</Link>
-          <Link href="/collections/activewear">Activewear</Link>
-          <Link href="/collections/slides-sandals">Slides &amp; sandals</Link>
+          {FEATURED_COLLECTION_SLUGS.filter((slug) => slug !== collection).map((slug) => (
+            <Link key={slug} href={`/collections/${slug}`}>
+              {getCategoryBySlug(slug)!.h1}
+            </Link>
+          ))}
         </div>
       </div>
     </section>

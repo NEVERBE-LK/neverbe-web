@@ -10,9 +10,40 @@ export function absoluteUrl(path: string) {
 export function plainDescription(value: string, limit = 300) {
   return value
     .replace(/<[^>]*>/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`#]+/g, "")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, limit);
+}
+
+/** Preserve an explicit catalog disclosure when a long description is shortened for search. */
+export function productSearchName(product: Product) {
+  const name = product.name.trim();
+  const brand = product.brand?.trim();
+  const hasBrand = !brand || name.toLowerCase().includes(brand.toLowerCase());
+  const displayName = hasBrand || /^(fashion|generic|unbranded)$/i.test(brand)
+    ? name
+    : `${brand} ${name}`;
+  const disclosedReplica = /\b(?:this is a (?:high[- ]quality )?replica|not a genuine original)\b/i.test(
+    plainDescription(product.description || "", 10000),
+  );
+  return disclosedReplica && !/\breplica\b/i.test(displayName)
+    ? `${displayName} (Replica)`
+    : displayName;
+}
+
+export function productSearchDescription(product: Product) {
+  const name = productSearchName(product);
+  const description = plainDescription(product.description || "", 160);
+  // The name includes any explicit replica disclosure, even if it was at the end of the catalog text.
+  if (/\(Replica\)$/.test(name)) {
+    return plainDescription(`${name}. View available sizes, colours and prices in LKR at NEVERBE Sri Lanka.`, 160);
+  }
+  return description || plainDescription(
+    `Shop ${name}, ${product.category || "footwear"}, online at NEVERBE Sri Lanka. View available sizes, colours and current pricing in LKR.`,
+    160,
+  );
 }
 
 /** Escape markup delimiters so catalog text cannot terminate a JSON-LD script. */
@@ -41,7 +72,7 @@ export function productStructuredData(product: Product) {
     "@context": "https://schema.org",
     "@type": "Product",
     "@id": `${canonical}#product`,
-    name: product.name,
+    name: productSearchName(product),
     url: canonical,
     image: [...new Set(images)].slice(0, 8).map(absoluteUrl),
     description: plainDescription(

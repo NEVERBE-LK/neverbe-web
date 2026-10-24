@@ -1,8 +1,5 @@
 import { MetadataRoute } from "next";
-import {
-  getProductsForSitemap,
-  getCategoriesForSitemap,
-} from "@/actions/productAction";
+import { getCatalogForSitemap } from "@/actions/productAction";
 import { getCombosForSitemap } from "@/actions/promotionAction";
 
 export const revalidate = 3600;
@@ -30,9 +27,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Dynamically fetch catalog data
-    const [products, categories, combos] = await Promise.all([
-      getProductsForSitemap(),
-      getCategoriesForSitemap(),
+    const [catalog, combos] = await Promise.all([
+      getCatalogForSitemap(),
       getCombosForSitemap(),
     ]);
 
@@ -61,8 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     const entries = [
       ...staticPages,
-      ...processDynamicUrls(categories),
-      ...processDynamicUrls(products),
+      ...catalog,
       ...processDynamicUrls(combos),
     ];
     return [...new Map(entries.map((entry) => [entry.url, entry])).values()];

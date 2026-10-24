@@ -80,7 +80,7 @@ export default function Header({
           >
             <Search size={21} />
           </Link>
-          <ThemeToggle />
+          <ThemeToggle className="sport-nav-theme" />
           <Link
             href="/account"
             className="sport-icon sport-account"

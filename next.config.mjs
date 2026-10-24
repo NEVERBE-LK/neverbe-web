@@ -58,6 +58,12 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // Preview deployments must not compete with the public storefront.
+        source: "/:path*",
+        has: [{ type: "host", value: "(?!neverbe\\.lk$|www\\.neverbe\\.lk$).+" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      {
         source: "/brand/:path*",
         headers: [
           {
@@ -88,6 +94,12 @@ const nextConfig = {
 
   async redirects() {
     return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www\\.neverbe\\.lk" }],
+        destination: "https://neverbe.lk/:path*",
+        permanent: true,
+      },
       {
         source: "/collections/deals",
         destination: "/collections/offers",

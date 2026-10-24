@@ -37,6 +37,35 @@ function loadTs(relative, mocks = {}) {
   return mod.exports;
 }
 const seo = loadTs("utils/seo.ts");
+test("reviews never invent ratings, praise, verification or dates", () => {
+  const { normalizeProductReviews, displayedReviewAverage } = loadTs("utils/productReviews.ts");
+  const reviews = normalizeProductReviews({ reviews: [
+    { id: "one", rating: 4, review: "Good fit", userName: "A", createdAt: "2026-10-01" },
+    { id: "two", rating: 2, createdAt: "invalid" },
+    { id: "no-rating", review: "Unrated" },
+    { id: "out-of-range", rating: 9 },
+    { id: "nan", rating: NaN },
+    null,
+  ] });
+  assert.equal(reviews.length, 2);
+  assert.equal(reviews[1].review, "");
+  assert.equal(reviews[1].userName, "Customer");
+  assert.equal(reviews[1].createdAt, undefined);
+  assert.equal(displayedReviewAverage(reviews), 3);
+  assert.equal(displayedReviewAverage([]), null);
+  assert.equal(normalizeProductReviews([{ id: "same", rating: 4 }, { id: "same", rating: 4 }]).length, 1);
+});
+test("shipping quotes distinguish free delivery from unavailable and stale quotes", () => {
+  const { parseShippingCost, currentShippingCost } = loadTs("utils/shippingQuote.ts");
+  for (const invalid of [undefined, null, "", "500", NaN, Infinity, -1])
+    assert.equal(parseShippingCost(invalid), null);
+  assert.equal(parseShippingCost(0), 0);
+  assert.equal(parseShippingCost(350), 350);
+  assert.equal(currentShippingCost({ key: "old-cart", status: "ready", cost: 0 }, "new-cart"), null);
+  for (const status of ["loading", "error"])
+    assert.equal(currentShippingCost({ key: "cart", status }, "cart"), null);
+  assert.equal(currentShippingCost({ key: "cart", status: "ready", cost: 0 }, "cart"), 0);
+});
 const sample = {
   id: "runner-1",
   name: "Everyday Runner",
@@ -86,6 +115,35 @@ test("catalog text cannot close a JSON-LD script element", () => {
   const serialized = seo.serializeJsonLd({ name });
   assert.equal(serialized.includes("<"), false);
   assert.equal(JSON.parse(serialized).name, name);
+});
+test("product search labels include the catalog brand once and preserve explicit disclosures", () => {
+  const product = { ...sample, brand: "Example", name: "Road Runner" };
+  assert.equal(seo.productSearchName(product), "Example Road Runner");
+  assert.equal(seo.productSearchName({ ...product, name: "Example Road Runner" }), "Example Road Runner");
+  assert.equal(seo.productSearchName({ ...product, brand: "Fashion" }), "Road Runner");
+  const replica = { ...product, description: "Long introduction. ".repeat(30) + "<p>Disclaimer: This is a high-quality replica product, not a genuine original.</p>" };
+  assert.equal(seo.productSearchName(replica), "Example Road Runner (Replica)");
+  assert.match(seo.productSearchDescription(replica), /\(Replica\)/);
+  assert.ok(seo.productSearchDescription(replica).length <= 160);
+  assert.equal(seo.productSearchName({ ...product, description: "This is not a replica." }), "Example Road Runner");
+  assert.equal(seo.plainDescription("**Soft** lining and [size details](/sizes)."), "Soft lining and size details.");
+});
+test("sitemap includes published catalog categories even when the dropdown omits them", () => {
+  const { catalogSitemapEntries } = loadTs("utils/catalogSitemap.ts");
+  const entries = catalogSitemapEntries([
+    { ...sample, category: "Running Shoes", updatedAt: "2026-10-21T00:00:00Z" },
+    { ...sample, id: "sold out", category: "Running Shoes", inStock: false },
+    { ...sample, id: "hidden", listing: false, category: "Activewear" },
+    { ...sample, id: "deleted", isDeleted: true },
+    { ...sample, id: "inactive", status: false },
+  ]);
+  assert.deepEqual(entries.map(e => e.url), [
+    "https://neverbe.lk/collections/products/runner-1",
+    "https://neverbe.lk/collections/running-shoes",
+    "https://neverbe.lk/collections/products/sold%20out",
+  ]);
+  assert.equal(entries[0].lastModified.toISOString(), "2026-10-21T00:00:00.000Z");
+  assert.equal(entries[2].lastModified, undefined);
 });
 test("light and dark theme roles stay complete and use one source", () => {
   const { designTokens, themeCss } = loadTs("config/theme.ts");
@@ -227,6 +285,9 @@ test("unfiltered collection pages have distinct canonicals; facets stay noindex"
     filtered.alternates.canonical,
     "https://neverbe.lk/collections/sneakers",
   );
+  const empty = collections.collectionMetadata(base, "/collections/sneakers", catalog.catalogQuery({}), { empty: true });
+  assert.equal(empty.robots.index, false);
+  assert.equal(empty.robots.follow, true);
 });
 test("collection schema describes this page's actual links without invented offers", () => {
   const schema = collections.collectionStructuredData({

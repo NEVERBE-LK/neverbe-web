@@ -37,6 +37,8 @@ import PaymentOptions from "./PaymentOptions";
 import CouponInput from "@/components/CouponInput";
 import PromotionBanner from "@/components/PromotionBanner";
 import { KOKOLogo } from "@/assets/images";
+import { DELIVERY_ESTIMATE } from "@/config/shipping";
+import { currentShippingCost, parseShippingCost, type ShippingQuote } from "@/utils/shippingQuote";
 
 const formatSriLankanPhoneNumber = (phone: string) => {
   const cleaned = phone.replace(/\D/g, "");
@@ -276,25 +278,35 @@ const CheckoutForm = () => {
 
   const [billingCustomer, setBillingCustomer] = useState<Customer>(initialCustomerState);
   const [shippingCustomer, setShippingCustomer] = useState<Partial<Customer> | null>(null);
-  const [shippingCost, setShippingCost] = useState<number>(0);
+  const shippingKey = useMemo(() => JSON.stringify({ items: bagItems }), [bagItems]);
+  const [shippingQuote, setShippingQuote] = useState<ShippingQuote>({ key: "", status: "loading" });
+  const [shippingRetry, setShippingRetry] = useState(0);
+  const shippingCost = currentShippingCost(shippingQuote, shippingKey);
+  const shippingError = shippingQuote.key === shippingKey && shippingQuote.status === "error";
+  const shippingLabel = shippingCost === null
+    ? shippingError ? "Unavailable" : "Calculating…"
+    : shippingCost === 0 ? "FREE" : `LKR ${shippingCost.toLocaleString("en-LK")}`;
 
   useEffect(() => {
+    const controller = new AbortController();
     const fetchShipping = async () => {
       try {
-        if (bagItems.length === 0) {
-          setShippingCost(0);
-          return;
-        }
         const formData = new FormData();
-        formData.append("data", JSON.stringify({ items: bagItems }));
-        const res = await axiosInstance.post("/web/shipping/calculate", formData);
-        setShippingCost(res.data?.cost || 0);
+        formData.append("data", shippingKey);
+        const res = await axiosInstance.post("/web/shipping/calculate", formData, { signal: controller.signal, timeout: 10000 });
+        const cost = parseShippingCost(res.data?.cost);
+        if (cost === null) throw new Error("Invalid shipping quote");
+        if (!controller.signal.aborted) setShippingQuote({ key: shippingKey, status: "ready", cost });
       } catch (error) {
-        console.error("Failed to fetch shipping cost", error);
+        if (!controller.signal.aborted) {
+          setShippingQuote({ key: shippingKey, status: "error" });
+          console.error("Failed to fetch shipping cost", error);
+        }
       }
     };
-    fetchShipping();
-  }, [bagItems]);
+    void fetchShipping();
+    return () => controller.abort();
+  }, [shippingKey, shippingRetry]);
 
   const {
     isProcessing,
@@ -392,10 +404,11 @@ const CheckoutForm = () => {
     0,
     rawSubTotal - itemDiscount - couponDiscount - promotionDiscount,
   );
-  const taxableBase = netItemTotal + shippingCost;
+  const taxableBase = netItemTotal + (shippingCost ?? 0);
   const feePercent = paymentFee || 0;
   const fee = parseFloat((taxableBase * (feePercent / 100)).toFixed(2));
   const finalTotal = taxableBase + fee;
+  const totalLabel = shippingCost === null ? "Awaiting delivery quote" : `LKR ${finalTotal.toLocaleString("en-LK")}`;
   const kokoInstallment = Math.round(finalTotal / 3);
 
   const totalQuantity = useMemo(
@@ -405,6 +418,10 @@ const CheckoutForm = () => {
 
   const handlePaymentSubmit = async () => {
     try {
+      if (shippingCost === null) {
+        toast.error("Please wait for the delivery quote, or retry if it could not be loaded.");
+        return;
+      }
       await form.validateFields();
       const values = form.getFieldsValue(true);
 
@@ -559,7 +576,7 @@ const CheckoutForm = () => {
             />
           </div>
           <span className="font-black text-sm text-primary">
-            LKR {finalTotal.toLocaleString()}
+            {totalLabel}
           </span>
         </button>
 
@@ -647,7 +664,7 @@ const CheckoutForm = () => {
               <div className="flex justify-between text-secondary">
                 <span>Shipping</span>
                 <span className="font-bold text-primary">
-                  {shippingCost === 0 ? <span className="text-accent">FREE</span> : `LKR ${shippingCost.toLocaleString()}`}
+                  {shippingLabel}
                 </span>
               </div>
               {fee > 0 && (
@@ -658,7 +675,7 @@ const CheckoutForm = () => {
               )}
               <div className="pt-3 border-t border-glass-border flex justify-between items-baseline">
                 <span className="text-xs font-black uppercase tracking-wider text-primary">Total</span>
-                <span className="text-xl font-black text-primary">LKR {finalTotal.toLocaleString()}</span>
+                <span className="text-xl font-black text-primary">{totalLabel}</span>
               </div>
             </div>
           </div>
@@ -923,16 +940,27 @@ const CheckoutForm = () => {
                       Standard Tracked Delivery (Sri Lanka)
                     </p>
                     <p className="text-[11px] text-secondary m-0 mt-0.5">
-                      Islandwide doorstep dispatch · 2 to 4 business days
+                      Estimated delivery · {DELIVERY_ESTIMATE}, depending on location
                     </p>
                   </div>
                 </div>
                 <div className="text-right shrink-0">
                   <span className="text-xs font-black uppercase tracking-wider text-primary">
-                    {shippingCost === 0 ? <span className="text-accent">FREE</span> : `LKR ${shippingCost.toLocaleString()}`}
+                    {shippingLabel}
                   </span>
                 </div>
               </div>
+              {shippingError && (
+                <div role="alert" className="text-sm text-secondary">
+                  We could not calculate delivery. Your order has not been submitted.{" "}
+                  <button type="button" className="underline font-bold" onClick={() => {
+                    setShippingQuote({ key: shippingKey, status: "loading" });
+                    setShippingRetry((value) => value + 1);
+                  }}>
+                    Retry delivery quote
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* 4. Payment Method */}
@@ -1071,7 +1099,7 @@ const CheckoutForm = () => {
             <div className="space-y-4 pt-2">
               <button
                 type="submit"
-                disabled={isProcessing || bagItems.length === 0 || !paymentType}
+                disabled={isProcessing || bagItems.length === 0 || !paymentType || shippingCost === null}
                 className="w-full h-15 rounded-full bg-accent text-accent-text font-black uppercase tracking-widest text-xs flex items-center justify-between px-8 cursor-pointer shadow-xl hover:opacity-95 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed border-none"
               >
                 <span className="flex items-center gap-2">
@@ -1079,7 +1107,7 @@ const CheckoutForm = () => {
                   <span>{isProcessing ? "Processing Order..." : "Complete Order"}</span>
                 </span>
                 <span className="text-sm font-black tracking-tight">
-                  LKR {finalTotal.toLocaleString()}
+                  {totalLabel}
                 </span>
               </button>
 
@@ -1097,8 +1125,8 @@ const CheckoutForm = () => {
                 </div>
                 <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface/60 border border-glass-border">
                   <FiShield size={16} className="text-primary" />
-                  <span className="text-[10px] font-black uppercase tracking-wider text-primary">Authentic Gear</span>
-                  <span className="text-[9px] text-muted">100% NEVERBE verified</span>
+                  <Link href="/contact" className="text-[10px] font-black uppercase tracking-wider text-primary underline">Need Help?</Link>
+                  <span className="text-[9px] text-muted">Contact our team</span>
                 </div>
               </div>
 
@@ -1243,7 +1271,7 @@ const CheckoutForm = () => {
                 <div className="flex justify-between text-secondary">
                   <span>Shipping</span>
                   <span className="font-bold text-primary">
-                    {shippingCost === 0 ? <span className="text-accent">FREE</span> : `LKR ${shippingCost.toLocaleString()}`}
+                    {shippingLabel}
                   </span>
                 </div>
 
@@ -1263,13 +1291,13 @@ const CheckoutForm = () => {
                     <span className="text-[10px] text-muted">Including taxes &amp; delivery</span>
                   </div>
                   <span className="text-2xl font-black text-primary tracking-tight">
-                    LKR {finalTotal.toLocaleString()}
+                    {totalLabel}
                   </span>
                 </div>
 
                 {/* Koko Note */}
                 <div className="p-3 rounded-xl bg-void border border-glass-border flex items-center justify-between gap-2 text-[11px] text-secondary mt-3">
-                  <span>or 3 payments of <strong>LKR {kokoInstallment.toLocaleString()}</strong> with</span>
+                  <span>{shippingCost === null ? "Instalment total available after delivery quote" : <>or 3 payments of <strong>LKR {kokoInstallment.toLocaleString()}</strong> with</>}</span>
                   <Image src={KOKOLogo} alt="Koko" width={38} height={16} className="object-contain" />
                 </div>
               </div>

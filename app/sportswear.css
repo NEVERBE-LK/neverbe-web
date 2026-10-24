@@ -853,6 +853,10 @@ a.sport-button-ink svg {
   .sport-mobile-menu {
     display: inline-flex;
   }
+  .sport-nav-theme,
+  .sport-nav .sport-theme-toggle {
+    display: none !important;
+  }
   .sport-nav {
     height: 72px;
   }

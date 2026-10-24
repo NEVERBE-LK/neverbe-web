@@ -34,7 +34,7 @@ const DEFAULT_EDITORIAL_SLIDES: HeroSlide[] = [
     titleSecondary: "STAND",
     titleEmphasis: "STILL.",
     description:
-      "For the early starts. The extra mile. The everyday. Find the footwear and apparel that move with you.",
+      "Shop sneakers, running shoes and slides in Sri Lanka. Find your size, compare prices and choose your next everyday pair.",
     primaryButtonText: "Shop new arrivals",
     primaryButtonLink: "/collections/new-arrivals",
     secondaryButtonText: "Explore the collection",
@@ -61,14 +61,14 @@ const DEFAULT_EDITORIAL_SLIDES: HeroSlide[] = [
     type: "editorial",
     url: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1920&q=85",
     alt: "Fitness athlete in high-performance training session",
-    eyebrow: "BUILT FOR INTENSITY",
+    eyebrow: "FIND YOUR NEXT PAIR",
     titlePrimary: "PUSH",
     titleSecondary: "PAST",
     titleEmphasis: "LIMITS.",
     description:
-      "Technical sweat-wicking activewear designed to keep up with your heaviest sessions and longest days.",
-    primaryButtonText: "Shop activewear",
-    primaryButtonLink: "/collections/activewear",
+      "Explore sports footwear by style, size and price. Check the product details and choose a pair for your routine.",
+    primaryButtonText: "Shop sports shoes",
+    primaryButtonLink: "/collections/sports-shoes",
     secondaryButtonText: "Bundle deals",
     secondaryButtonLink: "/collections/combos",
   },
@@ -92,6 +92,7 @@ const DEFAULT_EDITORIAL_SLIDES: HeroSlide[] = [
 
 export default function Hero({ slides = [] }: { slides?: Slide[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [firstImageLoaded, setFirstImageLoaded] = useState(false);
 
   // Combine curated hardcoded editorial slides with any marketing promotional banners from DB
   const slideList: HeroSlide[] = useMemo(() => {
@@ -126,7 +127,7 @@ export default function Hero({ slides = [] }: { slides?: Slide[] }) {
     >
       {slideList.map((slide, index) => {
         const isCurrent = index === currentIndex;
-        const isNext = index === (currentIndex + 1) % slideList.length;
+        const isNext = firstImageLoaded && index === (currentIndex + 1) % slideList.length;
         if (!isCurrent && !isNext && index !== 0) return null;
 
         const isBanner = slide.type === "banner";
@@ -137,6 +138,7 @@ export default function Hero({ slides = [] }: { slides?: Slide[] }) {
             alt={slide.alt}
             fill
             priority={index === 0}
+            onLoad={index === 0 ? () => setFirstImageLoaded(true) : undefined}
             sizes="100vw"
             className={`sport-hero-image ${
               isBanner ? "sport-hero-banner-image" : ""

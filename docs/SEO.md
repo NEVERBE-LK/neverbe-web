@@ -1,5 +1,7 @@
 # NEVERBE search visibility
 
+See [the October 2026 Search Console review](SEARCH-CONSOLE-2026-10-22.md) for the supplied report baseline, implemented opportunities, and deployment/measurement follow-up.
+
 ## Implemented
 
 - Server-rendered product results and crawlable `<a href>` pagination for all products, categories, new arrivals, offers and bundles. Each normal collection page has its own canonical URL and page title. First-page URLs omit `page=1`; page size is preserved when it changes the results.
@@ -7,7 +9,10 @@
 - Collection JSON-LD is shared `CollectionPage`, `ItemList` and breadcrumb markup referring to the actual products shown. Product offers stay on product detail pages; collection pages no longer invent shipping rates, delivery timelines, return windows, price expiry dates or bundle availability.
 - Request normalization is shared by server rendering and the client. Successful initial results are reused instead of immediately requesting the same inventory again. API failure renders a retry state rather than presenting fabricated inventory.
 - Useful collection buying guidance, delivery-policy links and category links replace sample bundle offers and unsupported promises. Product descriptions in metadata use the catalog description where present. Known product categories link directly to curated category URLs.
-- About, contact and policy markup refer to the root Organization entity, avoiding conflicting duplicate social and contact details. No local business hours or coordinates are invented.
+- About, contact and policy markup refer to the root Organization entity. The owner-supplied 09:00–19:00 opening hours and Thursday closure are shared by visible content and LocalBusiness markup. No coordinates are invented.
+- Catalog-derived sitemap entries include populated legacy categories missing from the category dropdown. Confirmed empty collection pages are noindex. Homepage and collection links prioritize actual footwear inventory.
+- The application redirects www permanently to the apex domain and sends noindex headers on alternate hosting domains. A hosting/CDN rule that runs first must also use a permanent redirect; the public www check returned 302 before deployment.
+- Search titles use actual brand/model information and retain explicit catalog replica disclosures. Product-review UI uses only valid returned ratings/text and labels its average as the displayed review sample.
 - The existing Firebase integration now receives production `web_vital` events after initial rendering. Fields: `metric_name`, `metric_value`, `metric_delta`, `metric_rating`, `metric_id`, `page_type`. Values use native Web Vitals units (milliseconds for LCP/INP, unitless CLS). Dynamic product/order IDs and queries are omitted from the custom page-type field. Existing analytics configuration and availability apply; this is instrumentation, not a measured performance score.
 - Optional server environment variable `GOOGLE_SITE_VERIFICATION` emits Google's verification meta tag only when configured with a real token.
 
