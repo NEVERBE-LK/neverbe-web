@@ -150,6 +150,21 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
   const [error, setError] = useState<string | null>(null);
   const [activeOrderId, setActiveOrderId] = useState<string>("");
 
+  const getRecaptchaToken = useCallback(
+    async (action: string): Promise<string> => {
+      try {
+        if (typeof executeRecaptcha === "function") {
+          const token = await executeRecaptcha(action);
+          return token || "";
+        }
+      } catch (err) {
+        console.warn(`reCAPTCHA execution skipped or failed for action "${action}":`, err);
+      }
+      return "";
+    },
+    [executeRecaptcha],
+  );
+
   // OTP state for COD
   const [otpState, setOtpState] = useState<OTPState>({
     showModal: false,
@@ -349,11 +364,7 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
    * Process COD Payment - initiates OTP flow with Server Order ID
    */
   const processCOD = async (order: Order, customer: Customer) => {
-    if (!executeRecaptcha) {
-      throw new Error("Recaptcha not ready");
-    }
-
-    const token = await executeRecaptcha("request_otp");
+    const token = await getRecaptchaToken("request_otp");
     await requestOTP(customer.phone, token);
 
     setOtpState({
@@ -383,11 +394,6 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
    */
   const processPayment = useCallback(
     async (orderData: Order, customer: Customer) => {
-      if (!executeRecaptcha) {
-        setError("Recaptcha not ready");
-        return;
-      }
-
       setIsProcessing(true);
       setError(null);
 
@@ -408,7 +414,7 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
         }
 
         // 3. Handle PayHere / KOKO Gateways
-        const token = await executeRecaptcha("new_order");
+        const token = await getRecaptchaToken("new_order");
 
         switch (options.paymentMethodId?.toUpperCase()) {
           case PAYMENT_METHOD_IDS.KOKO: {
@@ -453,14 +459,14 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
    */
   const handleOTPVerification = useCallback(
     async (otp: string) => {
-      if (!otpState.pendingOrder || !executeRecaptcha) return;
+      if (!otpState.pendingOrder) return;
 
       setOtpState((prev) => ({ ...prev, isVerifying: true }));
 
       try {
         await verifyOTP(otpState.pendingOrder.customer.phone, otp);
 
-        const token = await executeRecaptcha("finalize_cod");
+        const token = await getRecaptchaToken("finalize_cod");
         const isHighRisk = otpState.pendingOrder.riskStatus === "HIGH_RISK";
         const pendingOrderWithRisk: Order = {
           ...otpState.pendingOrder,
@@ -493,7 +499,7 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
         setOtpState((prev) => ({ ...prev, isVerifying: false }));
       }
     },
-    [otpState.pendingOrder, executeRecaptcha, dispatch, router],
+    [otpState.pendingOrder, getRecaptchaToken, dispatch, router],
   );
 
   /**
@@ -501,15 +507,10 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
    */
   const handleResendOTP = useCallback(
     async (phoneNumber: string) => {
-      if (!executeRecaptcha) {
-        toast.error("Recaptcha not ready");
-        return;
-      }
-
       setOtpState((prev) => ({ ...prev, isResending: true }));
 
       try {
-        const token = await executeRecaptcha("request_otp");
+        const token = await getRecaptchaToken("request_otp");
         await requestOTP(phoneNumber, token);
         setOtpState((prev) => ({ ...prev, cooldown: 60 }));
 
@@ -533,7 +534,7 @@ export const usePayment = (options: UsePaymentOptions): UsePaymentReturn => {
         setOtpState((prev) => ({ ...prev, isResending: false }));
       }
     },
-    [executeRecaptcha],
+    [getRecaptchaToken],
   );
 
   // Prepaid Fee state for High-Risk Decision Modal & Persistent Banner

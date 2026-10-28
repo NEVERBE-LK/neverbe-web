@@ -53,7 +53,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
             key={option.paymentId}
             onClick={() => handleSelect(option)}
             className={`
-              relative group cursor-pointer p-4 transition-all duration-300 rounded-2xl overflow-hidden v2-glass border
+              relative group cursor-pointer p-3.5 sm:p-4 transition-all duration-300 rounded-2xl overflow-hidden v2-glass border
               ${
                 isSelected
                   ? "border-accent bg-accent/10 ring-1 ring-accent/30"
@@ -61,7 +61,7 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
               }
             `}
           >
-            <div className="flex items-start gap-3.5">
+            <div className="flex items-start gap-2.5 sm:gap-3.5">
               {/* Radio Checkbox */}
               <div
                 className={`
@@ -79,8 +79,8 @@ const PaymentOptions: React.FC<PaymentOptionsProps> = ({
               </div>
 
               <div className="flex-1 min-w-0">
-                <div className="flex items-start justify-between gap-3 w-full">
-                  <div className="flex items-start gap-3 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-3 w-full">
+                  <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
                     {option.imageUrl && (
                       <div className="w-8 h-8 rounded-lg overflow-hidden bg-elevated border border-glass-border flex items-center justify-center p-1 shrink-0">
                         <img

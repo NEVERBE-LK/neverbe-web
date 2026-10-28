@@ -525,22 +525,22 @@ const CheckoutForm = () => {
   return (
     <div className="w-full">
       {/* Minimal Distraction-Free Checkout Header */}
-      <header className="flex items-center justify-between pb-6 mb-6 sm:mb-8 border-b border-glass-border">
-        <div className="flex items-center gap-3">
+      <header className="flex items-center justify-between gap-3 pb-5 mb-5 sm:pb-6 sm:mb-8 border-b border-glass-border">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <Link
             href="/"
-            className="text-xl sm:text-2xl font-black uppercase tracking-tight text-primary hover:opacity-80 transition-opacity"
+            className="text-lg sm:text-2xl font-black uppercase tracking-tight text-primary hover:opacity-80 transition-opacity whitespace-nowrap"
           >
             NEVERBE
           </Link>
-          <span className="text-muted text-sm font-light">/</span>
-          <span className="text-[11px] sm:text-xs font-black uppercase tracking-widest text-secondary">
+          <span className="text-muted text-xs sm:text-sm font-light">/</span>
+          <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-secondary whitespace-nowrap">
             Checkout
           </span>
         </div>
 
-        <div className="flex items-center gap-4 sm:gap-6 text-xs">
-          <div className="hidden sm:flex items-center gap-1.5 text-secondary">
+        <div className="flex items-center gap-2.5 sm:gap-6 text-xs shrink-0">
+          <div className="hidden md:flex items-center gap-1.5 text-secondary">
             <FiLock size={13} className="text-accent" />
             <span className="font-semibold text-[11px] uppercase tracking-wider">
               Secure Checkout
@@ -548,10 +548,11 @@ const CheckoutForm = () => {
           </div>
           <Link
             href="/cart"
-            className="inline-flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-secondary hover:text-primary transition-colors"
+            className="inline-flex items-center gap-1.5 font-bold text-[11px] sm:text-xs uppercase tracking-wider text-secondary hover:text-primary transition-colors whitespace-nowrap py-1 px-2.5 sm:p-0 rounded-lg sm:rounded-none bg-surface sm:bg-transparent border border-glass-border sm:border-none"
           >
-            <span>Return to bag</span>
-            <FiArrowRight size={13} />
+            <span className="hidden sm:inline">Return to bag</span>
+            <span className="sm:hidden">Bag</span>
+            <FiArrowRight size={12} className="sm:size-[13px]" />
           </Link>
         </div>
       </header>
@@ -561,21 +562,21 @@ const CheckoutForm = () => {
         <button
           type="button"
           onClick={() => setShowMobileSummary(!showMobileSummary)}
-          className="w-full py-4 px-5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary cursor-pointer hover:bg-surface-2 transition-colors"
+          className="w-full py-3.5 px-4 sm:py-4 sm:px-5 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-primary cursor-pointer hover:bg-surface-2 transition-colors"
         >
-          <div className="flex items-center gap-2.5">
-            <FiShoppingBag size={17} className="text-secondary" />
-            <span className="text-primary font-black">
+          <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+            <FiShoppingBag size={17} className="text-secondary shrink-0" />
+            <span className="text-primary font-black truncate">
               {showMobileSummary ? "Hide order summary" : `Order summary (${totalQuantity})`}
             </span>
             <FiChevronDown
               size={15}
-              className={`text-secondary transition-transform duration-300 ${
+              className={`text-secondary shrink-0 transition-transform duration-300 ${
                 showMobileSummary ? "rotate-180" : ""
               }`}
             />
           </div>
-          <span className="font-black text-sm text-primary">
+          <span className="font-black text-sm text-primary shrink-0 pl-2">
             {totalLabel}
           </span>
         </button>
@@ -708,21 +709,21 @@ const CheckoutForm = () => {
       >
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           {/* LEFT COLUMN: Customer Information, Shipping & Payment */}
-          <div className="lg:col-span-7 space-y-6">
+          <div className="lg:col-span-7 space-y-5 sm:space-y-6">
             {/* Breadcrumb Steps */}
-            <nav aria-label="Checkout Progress" className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-              <Link href="/cart" className="hover:text-primary transition-colors">
+            <nav aria-label="Checkout Progress" className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-muted whitespace-nowrap overflow-x-auto py-0.5">
+              <Link href="/cart" className="hover:text-primary transition-colors shrink-0">
                 Bag
               </Link>
-              <span>/</span>
-              <span className="text-primary font-black">Information &amp; Delivery</span>
-              <span>/</span>
-              <span className="text-muted">Payment</span>
+              <span className="shrink-0 text-muted/50">/</span>
+              <span className="text-primary font-black shrink-0">Information &amp; Delivery</span>
+              <span className="shrink-0 text-muted/50">/</span>
+              <span className="text-muted shrink-0">Payment</span>
             </nav>
 
             {/* 1. Contact Information */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-surface border border-glass-border space-y-5 shadow-xs">
-              <div className="flex items-center justify-between border-b border-glass-border pb-3.5">
+            <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-surface border border-glass-border space-y-4 sm:space-y-5 shadow-xs">
+              <div className="flex items-center justify-between border-b border-glass-border pb-3.5 gap-2">
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-muted block mb-0.5">
                     Step 1 of 3
@@ -734,7 +735,7 @@ const CheckoutForm = () => {
                 {(!user || user.isAnonymous) && (
                   <Link
                     href="/account/login?redirect=/checkout"
-                    className="text-xs font-bold text-accent hover:underline flex items-center gap-1"
+                    className="text-xs font-bold text-accent hover:underline flex items-center gap-1 shrink-0"
                   >
                     <span>Log in</span>
                     <FiArrowRight size={12} />
@@ -794,7 +795,7 @@ const CheckoutForm = () => {
             </div>
 
             {/* 2. Shipping Address */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-surface border border-glass-border space-y-5 shadow-xs">
+            <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-surface border border-glass-border space-y-4 sm:space-y-5 shadow-xs">
               <div className="flex items-center justify-between border-b border-glass-border pb-3.5">
                 <div>
                   <span className="text-[10px] font-black uppercase tracking-widest text-muted block mb-0.5">
@@ -924,7 +925,7 @@ const CheckoutForm = () => {
             </div>
 
             {/* 3. Shipping Method */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-surface border border-glass-border space-y-4 shadow-xs">
+            <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-surface border border-glass-border space-y-4 shadow-xs">
               <div className="border-b border-glass-border pb-3.5">
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted block mb-0.5">
                   Shipping Option
@@ -934,23 +935,23 @@ const CheckoutForm = () => {
                 </h2>
               </div>
 
-              <div className="p-4 rounded-xl border border-accent bg-accent/5 flex items-center justify-between gap-4">
-                <div className="flex items-start gap-3.5">
+              <div className="p-3.5 sm:p-4 rounded-xl border border-accent bg-accent/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                <div className="flex items-start gap-3">
                   <div className="w-5 h-5 rounded-full border-2 border-accent bg-accent text-accent-text flex items-center justify-center shrink-0 mt-0.5">
                     <FiCheckCircle size={13} />
                   </div>
-                  <div>
-                    <p className="text-xs font-black uppercase tracking-wider text-primary m-0 flex items-center gap-2">
-                      <FiTruck size={14} className="text-accent" />
-                      Standard Tracked Delivery (Sri Lanka)
+                  <div className="min-w-0">
+                    <p className="text-xs font-black uppercase tracking-wider text-primary m-0 flex items-center gap-2 flex-wrap">
+                      <FiTruck size={14} className="text-accent shrink-0" />
+                      <span>Standard Tracked Delivery (Sri Lanka)</span>
                     </p>
-                    <p className="text-[11px] text-secondary m-0 mt-0.5">
+                    <p className="text-[11px] text-secondary m-0 mt-1 leading-relaxed">
                       Estimated delivery · {DELIVERY_ESTIMATE}, depending on location
                     </p>
                   </div>
                 </div>
-                <div className="text-right shrink-0">
-                  <span className="text-xs font-black uppercase tracking-wider text-primary">
+                <div className="pl-8 sm:pl-0 sm:text-right shrink-0">
+                  <span className="text-xs sm:text-sm font-black uppercase tracking-wider text-primary">
                     {shippingLabel}
                   </span>
                 </div>
@@ -969,7 +970,7 @@ const CheckoutForm = () => {
             </div>
 
             {/* 4. Payment Method */}
-            <div className="p-6 sm:p-7 rounded-2xl bg-surface border border-glass-border space-y-5 shadow-xs">
+            <div className="p-4 sm:p-6 md:p-7 rounded-2xl bg-surface border border-glass-border space-y-5 shadow-xs">
               <div className="border-b border-glass-border pb-3.5">
                 <span className="text-[10px] font-black uppercase tracking-widest text-muted block mb-0.5">
                   Step 3 of 3
@@ -1105,33 +1106,33 @@ const CheckoutForm = () => {
               <button
                 type="submit"
                 disabled={isProcessing || bagItems.length === 0 || !paymentType || shippingCost === null}
-                className="w-full h-15 rounded-full bg-accent text-accent-text font-black uppercase tracking-widest text-xs flex items-center justify-between px-8 cursor-pointer shadow-xl hover:opacity-95 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed border-none"
+                className="w-full h-14 sm:h-15 rounded-full bg-accent text-accent-text font-black uppercase tracking-widest text-xs flex items-center justify-between px-4 sm:px-8 cursor-pointer shadow-xl hover:opacity-95 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed border-none"
               >
                 <span className="flex items-center gap-2">
                   <FiLock size={15} />
                   <span>{isProcessing ? "Processing Order..." : "Complete Order"}</span>
                 </span>
-                <span className="text-sm font-black tracking-tight">
+                <span className="text-xs sm:text-sm font-black tracking-tight">
                   {totalLabel}
                 </span>
               </button>
 
               {/* Trust Badges Bar */}
-              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-glass-border text-center text-secondary">
-                <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface/60 border border-glass-border">
-                  <FiLock size={16} className="text-primary" />
-                  <span className="text-[10px] font-black uppercase tracking-wider text-primary">Secure Checkout</span>
-                  <span className="text-[9px] text-muted">Bank-grade encryption</span>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 pt-4 border-t border-glass-border text-center text-secondary">
+                <div className="flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl bg-surface/60 border border-glass-border">
+                  <FiLock size={16} className="text-primary shrink-0" />
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-primary">Secure Checkout</span>
+                  <span className="text-[8px] sm:text-[9px] text-muted">Bank-grade encryption</span>
                 </div>
-                <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface/60 border border-glass-border">
-                  <FiRefreshCw size={16} className="text-primary" />
-                  <span className="text-[10px] font-black uppercase tracking-wider text-primary">7-Day Exchange</span>
-                  <span className="text-[9px] text-muted">Hassle-free sizing</span>
+                <div className="flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl bg-surface/60 border border-glass-border">
+                  <FiRefreshCw size={16} className="text-primary shrink-0" />
+                  <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-primary">7-Day Exchange</span>
+                  <span className="text-[8px] sm:text-[9px] text-muted">Hassle-free sizing</span>
                 </div>
-                <div className="flex flex-col items-center gap-1.5 p-3 rounded-xl bg-surface/60 border border-glass-border">
-                  <FiShield size={16} className="text-primary" />
-                  <Link href="/contact" className="text-[10px] font-black uppercase tracking-wider text-primary underline">Need Help?</Link>
-                  <span className="text-[9px] text-muted">Contact our team</span>
+                <div className="flex flex-col items-center gap-1 sm:gap-1.5 p-2 sm:p-3 rounded-xl bg-surface/60 border border-glass-border">
+                  <FiShield size={16} className="text-primary shrink-0" />
+                  <Link href="/contact" className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-primary underline">Need Help?</Link>
+                  <span className="text-[8px] sm:text-[9px] text-muted">Contact our team</span>
                 </div>
               </div>
 
