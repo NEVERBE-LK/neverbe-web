@@ -2134,7 +2134,8 @@ button.commerce-primary:disabled {
   background: var(--v2-bg-void);
   transform: translateX(17px);
 }
-.commerce-coupon form {
+.commerce-coupon form,
+.commerce-coupon .commerce-coupon-inner {
   display: flex;
   gap: 10px;
   align-items: center;

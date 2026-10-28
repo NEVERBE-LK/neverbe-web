@@ -206,6 +206,8 @@ export const useCoupon = (options: UseCouponOptions = {}): UseCouponReturn => {
       const requestData = {
         code,
         userId: user?.uid,
+        email: user?.email,
+        phone: user?.phoneNumber,
         cartTotal: getCartTotal(),
         cartItems: bagItems.map((item) => ({
           itemId: item.itemId,
