@@ -104,6 +104,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
     (shippingFee || 0) +
     (fee || 0);
 
+  const isCOD =
+    (paymentMethod || "").toLowerCase().includes("cod") ||
+    (paymentMethod || "").toLowerCase().includes("cash on delivery");
+  const isFeePrepaid = isCOD && !!order.deliveryFeePrepaid;
+  const prepaidAmount = isFeePrepaid ? (shippingFee || 450) : 0;
+  const codBalance = Math.max(0, total - prepaidAmount);
+
   const handlePayDeliveryFee = async () => {
     if (!order) return;
     setProcessingFee(true);
@@ -340,6 +347,19 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
         align: "right",
       });
 
+      if (isFeePrepaid) {
+        currentY += 7;
+        doc.setTextColor(printPalette.accent);
+        doc.setFont("helvetica", "bold");
+        doc.text("Prepaid Delivery Fee:", summaryX, currentY);
+        doc.text(
+          `- Rs. ${prepaidAmount.toLocaleString()}`,
+          valueX,
+          currentY,
+          { align: "right" },
+        );
+      }
+
       currentY += 10;
       doc.setDrawColor(printPalette.border);
       doc.line(summaryX, currentY - 5, valueX, currentY - 5);
@@ -347,8 +367,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(printPalette.ink);
-      doc.text("Grand Total:", summaryX, currentY);
-      doc.text(`Rs. ${total.toLocaleString()}`, valueX, currentY, {
+      doc.text(isFeePrepaid ? "COD Balance Due:" : "Grand Total:", summaryX, currentY);
+      doc.text(`Rs. ${(isFeePrepaid ? codBalance : total).toLocaleString()}`, valueX, currentY, {
         align: "right",
       });
 
@@ -579,7 +599,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             </div>
 
             {/* DELIVERY FEE PREPAYMENT */}
-            {order.riskStatus === "HIGH_RISK" && (
+            {isCOD && order.riskStatus === "HIGH_RISK" && (
               <div className="mt-6 mb-10">
                 {order.deliveryFeePrepaid ? (
                   <div className="bg-accent/10 border border-accent rounded-[2.5rem] p-6 md:p-8 flex items-center gap-5">
@@ -723,23 +743,31 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       Rs. {(shippingFee || 0).toLocaleString()}
                     </span>
                   </div>
+                  {isFeePrepaid && (
+                    <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-accent">
+                      <span>Prepaid Delivery Fee (Online)</span>
+                      <span>- Rs. {prepaidAmount.toLocaleString()}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-8 mt-8 border-t border-default">
                   <div className="flex justify-between items-end">
                     <div>
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent block mb-2">
-                        Order Total
+                        {isFeePrepaid ? "COD Balance Due" : "Order Total"}
                       </span>
                       <div className="flex items-center gap-2">
                         <IoCheckmarkCircle className="text-accent" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-accent">
-                          Payment Verified
+                          {isCOD
+                            ? (order.deliveryFeePrepaid ? "Delivery Fee Prepaid" : "Cash on Delivery")
+                            : "Payment Verified"}
                         </span>
                       </div>
                     </div>
                     <span className="text-4xl font-display font-black text-primary-dark tracking-tighter">
-                      Rs. {total.toLocaleString()}
+                      Rs. {(isFeePrepaid ? codBalance : total).toLocaleString()}
                     </span>
                   </div>
                 </div>

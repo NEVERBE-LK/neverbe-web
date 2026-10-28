@@ -983,7 +983,9 @@ const CheckoutForm = () => {
                 </p>
               </div>
 
-              {riskResult?.isHighRisk && (
+              {riskResult?.isHighRisk &&
+                ((paymentType || "").toLowerCase().includes("cod") ||
+                  (paymentType || "").toLowerCase().includes("cash on delivery")) && (
                 <div className="bg-error/10 border border-error/30 rounded-xl p-4 flex items-start gap-3 text-error">
                   <FiAlertTriangle className="text-error shrink-0 mt-0.5" size={18} />
                   <div>

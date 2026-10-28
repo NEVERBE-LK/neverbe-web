@@ -10,7 +10,13 @@ interface PrepaidFeeBannerProps {
 }
 
 export default function PrepaidFeeBanner({ order, onPayNow }: PrepaidFeeBannerProps) {
-  if (!order || order.deliveryFeePrepaid) return null;
+  const isCOD =
+    (order?.paymentMethod || "").toLowerCase().includes("cod") ||
+    (order?.paymentMethod || "").toLowerCase().includes("cash on delivery");
+
+  if (!order || !isCOD || order.riskStatus !== "HIGH_RISK" || order.deliveryFeePrepaid) {
+    return null;
+  }
 
   return (
     <div className="w-full bg-warning/10 border-b border-warning/30 py-3 px-4 md:px-8 text-primary">

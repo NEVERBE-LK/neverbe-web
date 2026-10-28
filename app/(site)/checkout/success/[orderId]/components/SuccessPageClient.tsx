@@ -14,8 +14,11 @@ import axiosInstance from "@/actions/axiosInstance";
 const emptySubscribe = () => () => {};
 
 export default function SuccessPageClient({ order }: { order: Order }) {
+  const isCOD =
+    (order?.paymentMethod || "").toLowerCase().includes("cod") ||
+    (order?.paymentMethod || "").toLowerCase().includes("cash on delivery");
   const [feePaid, setFeePaid] = useState(order?.deliveryFeePrepaid || false);
-  const isHighRiskPending = order?.riskStatus === "HIGH_RISK" && !feePaid;
+  const isHighRiskPending = isCOD && order?.riskStatus === "HIGH_RISK" && !feePaid;
   const [showModal, setShowModal] = useState<boolean>(isHighRiskPending);
   const [isDismissed, setIsDismissed] = useState<boolean>(false);
   const pollCountRef = useRef(0);
@@ -104,7 +107,7 @@ export default function SuccessPageClient({ order }: { order: Order }) {
             </div>
           )}
 
-          {order?.riskStatus === 'HIGH_RISK' && feePaid && (
+          {isCOD && order?.riskStatus === 'HIGH_RISK' && feePaid && (
             <div className="w-full bg-accent/10 border border-accent/30 rounded-2xl p-4 mb-8 text-left">
               <p className="text-xs font-bold text-accent mb-1">
                 ✓ Delivery Fee Paid
@@ -140,7 +143,7 @@ export default function SuccessPageClient({ order }: { order: Order }) {
       </main>
 
       {/* Interactive High-Risk Decision Modal */}
-      {isMounted && (
+      {isMounted && isCOD && (
         <PrepaidFeeDecisionModal
           isOpen={showModal}
           order={order}

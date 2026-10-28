@@ -78,16 +78,22 @@ const OrdersView: React.FC<OrdersViewProps> = ({ orders }) => {
                       </h3>
                     </div>
                     <div className="flex items-center gap-2">
-                      {order.riskStatus === 'HIGH_RISK' && !order.deliveryFeePrepaid && (
-                        <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning border border-warning/30 text-[9px] font-bold uppercase tracking-wider">
-                          ⚠️ PREPAID FEE PENDING
-                        </span>
-                      )}
-                      {order.riskStatus === 'HIGH_RISK' && order.deliveryFeePrepaid && (
-                        <span className="px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold uppercase tracking-wider">
-                          ✓ FEE PAID
-                        </span>
-                      )}
+                      {((order.paymentMethod || "").toLowerCase().includes("cod") ||
+                        (order.paymentMethod || "").toLowerCase().includes("cash on delivery")) &&
+                        order.riskStatus === 'HIGH_RISK' &&
+                        !order.deliveryFeePrepaid && (
+                          <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning border border-warning/30 text-[9px] font-bold uppercase tracking-wider">
+                            ⚠️ PREPAID FEE PENDING
+                          </span>
+                        )}
+                      {((order.paymentMethod || "").toLowerCase().includes("cod") ||
+                        (order.paymentMethod || "").toLowerCase().includes("cash on delivery")) &&
+                        order.riskStatus === 'HIGH_RISK' &&
+                        order.deliveryFeePrepaid && (
+                          <span className="px-2 py-0.5 rounded-full bg-accent/20 text-accent border border-accent/30 text-[9px] font-bold uppercase tracking-wider">
+                            ✓ FEE PAID
+                          </span>
+                        )}
                       <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted">
                         {order.id?.toUpperCase()}
                       </span>
