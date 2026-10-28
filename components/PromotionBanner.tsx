@@ -122,7 +122,7 @@ const PromotionBanner: React.FC<PromotionBannerProps> = ({
                       </p>
                     </div>
                     {totalPromotionDiscount > 0 && (
-                      <p className="text-xl font-display font-black text-success whitespace-nowrap tracking-tighter">
+                      <p className="text-xl font-display font-black text-warning whitespace-nowrap tracking-tighter">
                         -Rs. {totalPromotionDiscount.toLocaleString()}
                       </p>
                     )}
@@ -246,10 +246,10 @@ const PromotionBanner: React.FC<PromotionBannerProps> = ({
               </p>
               {promo.savings && (
                 <div className="inline-flex flex-col">
-                  <span className="text-xs font-black uppercase tracking-widest text-success mb-1">
+                  <span className="text-xs font-black uppercase tracking-widest text-warning mb-1">
                     Your Benefit:
                   </span>
-                  <p className="text-3xl font-display font-black text-success tracking-tighter">
+                  <p className="text-3xl font-display font-black text-warning tracking-tighter">
                     - Rs. {promo.savings.toLocaleString()}
                   </p>
                 </div>

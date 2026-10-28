@@ -553,14 +553,20 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-display font-black text-primary-dark">
+                          <p
+                            className={`font-display font-black ${
+                              (item.discount || 0) > 0
+                                ? "text-error"
+                                : "text-primary-dark"
+                            }`}
+                          >
                             Rs.{" "}
                             {(
                               item.price - (item.discount || 0)
                             ).toLocaleString()}
                           </p>
                           {(item.discount || 0) > 0 && (
-                            <p className="text-[10px] text-accent font-bold uppercase line-through opacity-40">
+                            <p className="text-[10px] text-muted font-bold uppercase line-through opacity-60">
                               Rs. {item.price.toLocaleString()}
                             </p>
                           )}
@@ -700,7 +706,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </span>
                   </div>
                   {promotionDiscountSum > 0 && (
-                    <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-accent">
+                    <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-warning">
                       <span>Auto Discount</span>
                       <span>- Rs. {promotionDiscountSum.toLocaleString()}</span>
                     </div>

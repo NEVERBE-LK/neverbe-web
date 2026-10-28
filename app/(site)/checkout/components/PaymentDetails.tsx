@@ -353,8 +353,8 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         </div>
 
         {itemDiscount > 0 && (
-          <div className="flex justify-between text-accent">
-            <span>Discounts</span>
+          <div className="flex justify-between text-error">
+            <span>Item Discounts</span>
             <span className="font-black">
               - LKR {itemDiscount.toLocaleString()}
             </span>
@@ -362,7 +362,7 @@ const PaymentDetails: React.FC<PaymentDetailsProps> = ({
         )}
 
         {promotionDiscount > 0 && (
-          <div className="flex justify-between text-accent">
+          <div className="flex justify-between text-warning">
             <span>Promotion</span>
             <span className="font-black">
               - LKR {promotionDiscount.toLocaleString()}

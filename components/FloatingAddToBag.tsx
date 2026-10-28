@@ -13,6 +13,7 @@ interface FloatingAddToBagProps {
   qty?: number;
   onQtyChange?: (qty: number) => void;
   maxQty?: number;
+  discountType?: "item" | "promotion" | null;
 }
 
 /**
@@ -28,6 +29,7 @@ const FloatingAddToBag: React.FC<FloatingAddToBagProps> = ({
   qty = 1,
   onQtyChange,
   maxQty = 10,
+  discountType,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -59,7 +61,15 @@ const FloatingAddToBag: React.FC<FloatingAddToBagProps> = ({
                 {productName}
               </p>
               <div className="flex items-center gap-2">
-                <p className="text-md font-display font-black text-accent tracking-tighter">
+                <p
+                  className={`text-md font-display font-black tracking-tighter ${
+                    discountType === "item"
+                      ? "text-error"
+                      : discountType === "promotion"
+                      ? "text-warning"
+                      : "text-accent"
+                  }`}
+                >
                   Rs. {price.toLocaleString()}
                 </p>
                 {selectedSize && (

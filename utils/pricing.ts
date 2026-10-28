@@ -109,3 +109,46 @@ export function calculateSavingsPercent(
   return Math.round((savings / originalPrice) * 100);
 }
 
+export type DiscountType = "item" | "promotion" | null;
+
+/**
+ * Determine which discount type applies to a product:
+ * - "promotion": active promotion reduces the price (rendered in yellow)
+ * - "item": item-level discount reduces the price (rendered in red)
+ * - null: no discount applied
+ */
+export function getDiscountType(
+  product: Product,
+  promotion?: Promotion | null,
+  isEligible: boolean = false
+): DiscountType {
+  const hasPromo = Boolean(
+    promotion?.actions?.[0]?.value && (isEligible || !hasConditions(promotion))
+  );
+  if (hasPromo) {
+    const promoPrice = calculateFinalPrice(product, promotion, isEligible);
+    if (promoPrice < product.sellingPrice) {
+      return "promotion";
+    }
+  }
+
+  if ((product.discount || 0) > 0) {
+    return "item";
+  }
+
+  return null;
+}
+
+/**
+ * Returns the CSS color class corresponding to the discount type:
+ * - "item" -> "text-error" (red)
+ * - "promotion" -> "text-warning" (yellow)
+ * - null -> ""
+ */
+export function getDiscountColorClass(discountType: DiscountType): string {
+  if (discountType === "item") return "text-error";
+  if (discountType === "promotion") return "text-warning";
+  return "";
+}
+
+

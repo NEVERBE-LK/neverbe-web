@@ -8,7 +8,12 @@ import { Plus } from "lucide-react";
 import type { Product } from "@/interfaces/Product";
 import { usePromotionsContext } from "./PromotionsProvider";
 import { useQuickView } from "./QuickViewProvider";
-import { calculateFinalPrice, getOriginalPrice } from "@/utils/pricing";
+import {
+  calculateFinalPrice,
+  getOriginalPrice,
+  getDiscountType,
+  getDiscountColorClass,
+} from "@/utils/pricing";
 import { KOKOLogo } from "@/assets/images";
 
 function ItemCard({
@@ -26,7 +31,8 @@ function ItemCard({
   const price = calculateFinalPrice(item, promotion);
   const original = getOriginalPrice(item);
   const kokoInstallment = Math.round(price / 3);
-  const hasItemDiscount = Boolean((item.discount || 0) > 0);
+  const discountType = getDiscountType(item, promotion);
+  const discountColorClass = getDiscountColorClass(discountType);
 
   const image =
     variant?.images?.[0]?.url ||
@@ -54,7 +60,19 @@ function ItemCard({
             preload={priority}
           />
         </Link>
-        {label && <span className="commerce-item-badge">{label}</span>}
+        {label && (
+          <span
+            className={`commerce-item-badge ${
+              discountType === "promotion" && label === promotion?.name
+                ? "is-promo"
+                : discountType === "item" && label?.includes("% off")
+                ? "is-item-discount"
+                : ""
+            }`}
+          >
+            {label}
+          </span>
+        )}
         <button
           type="button"
           className="commerce-item-quick"
@@ -74,8 +92,16 @@ function ItemCard({
         >
           <h3 className="text-primary group-hover:text-secondary transition-colors">{item.name}</h3>
         </Link>
-        <div className={`commerce-item-price ${hasItemDiscount ? "has-discount" : ""}`}>
-          <strong className={hasItemDiscount ? "text-error" : ""}>
+        <div
+          className={`commerce-item-price ${
+            discountType === "item"
+              ? "has-item-discount has-discount"
+              : discountType === "promotion"
+              ? "has-promo-discount"
+              : ""
+          }`}
+        >
+          <strong className={discountColorClass}>
             LKR {price.toLocaleString("en-LK")}
           </strong>
           {original > price && (

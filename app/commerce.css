@@ -741,6 +741,12 @@ button.commerce-primary:disabled {
 .commerce-savings {
   color: var(--v2-accent);
 }
+.commerce-savings.is-item-discount {
+  color: var(--color-error);
+}
+.commerce-savings.is-promo {
+  color: var(--color-warning);
+}
 .commerce-cart-content.is-compact {
   display: flex;
   flex-direction: column;
@@ -915,8 +921,13 @@ button.commerce-primary:disabled {
   font-size: 20px;
   font-weight: 650;
 }
+.commerce-product-price.has-item-discount strong,
 .commerce-product-price.has-discount strong {
   color: var(--color-error);
+}
+.commerce-product-price.has-promo-discount strong,
+.commerce-product-price.has-promotion strong {
+  color: var(--color-warning);
 }
 .commerce-product-price del {
   font-size: 14px;
@@ -1075,7 +1086,8 @@ button.commerce-primary:disabled {
   padding: 12px 16px;
   margin-bottom: 22px;
   font-size: 12px;
-  border-left: 2px solid var(--v2-accent);
+  border-left: 2px solid var(--color-warning);
+  color: var(--color-warning);
 }
 .commerce-auth {
   min-height: 100svh;
@@ -1808,6 +1820,14 @@ button.commerce-primary:disabled {
   color: var(--v2-text-primary);
   border-radius: 20px;
 }
+.commerce-item-badge.is-item-discount {
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+.commerce-item-badge.is-promo {
+  color: var(--color-warning);
+  border: 1px solid var(--color-warning);
+}
 .commerce-item-quick {
   position: absolute;
   bottom: 13px;
@@ -1860,8 +1880,13 @@ button.commerce-primary:disabled {
 .commerce-item-price strong {
   font-weight: 650;
 }
+.commerce-item-price.has-item-discount strong,
 .commerce-item-price.has-discount strong {
   color: var(--color-error);
+}
+.commerce-item-price.has-promo-discount strong,
+.commerce-item-price.has-promotion strong {
+  color: var(--color-warning);
 }
 .commerce-item-price del {
   font-size: 10px;

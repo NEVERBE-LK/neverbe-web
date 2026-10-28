@@ -155,7 +155,7 @@ const OffersPage = async ({
                   className="v2-glass p-6 rounded-3xl relative overflow-hidden flex flex-col justify-between"
                 >
                   <div>
-                    <span className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-full bg-accent text-accent-text inline-block mb-3">
+                    <span className="px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider rounded-full border border-warning text-warning inline-block mb-3">
                       {promo.type}
                     </span>
                     <h3 className="font-display font-bold text-xl uppercase text-primary mb-2">
@@ -166,7 +166,7 @@ const OffersPage = async ({
                     </p>
                   </div>
                   <div className="mt-6 pt-4 border-t border-glass-border flex justify-between items-center">
-                    <span className="text-[11px] font-extrabold text-accent uppercase tracking-wider">
+                    <span className="text-[11px] font-extrabold text-warning uppercase tracking-wider">
                       Auto-applied at checkout
                     </span>
                     <Link

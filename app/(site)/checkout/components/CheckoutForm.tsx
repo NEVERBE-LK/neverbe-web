@@ -626,9 +626,14 @@ const CheckoutForm = () => {
                     )}
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-xs font-black text-primary m-0">
+                    <p className={`text-xs font-black m-0 ${item.discount > 0 ? "text-error" : "text-primary"}`}>
                       LKR {Math.max(0, item.price * item.quantity - item.discount).toLocaleString()}
                     </p>
+                    {item.discount > 0 && (
+                      <p className="text-[10px] text-muted line-through m-0">
+                        LKR {(item.price * item.quantity).toLocaleString()}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -644,13 +649,13 @@ const CheckoutForm = () => {
                 <span className="font-bold text-primary">LKR {rawSubTotal.toLocaleString()}</span>
               </div>
               {itemDiscount > 0 && (
-                <div className="flex justify-between text-accent font-bold">
+                <div className="flex justify-between text-error font-bold">
                   <span>Product Savings</span>
                   <span>- LKR {itemDiscount.toLocaleString()}</span>
                 </div>
               )}
               {promotionDiscount > 0 && (
-                <div className="flex justify-between text-accent font-bold">
+                <div className="flex justify-between text-warning font-bold">
                   <span>Promotions</span>
                   <span>- LKR {promotionDiscount.toLocaleString()}</span>
                 </div>
@@ -1224,9 +1229,14 @@ const CheckoutForm = () => {
                       )}
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-xs font-black text-primary m-0">
+                      <p className={`text-xs font-black m-0 ${item.discount > 0 ? "text-error" : "text-primary"}`}>
                         LKR {Math.max(0, item.price * item.quantity - item.discount).toLocaleString()}
                       </p>
+                      {item.discount > 0 && (
+                        <p className="text-[10px] text-muted line-through m-0">
+                          LKR {(item.price * item.quantity).toLocaleString()}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -1248,14 +1258,14 @@ const CheckoutForm = () => {
                 </div>
 
                 {itemDiscount > 0 && (
-                  <div className="flex justify-between text-accent font-bold">
+                  <div className="flex justify-between text-error font-bold">
                     <span>Product Savings</span>
                     <span>- LKR {itemDiscount.toLocaleString()}</span>
                   </div>
                 )}
 
                 {promotionDiscount > 0 && (
-                  <div className="flex justify-between text-accent font-bold">
+                  <div className="flex justify-between text-warning font-bold">
                     <span>Promotional Discount</span>
                     <span>- LKR {promotionDiscount.toLocaleString()}</span>
                   </div>

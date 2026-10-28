@@ -458,3 +458,41 @@ test("pricing logic displays our real sellingPrice as higher price for item disc
   assert.equal(pricing.calculateSavings(regularItem), 0);
 });
 
+test("discount colors: red for item discount, yellow for promotion", () => {
+  const itemWithDiscount = {
+    ...sample,
+    sellingPrice: 7500,
+    marketPrice: 7500,
+    discount: 15,
+  };
+  const regularItem = {
+    ...sample,
+    sellingPrice: 7500,
+    marketPrice: 7500,
+    discount: 0,
+  };
+  const activePromo = {
+    id: "promo-1",
+    name: "Flash Sale",
+    type: "PERCENTAGE",
+    actions: [{ value: 10 }],
+    conditions: [],
+  };
+
+  // Item-level discount only: type is item, color is text-error (red)
+  assert.equal(pricing.getDiscountType(itemWithDiscount), "item");
+  assert.equal(pricing.getDiscountColorClass("item"), "text-error");
+
+  // Promotion discount only: type is promotion, color is text-warning (yellow)
+  assert.equal(pricing.getDiscountType(regularItem, activePromo), "promotion");
+  assert.equal(pricing.getDiscountColorClass("promotion"), "text-warning");
+
+  // No discount: type is null, color is empty
+  assert.equal(pricing.getDiscountType(regularItem), null);
+  assert.equal(pricing.getDiscountColorClass(null), "");
+
+  // Promotion takes precedence over item discount when active
+  assert.equal(pricing.getDiscountType(itemWithDiscount, activePromo), "promotion");
+});
+
+
