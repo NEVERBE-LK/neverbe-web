@@ -145,6 +145,67 @@ test("sitemap includes published catalog categories even when the dropdown omits
   assert.equal(entries[0].lastModified.toISOString(), "2026-10-21T00:00:00.000Z");
   assert.equal(entries[2].lastModified, undefined);
 });
+test("sitemap loads every catalog page and propagates failures instead of publishing missing URLs", async () => {
+  const products = Array.from({ length: 405 }, (_, index) => ({
+    ...sample, id: `product-${index}`,
+  }));
+  const requested = [];
+  const { getCatalogForSitemap } = loadTs("actions/productAction.ts", {
+    "./axiosInstance": {
+      get: async (url) => {
+        const page = Number(new URL(url, "https://example.com").searchParams.get("page"));
+        requested.push(page);
+        return { data: { total: products.length, dataList: products.slice((page - 1) * 200, page * 200) } };
+      },
+    },
+  });
+  const entries = await getCatalogForSitemap();
+  assert.deepEqual(requested, [1, 2, 3]);
+  assert.equal(entries.filter(entry => entry.url.includes("/products/")).length, 405);
+
+  const unavailable = loadTs("actions/productAction.ts", {
+    "./axiosInstance": { get: async () => { throw new Error("Catalog unavailable"); } },
+  });
+  await assert.rejects(unavailable.getCatalogForSitemap(), /Catalog unavailable/);
+  for (const data of [{}, { total: 3, dataList: [] }]) {
+    const invalid = loadTs("actions/productAction.ts", {
+      "./axiosInstance": { get: async () => ({ data }) },
+    });
+    await assert.rejects(invalid.getCatalogForSitemap(), /Invalid catalog|Incomplete catalog/);
+  }
+  const empty = loadTs("actions/productAction.ts", {
+    "./axiosInstance": { get: async () => ({ data: { total: 0 } }) },
+  });
+  assert.deepEqual(await empty.getCatalogForSitemap(), []);
+});
+test("bundle sitemap includes every page, preserves real dates and rejects request failure", async () => {
+  const combos = Array.from({ length: 101 }, (_, index) => ({ id: `combo ${index}` }));
+  const { getCombosForSitemap } = loadTs("actions/promotionAction.ts", {
+    "./axiosInstance": { get: async (url) => {
+      const page = Number(new URL(url, "https://example.com").searchParams.get("page"));
+      return { data: { total: combos.length, dataList: combos.slice((page - 1) * 100, page * 100) } };
+    } },
+  });
+  const entries = await getCombosForSitemap();
+  assert.equal(entries.length, 101);
+  assert.equal(entries[100].url, "/collections/combos/combo%20100");
+  assert.equal(entries[0].lastModified, undefined);
+  const unavailable = loadTs("actions/promotionAction.ts", {
+    "./axiosInstance": { get: async () => { throw new Error("Bundles unavailable"); } },
+  });
+  await assert.rejects(unavailable.getCombosForSitemap(), /Bundles unavailable/);
+  const empty = loadTs("actions/promotionAction.ts", {
+    "./axiosInstance": { get: async () => ({ data: { total: 0, totalPages: 0 } }) },
+  });
+  assert.deepEqual(await empty.getCombosForSitemap(), []);
+});
+test("sitemap generation rejects catalog failure rather than returning a static-only success", async () => {
+  const sitemap = loadTs("app/sitemap.ts", {
+    "@/actions/productAction": { getCatalogForSitemap: async () => { throw new Error("Catalog unavailable"); } },
+    "@/actions/promotionAction": { getCombosForSitemap: async () => [] },
+  }).default;
+  await assert.rejects(sitemap(), /Catalog unavailable/);
+});
 test("light and dark theme roles stay complete and use one source", () => {
   const { designTokens, themeCss } = loadTs("config/theme.ts");
   assert.deepEqual(

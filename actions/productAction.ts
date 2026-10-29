@@ -124,28 +124,35 @@ export const getCategoriesForSitemap = async () => {
 };
 
 export const getCatalogForSitemap = async () => {
-  try {
-    const first = await axiosInstance.get("/web/products?page=1&size=200");
-    const products = [...(first.data.dataList || [])];
-    const pages = Math.ceil(
-      (Number(first.data.total) || products.length) / 200,
-    );
-    // Bound concurrency while including the complete catalog in the sitemap.
-    for (let page = 2; page <= pages; page += 4) {
-      const responses = await Promise.all(
-        Array.from({ length: Math.min(4, pages - page + 1) }, (_, index) =>
-          axiosInstance.get(`/web/products?page=${page + index}&size=200`),
-        ),
-      );
-      responses.forEach((response) =>
-        products.push(...(response.data.dataList || [])),
-      );
+  const readPage = async (page: number) => {
+    const { data } = await axiosInstance.get(`/web/products?page=${page}&size=200`);
+    const dataList = data?.dataList ?? (data?.total === 0 ? [] : undefined);
+    if (
+      !Array.isArray(dataList) ||
+      !Number.isSafeInteger(data.total) || data.total < 0
+    ) {
+      throw new Error("Invalid catalog response while generating sitemap");
     }
-    return catalogSitemapEntries(products);
-  } catch (error) {
-    console.error("Failed to fetch products for sitemap:", error);
-    return [];
+    return { total: data.total, dataList };
+  };
+  const first = await readPage(1);
+  const products = [...first.dataList];
+  const pages = Math.ceil(first.total / 200);
+  // Bound concurrency while including the complete catalog in the sitemap.
+  for (let page = 2; page <= pages; page += 4) {
+    const responses = await Promise.all(
+      Array.from({ length: Math.min(4, pages - page + 1) }, (_, index) =>
+        readPage(page + index),
+      ),
+    );
+    responses.forEach((response) => products.push(...response.dataList));
   }
+  // Let failed regeneration retain the previous sitemap instead of caching
+  // a successful response that silently removes all catalog URLs.
+  if (products.length < first.total) {
+    throw new Error("Incomplete catalog while generating sitemap");
+  }
+  return catalogSitemapEntries(products);
 };
 
 export const getCategories = async () => {

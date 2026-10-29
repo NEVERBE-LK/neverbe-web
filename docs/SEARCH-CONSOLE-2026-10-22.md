@@ -47,6 +47,14 @@ Read-only checks during this review found:
 
 ## Deployment and measurement
 
+### Follow-up validation, 29 October 2026
+
+Final local checks exposed a sitemap failure path: catalog errors were converted into empty arrays and cached as a successful sitemap containing only static pages. Product and bundle sitemap loaders now reject unavailable, malformed or incomplete responses, paginate the full inventory, and accept confirmed empty responses. Sitemap generation propagates failures so an unsuccessful regeneration cannot replace the previous valid sitemap. The first build requires catalog availability. This uses [Next.js ISR error handling](https://nextjs.org/docs/app/guides/incremental-static-regeneration#handling-uncaught-exceptions).
+
+The final local production build generated 62 sitemap URLs, including 43 published products and the running-shoes collection. Production HTTP checks passed for the sitemap, crawlable homepage links, server-rendered products, category canonical, confirmed empty and filtered collection noindex, www 308 redirect with path/query preservation, preview-host noindex and the product's explicit replica disclosure. Build/TypeScript and regression tests passed. Full-project lint reported zero errors and eight existing warnings; changed source/test files passed lint without warnings. Regression tests cover pagination, real empty catalogs, request failure and incomplete responses. Bundle entries no longer invent a modification date when none is provided. These are local implementation checks, not evidence of a deployed ranking or order increase. No orders or payments were submitted. These checks were completed before the owner-requested deployment on 29 October 2026; verify rollout status in Firebase App Hosting separately.
+
+### Deployment checklist
+
 1. Deploy the tested storefront and change any upstream www redirect from temporary to permanent. Confirm apex remains indexable and staging/default hosting URLs emit `X-Robots-Tag: noindex, nofollow`.
 2. Check `/sitemap.xml` contains the running-shoes collection and published product URLs. Submit it in the existing Search Console property. Use URL Inspection on the homepage, running-shoes, slides-sandals, and the leading product URLs; inspect Google-selected canonicals and request re-indexing of the changed priority pages.
 3. Validate actual product markup with Google's Rich Results Test. Keep all catalog disclosures and actual prices/stock accurate. No ratings, shipping amounts, performance specifications or authentication claims should be invented for search.
