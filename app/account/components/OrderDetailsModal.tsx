@@ -421,51 +421,51 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
           initial={{ opacity: 0, scale: 0.98, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.98, y: 10 }}
-          className="relative bg-surface w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-[2.5rem] shadow-2xl border border-default flex flex-col"
+          className="relative bg-surface w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl sm:rounded-[2.5rem] shadow-2xl border border-default flex flex-col"
         >
           {/* HEADER */}
-          <div className="sticky top-0 bg-surface border-b border-default p-6 md:p-8 flex items-center justify-between z-20">
+          <div className="sticky top-0 bg-surface border-b border-default p-4 sm:p-6 md:p-8 flex items-center justify-between z-20">
             <div>
-              <h2 className="text-2xl font-display font-black uppercase tracking-tighter text-primary-dark leading-none">
+              <h2 className="text-xl sm:text-2xl font-display font-black uppercase tracking-tighter text-primary-dark leading-none">
                 Order Details
               </h2>
-              <p className="text-[11px] text-muted font-bold mt-2 uppercase tracking-widest">
-                Reference: #{orderId} <span className="mx-2 text-muted">|</span>{" "}
+              <p className="text-[10px] sm:text-[11px] text-muted font-bold mt-1.5 sm:mt-2 uppercase tracking-widest">
+                Reference: #{orderId} <span className="mx-1 sm:mx-2 text-muted">|</span>{" "}
                 {toSafeLocaleString(createdAt)}
               </p>
             </div>
             <Button
               type="text"
-              icon={<IoClose size={22} />}
+              icon={<IoClose size={20} />}
               onClick={onClose}
-              className="p-3 bg-surface-2 hover:bg-surface-3 text-primary-dark transition-all rounded-full h-auto"
+              className="p-2.5 sm:p-3 bg-surface-2 hover:bg-surface-3 text-primary-dark transition-all rounded-full h-auto"
             />
           </div>
 
-          <div className="p-6 md:p-10 overflow-y-auto hide-scrollbar space-y-10">
+          <div className="p-4 sm:p-6 md:p-10 overflow-y-auto hide-scrollbar space-y-6 sm:space-y-10">
             {/* STATUS & ACTIONS */}
-            <div className="flex flex-wrap items-center justify-between gap-6 bg-surface-2 p-6 rounded-4xl border border-default">
-              <div className="flex items-center gap-5">
-                <div className="p-4 bg-accent text-inverse rounded-2xl shadow-lg shadow-accent/20">
-                  <IoCubeOutline size={24} />
+            <div className="flex flex-wrap items-center justify-between gap-4 sm:gap-6 bg-surface-2 p-4 sm:p-6 rounded-2xl sm:rounded-4xl border border-default">
+              <div className="flex items-center gap-3.5 sm:gap-5">
+                <div className="p-3 sm:p-4 bg-accent text-inverse rounded-xl sm:rounded-2xl shadow-lg shadow-accent/20 shrink-0">
+                  <IoCubeOutline size={22} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-1">
+                  <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-muted mb-0.5 sm:mb-1">
                     Current Status
                   </p>
                   <div className="flex items-center gap-3">
-                    <p className="font-display font-black text-xl uppercase tracking-tighter text-accent">
+                    <p className="font-display font-black text-lg sm:text-xl uppercase tracking-tighter text-accent">
                       {status}
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 w-full sm:w-auto">
                 <Button
                   onClick={handleDownloadInvoice}
                   loading={downloading}
                   disabled={downloading}
-                  className="flex items-center gap-2 px-6 py-4 bg-surface text-primary-dark border border-strong hover:border-primary transition-all text-xs! font-black! uppercase! tracking-widest! rounded-full shadow-sm h-auto"
+                  className="w-full sm:w-auto justify-center flex items-center gap-2 px-5 sm:px-6 py-3.5 sm:py-4 bg-surface text-primary-dark border border-strong hover:border-primary transition-all text-xs! font-black! uppercase! tracking-widest! rounded-full shadow-sm h-auto"
                 >
                   <IoCloudDownloadOutline size={18} />
                   {downloading ? null : "Download Invoice"}
@@ -475,7 +475,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
             {/* TRACKING TIMELINE */}
             {trackingNumber && (
-              <div className="bg-surface-2 p-6 md:p-8 rounded-4xl border border-default">
+              <div className="bg-surface-2 p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-4xl border border-default">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-1.5 h-6 bg-accent rounded-full" />
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
@@ -538,9 +538,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                 {items.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex gap-6 p-4 bg-surface-2 rounded-3xl border border-default hover:border-accent transition-all group"
+                    className="flex gap-3 sm:gap-6 p-3 sm:p-4 bg-surface-2 rounded-2xl sm:rounded-3xl border border-default hover:border-accent transition-all group"
                   >
-                    <div className="w-20 h-20 bg-surface shrink-0 rounded-2xl overflow-hidden border border-default p-1">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-surface shrink-0 rounded-xl sm:rounded-2xl overflow-hidden border border-default p-1">
                       <Image
                         width={80}
                         height={80}
@@ -551,13 +551,13 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         className="w-full h-full object-cover mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
                       />
                     </div>
-                    <div className="flex-1 flex flex-col justify-center">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-display font-black uppercase tracking-tighter text-primary-dark text-lg leading-tight">
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <div className="flex justify-between items-start gap-2">
+                        <div className="min-w-0">
+                          <h4 className="font-display font-black uppercase tracking-tighter text-primary-dark text-base sm:text-lg leading-tight truncate">
                             {item.name}
                           </h4>
-                          <div className="flex items-center gap-4 mt-1">
+                          <div className="flex items-center gap-3 sm:gap-4 mt-1">
                             <span className="text-[10px] font-bold uppercase text-muted tracking-widest">
                               Size:{" "}
                               <span className="text-primary-dark">
@@ -572,9 +572,9 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                             </span>
                           </div>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right shrink-0">
                           <p
-                            className={`font-display font-black ${
+                            className={`font-display font-black text-sm sm:text-base ${
                               (item.discount || 0) > 0
                                 ? "text-error"
                                 : "text-primary-dark"
@@ -600,17 +600,17 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
 
             {/* DELIVERY FEE PREPAYMENT */}
             {isCOD && order.riskStatus === "HIGH_RISK" && (
-              <div className="mt-6 mb-10">
+              <div className="mt-4 sm:mt-6 mb-6 sm:mb-10">
                 {order.deliveryFeePrepaid ? (
-                  <div className="bg-accent/10 border border-accent rounded-[2.5rem] p-6 md:p-8 flex items-center gap-5">
-                    <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center shrink-0">
-                      <IoCheckmarkCircle className="text-accent text-2xl" />
+                  <div className="bg-accent/10 border border-accent rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-6 md:p-8 flex items-center gap-4 sm:gap-5">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-accent/20 rounded-full flex items-center justify-center shrink-0">
+                      <IoCheckmarkCircle className="text-accent text-xl sm:text-2xl" />
                     </div>
                     <div>
-                      <h3 className="text-primary-dark font-display font-black uppercase text-lg">
+                      <h3 className="text-primary-dark font-display font-black uppercase text-base sm:text-lg">
                         Delivery Fee Paid
                       </h3>
-                      <p className="text-muted text-sm mt-1">
+                      <p className="text-muted text-xs sm:text-sm mt-0.5 sm:mt-1">
                         LKR {order.shippingFee} Delivery Fee has been confirmed.{" "}
                         {(order as any).deliveryFeeTxnId
                           ? `Transaction: ${(order as any).deliveryFeeTxnId}`
@@ -619,16 +619,16 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="bg-warning/10 border border-warning rounded-[2.5rem] p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-start gap-5">
-                      <div className="w-12 h-12 bg-warning/20 rounded-full flex items-center justify-center shrink-0">
-                        <IoWarningOutline className="text-warning text-2xl" />
+                  <div className="bg-warning/10 border border-warning rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
+                    <div className="flex items-start gap-3.5 sm:gap-5">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-warning/20 rounded-full flex items-center justify-center shrink-0">
+                        <IoWarningOutline className="text-warning text-xl sm:text-2xl" />
                       </div>
                       <div>
-                        <h3 className="text-primary-dark font-display font-black uppercase text-lg">
+                        <h3 className="text-primary-dark font-display font-black uppercase text-base sm:text-lg">
                           Delivery Fee Required (LKR {order.shippingFee})
                         </h3>
-                        <p className="text-primary-dark/70 text-sm mt-1 max-w-lg">
+                        <p className="text-primary-dark/70 text-xs sm:text-sm mt-0.5 sm:mt-1 max-w-lg">
                           To process this order and dispatch it immediately,
                           please pay the prepaid delivery fee.
                         </p>
@@ -638,7 +638,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                       onClick={handlePayDeliveryFee}
                       loading={processingFee}
                       disabled={processingFee}
-                      className="bg-warning hover:bg-warning text-dark border-none text-xs font-black uppercase tracking-widest rounded-full px-8 h-12 shadow-md shrink-0 transition-all"
+                      className="w-full md:w-auto bg-warning hover:bg-warning text-dark border-none text-xs font-black uppercase tracking-widest rounded-full px-6 sm:px-8 h-11 sm:h-12 shadow-md shrink-0 transition-all"
                     >
                       Pay LKR {order.shippingFee} Delivery Fee
                     </Button>
@@ -717,8 +717,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
               </div>
 
               {/* SUMMARY */}
-              <div className="bg-surface-2 p-8 rounded-[2.5rem] border border-default flex flex-col justify-between">
-                <div className="space-y-4">
+              <div className="bg-surface-2 p-5 sm:p-8 rounded-2xl sm:rounded-[2.5rem] border border-default flex flex-col justify-between">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex justify-between text-[11px] font-bold uppercase tracking-widest text-accent">
                     <span>Subtotal</span>
                     <span className="text-primary-dark">
@@ -751,8 +751,8 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                   )}
                 </div>
 
-                <div className="pt-8 mt-8 border-t border-default">
-                  <div className="flex justify-between items-end">
+                <div className="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-default">
+                  <div className="flex flex-wrap justify-between items-end gap-2">
                     <div>
                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent block mb-2">
                         {isFeePrepaid ? "COD Balance Due" : "Order Total"}
@@ -766,7 +766,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
                         </span>
                       </div>
                     </div>
-                    <span className="text-4xl font-display font-black text-primary-dark tracking-tighter">
+                    <span className="text-2xl sm:text-4xl font-display font-black text-primary-dark tracking-tighter">
                       Rs. {(isFeePrepaid ? codBalance : total).toLocaleString()}
                     </span>
                   </div>
@@ -775,7 +775,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({
             </div>
           </div>
 
-          <div className="p-6 bg-surface border-t border-default text-center">
+          <div className="p-4 sm:p-6 bg-surface border-t border-default text-center">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted">
               Customer Exclusives
             </p>

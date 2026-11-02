@@ -85,7 +85,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="v2-glass p-6 rounded-3xl border border-glass-border"
+              className="v2-glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-glass-border"
             >
               <Form
                 form={form}
@@ -118,10 +118,10 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                 >
                   <Input
                     placeholder="Street Address"
-                    className="w-full h-12 rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
+                    className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
                   />
                 </Form.Item>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <Form.Item
                     name="city"
                     rules={[{ required: true, message: "Required" }]}
@@ -129,7 +129,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                   >
                     <Input
                       placeholder="City"
-                      className="w-full h-12 rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
+                      className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
                     />
                   </Form.Item>
                   <Form.Item
@@ -139,7 +139,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                   >
                     <Input
                       placeholder="Phone Number"
-                      className="w-full h-12 rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
+                      className="w-full h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass border-glass-border text-primary font-bold text-xs"
                     />
                   </Form.Item>
                 </div>
@@ -148,7 +148,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
                   type="primary"
                   htmlType="submit"
                   loading={isSaving}
-                  className="w-full h-12 rounded-full bg-accent! !text-accent-text font-black uppercase text-xs tracking-widest border-none mt-2 cursor-pointer shadow-md"
+                  className="w-full h-11 sm:h-12 rounded-full bg-accent! !text-accent-text font-black uppercase text-xs tracking-widest border-none mt-2 cursor-pointer shadow-md"
                 >
                   Save Address
                 </Button>
@@ -156,7 +156,7 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
             </motion.div>
           ) : (
             <motion.div key="display" className="h-full">
-              <div className="v2-glass p-6 rounded-3xl border border-glass-border hover:border-accent transition-all duration-300 flex flex-col justify-between h-full min-h-[220px] relative group">
+              <div className="v2-glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-glass-border hover:border-accent transition-all duration-300 flex flex-col justify-between h-full min-h-[190px] relative group">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center">
@@ -225,10 +225,10 @@ const SavedAddresses: React.FC<SavedAddressesProps> = ({
   };
 
   return (
-    <div className="space-y-8">
-      <div className="border-b border-glass-border pb-6">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="border-b border-glass-border pb-4 sm:pb-6">
         <span className="v2-section-label mb-1">DELIVERY DESTINATIONS</span>
-        <h2 className="text-3xl font-black uppercase tracking-tight text-primary m-0">
+        <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-primary m-0">
           Saved Addresses
         </h2>
         <p className="text-xs text-secondary font-medium mt-1 m-0">

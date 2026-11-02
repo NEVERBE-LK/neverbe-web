@@ -73,11 +73,11 @@ const MyReviews = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="border-b border-glass-border pb-6">
+      <div className="border-b border-glass-border pb-4 sm:pb-6">
         <span className="v2-section-label mb-1">FEEDBACK</span>
-        <h2 className="text-3xl font-black uppercase tracking-tight text-primary m-0">
+        <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-primary m-0">
           My Reviews &amp; Ratings
         </h2>
       </div>
@@ -94,7 +94,7 @@ const MyReviews = () => {
               key={r.reviewId}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="v2-glass p-6 rounded-3xl border border-glass-border hover:border-accent transition-all flex flex-col justify-between"
+              className="v2-glass p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-glass-border hover:border-accent transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-3">

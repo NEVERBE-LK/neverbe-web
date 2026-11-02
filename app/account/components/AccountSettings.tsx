@@ -47,12 +47,12 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
     };
 
     return (
-      <div className="v2-glass p-8 rounded-3xl border border-glass-border hover:border-accent transition-all">
+      <div className="v2-glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-glass-border hover:border-accent transition-all">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center">
             <IoPersonOutline size={20} />
           </div>
-          <h3 className="text-xl font-black uppercase tracking-tight text-primary m-0">
+          <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-primary m-0">
             Personal Profile
           </h3>
         </div>
@@ -73,7 +73,7 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
               <Form.Item name="fName" rules={[{ required: true, message: "First name" }]}>
                 <Input
                   placeholder="FIRST NAME"
-                  className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
+                  className="h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
                 />
               </Form.Item>
             </Col>
@@ -81,7 +81,7 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
               <Form.Item name="lName" rules={[{ required: true, message: "Last name" }]}>
                 <Input
                   placeholder="LAST NAME"
-                  className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
+                  className="h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
                 />
               </Form.Item>
             </Col>
@@ -91,7 +91,7 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
             type="primary"
             htmlType="submit"
             loading={isUpdating}
-            className="h-12 px-8 rounded-full bg-accent! !text-accent-text font-black uppercase tracking-widest text-xs border-none mt-2 cursor-pointer shadow-md"
+            className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-accent! !text-accent-text font-black uppercase tracking-widest text-xs border-none mt-2 cursor-pointer shadow-md"
           >
             Update Details
           </Button>
@@ -132,12 +132,12 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
     };
 
     return (
-      <div className="v2-glass p-8 rounded-3xl border border-glass-border hover:border-accent transition-all">
+      <div className="v2-glass p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-glass-border hover:border-accent transition-all">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-2xl bg-accent/10 border border-accent/20 text-accent flex items-center justify-center">
             <IoLockClosedOutline size={20} />
           </div>
-          <h3 className="text-xl font-black uppercase tracking-tight text-primary m-0">
+          <h3 className="text-lg sm:text-xl font-black uppercase tracking-tight text-primary m-0">
             Security &amp; Password
           </h3>
         </div>
@@ -149,7 +149,7 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
           >
             <Input.Password
               placeholder="CURRENT PASSWORD"
-              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
+              className="h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
 
@@ -162,7 +162,7 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
           >
             <Input.Password
               placeholder="NEW PASSWORD"
-              className="h-12 rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
+              className="h-11 sm:h-12 rounded-xl sm:rounded-2xl bg-glass! border-glass-border! text-primary! font-bold text-xs"
             />
           </Form.Item>
 
@@ -170,7 +170,7 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
             type="primary"
             htmlType="submit"
             loading={isUpdating}
-            className="h-12 px-8 rounded-full bg-accent! !text-accent-text font-black uppercase tracking-widest text-xs border-none mt-2 cursor-pointer shadow-md"
+            className="w-full sm:w-auto h-11 sm:h-12 px-6 sm:px-8 rounded-full bg-accent! !text-accent-text font-black uppercase tracking-widest text-xs border-none mt-2 cursor-pointer shadow-md"
           >
             Update Password
           </Button>
@@ -180,15 +180,15 @@ const AccountSettings = ({ user, dispatch }: { user: any; dispatch: any }) => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="border-b border-glass-border pb-6">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="border-b border-glass-border pb-4 sm:pb-6">
         <span className="v2-section-label mb-1">SECURITY &amp; PREFERENCES</span>
-        <h2 className="text-3xl font-black uppercase tracking-tight text-primary m-0">
+        <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-primary m-0">
           Account Settings
         </h2>
       </div>
 
-      <div className="space-y-8">
+      <div className="space-y-4 sm:space-y-8">
         <ProfileForm />
         {!user?.isAnonymous && <SecurityForm />}
       </div>

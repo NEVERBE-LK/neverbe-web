@@ -560,7 +560,7 @@ button.commerce-primary:disabled {
   line-height: 1.8;
   color: var(--v2-text-secondary);
   max-width: 330px;
-  margin: 0 0 24px;
+  margin: 0 auto 24px;
 }
 .commerce-empty-icon {
   width: 74px;
@@ -1328,6 +1328,10 @@ button.commerce-primary:disabled {
   display: block;
   margin-top: 5px;
 }
+.commerce-account-nav-container {
+  display: flex;
+  flex-direction: column;
+}
 .commerce-account-layout > aside nav {
   display: flex;
   flex-direction: column;
@@ -1387,12 +1391,26 @@ button.commerce-primary:disabled {
   min-width: 0;
   text-align: left;
   cursor: pointer;
+  color: var(--v2-text-primary);
+  text-decoration: none;
+}
+.commerce-overview-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--v2-bg-elevated);
+  color: var(--v2-text-primary);
+  margin-bottom: 20px;
+  flex-shrink: 0;
 }
 .commerce-overview-grid h3 {
   font-size: 20px;
   font-weight: 650;
   letter-spacing: -0.025em;
-  margin: 25px 0 12px;
+  margin: 0 0 12px;
+  color: var(--v2-text-primary);
 }
 .commerce-overview-grid p {
   font-size: 12px;
@@ -1400,7 +1418,7 @@ button.commerce-primary:disabled {
   line-height: 1.8;
   margin: 0 0 25px;
 }
-.commerce-overview-grid span {
+.commerce-overview-grid span:not(.commerce-overview-icon) {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -1408,6 +1426,7 @@ button.commerce-primary:disabled {
   font-size: 11px;
   font-weight: 650;
   margin-top: auto;
+  color: var(--v2-text-primary);
 }
 .commerce-notice {
   display: flex;
@@ -1572,36 +1591,82 @@ button.commerce-primary:disabled {
   }
   .commerce-account-layout {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 24px;
+    min-width: 0;
   }
   .commerce-account-layout > aside {
     position: static;
+    min-width: 0;
+    max-width: 100%;
   }
   .commerce-account-member {
     display: none;
   }
+  .commerce-account-nav-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--v2-glass-border);
+    padding-bottom: 10px;
+    min-width: 0;
+    max-width: 100%;
+  }
   .commerce-account-layout > aside nav {
+    display: flex;
     flex-direction: row;
     overflow-x: auto;
-    border-bottom: 1px solid var(--v2-glass-border);
-    padding-bottom: 12px;
+    gap: 8px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    min-width: 0;
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+  .commerce-account-layout > aside nav::-webkit-scrollbar {
+    display: none;
   }
   .commerce-account-layout > aside nav button {
     width: auto;
     flex-shrink: 0;
+    min-height: 36px;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    background: var(--v2-bg-surface);
+    border: 1px solid var(--v2-glass-border);
+    color: var(--v2-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .commerce-account-layout nav button[aria-current] {
+    background: var(--v2-text-primary);
+    color: var(--v2-bg-void);
+    border-color: var(--v2-text-primary);
+    font-weight: 700;
   }
   .commerce-signout {
     width: auto;
-    margin: 10px 0 0 0;
-    border: 0;
+    flex-shrink: 0;
     min-height: 36px;
-    float: right;
+    padding: 8px 14px;
+    border-radius: 9999px;
+    background: transparent;
+    border: 1px solid var(--v2-glass-border);
+    color: var(--v2-text-secondary);
+    margin: 0;
+    float: none;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
   .commerce-overview-grid {
     gap: 15px;
   }
   .commerce-page-heading {
-    padding-bottom: 25px;
+    padding-bottom: 22px;
   }
 }
 @media (max-width: 640px) {
@@ -1648,8 +1713,22 @@ button.commerce-primary:disabled {
   .commerce-drawer-footer {
     padding-inline: 20px;
   }
+  .commerce-empty {
+    min-height: 240px;
+    padding: 32px 16px;
+  }
   .commerce-empty h2 {
-    font-size: 25px;
+    font-size: 22px;
+  }
+  .commerce-empty p:not(.sport-eyebrow) {
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0 auto 20px;
+    max-width: 100%;
+  }
+  .commerce-empty-icon {
+    width: 60px;
+    height: 60px;
   }
   .commerce-cart-page {
     padding: 35px 5% 55px;
@@ -1740,31 +1819,67 @@ button.commerce-primary:disabled {
     gap: 4px;
   }
   .commerce-account-main {
-    padding: 35px 5% 55px;
+    padding: 24px 4% 50px;
   }
   .commerce-account-main .commerce-page-heading h1 {
-    font-size: 42px;
+    font-size: 28px;
+    line-height: 1.15;
+    margin-bottom: 6px;
   }
   .commerce-account-layout > aside nav button {
     font-size: 11px;
-    gap: 9px;
-    padding-inline: 12px;
+    gap: 6px;
+    padding: 7px 12px;
+    min-height: 34px;
+  }
+  .commerce-signout {
+    padding: 7px 10px;
+    font-size: 11px;
+    min-height: 34px;
+    gap: 4px;
   }
   .commerce-overview h2 {
-    font-size: 26px;
+    font-size: 22px;
+    line-height: 1.2;
+    margin-bottom: 6px;
   }
   .commerce-overview-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 18px;
   }
   .commerce-overview-grid > button,
   .commerce-overview-grid > a {
-    padding: 25px;
+    padding: 16px 18px;
+    border-radius: 14px;
+  }
+  .commerce-overview-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+  }
+  .commerce-overview-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+  .commerce-overview-grid h3 {
+    font-size: 16px;
+    margin: 0 0 4px;
+  }
+  .commerce-overview-grid p {
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 14px;
   }
   .commerce-notice {
     flex-direction: column;
     align-items: flex-start;
-    gap: 7px;
-    padding: 16px;
+    gap: 8px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .commerce-cart-summary .commerce-primary {
     font-size: 12px;
