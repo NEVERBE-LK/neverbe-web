@@ -58,9 +58,16 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Preview deployments must not compete with the public storefront.
+        // App Hosting forwards the public domain separately from its origin host.
+        // Match that public domain before considering the internal Host header.
+        source: "/:path*",
+        has: [{ type: "header", key: "x-forwarded-host", value: "(?!neverbe\\.lk$|www\\.neverbe\\.lk$).+" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+      {
         source: "/:path*",
         has: [{ type: "host", value: "(?!neverbe\\.lk$|www\\.neverbe\\.lk$).+" }],
+        missing: [{ type: "header", key: "x-forwarded-host" }],
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       },
       {

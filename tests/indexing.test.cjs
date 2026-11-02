@@ -27,3 +27,16 @@ test("only the public storefront can be indexed; staging and default hosting dom
     assert.equal(response.headers.get("x-robots-tag"), host === "neverbe.lk" ? null : "noindex, nofollow");
   }
 });
+
+test("Firebase origin hosts do not noindex the public domain behind its proxy", async () => {
+  const { default: nextConfig } = await import("../next.config.mjs");
+  for (const forwardedHost of ["neverbe.lk", "www.neverbe.lk", "dev.neverbe.lk", "store--preview.hosted.app"]) {
+    const response = await unstable_getResponseFromNextConfig({
+      url: "https://web-origin.a.run.app/collections/running-shoes",
+      headers: { host: "web-origin.a.run.app", "x-forwarded-host": forwardedHost },
+      nextConfig,
+    });
+    const publicHost = ["neverbe.lk", "www.neverbe.lk"].includes(forwardedHost);
+    assert.equal(response.headers.get("x-robots-tag"), publicHost ? null : "noindex, nofollow");
+  }
+});
