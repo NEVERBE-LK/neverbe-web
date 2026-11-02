@@ -2185,12 +2185,19 @@ button.commerce-primary:disabled {
 }
 .commerce-faq {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 70px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  align-items: start;
+  width: 100%;
   max-width: 1500px;
-  margin: auto;
+  margin: 0 auto;
+  gap: 70px;
   padding: 60px 4%;
   border-block: 1px solid var(--v2-glass-border);
+  box-sizing: border-box;
+}
+.commerce-faq > div {
+  min-width: 0;
+  align-self: start;
 }
 .commerce-faq h2 {
   font-size: 35px;
@@ -2198,6 +2205,7 @@ button.commerce-primary:disabled {
   letter-spacing: -0.04em;
   line-height: 1.1;
   margin: 0;
+  overflow-wrap: break-word;
 }
 .commerce-faq details {
   border-bottom: 1px solid var(--v2-glass-border);
@@ -2607,7 +2615,12 @@ button.commerce-primary:disabled {
     gap: 16px;
   }
   .commerce-faq {
-    gap: 30px;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 48px 5%;
+  }
+  .commerce-faq h2 {
+    font-size: 30px;
   }
   .commerce-quick-view-drawer .commerce-product-gallery {
     max-width: 100%;
@@ -2672,11 +2685,11 @@ button.commerce-primary:disabled {
     gap: 9px;
   }
   .commerce-faq {
-    grid-template-columns: 1fr;
-    padding: 42px 5%;
+    padding: 40px 5%;
+    gap: 24px;
   }
   .commerce-faq h2 {
-    font-size: 29px;
+    font-size: 28px;
   }
   .commerce-modal .ant-modal-container {
     padding: 23px 18px;

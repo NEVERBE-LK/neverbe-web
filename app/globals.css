@@ -60,6 +60,10 @@
   --color-sport-footer: var(--color-dark-surface);
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 html,
 body {
   background-color: var(--v2-bg-void) !important;
