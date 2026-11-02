@@ -9,13 +9,13 @@ const TermsContent = () => {
       {termsAndConditions.map((item, index) => (
         <div
           key={index}
-          className="v2-glass p-8 rounded-3xl border border-glass-border hover:border-accent transition-all group"
+          className="v2-glass p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-glass-border hover:border-accent transition-all group"
         >
-          <div className="flex items-center gap-4 mb-3">
+          <div className="flex items-center gap-3 sm:gap-4 mb-3">
             <span className="text-xs font-black uppercase tracking-widest text-accent">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <h2 className="text-xl font-black uppercase tracking-tight text-primary m-0">
+            <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-primary m-0">
               {item.title}
             </h2>
           </div>

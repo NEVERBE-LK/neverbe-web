@@ -151,17 +151,27 @@ export const termsAndConditions = [
     description:
       "These Terms and Conditions are governed by and construed in accordance with the laws of Sri Lanka. Any disputes arising from or related to these terms shall be subject to the exclusive jurisdiction of the courts of Sri Lanka.",
   },
+  {
+    title: "Discounts, Promotions & Final Sale",
+    description:
+      "All items purchased at a discounted price, through promotional offers, special campaigns, clearance sales, or with coupon codes are deemed Final Sale. Final sale items cannot be returned, refunded, or exchanged for size, color, or alternative products under any circumstances. Neverbe reserves the right to determine the validity of promotional codes and to modify or cancel unauthorized or expired discounts at any time.",
+  },
 ];
 export const shippingReturnPolicy = [
   {
-    title: "Return Eligibility",
+    title: "Return & Exchange Eligibility",
     description:
-      "We accept returns and exchanges for unworn, unused items with their original packaging and tags intact. Accessories, such as socks and insoles, are final sale and cannot be returned or exchanged. To be eligible for a return or exchange, please initiate the process within 7 days of receiving your order.",
+      "We accept returns and size exchanges only for regular-priced, unworn, and unused items with their original packaging and tags intact within 7 days of receiving your order.\n\nAll discounted items, promotional sale merchandise, coupon code purchases, and accessories (such as socks and insoles) are strictly Final Sale and cannot be refunded, returned, or exchanged.",
+  },
+  {
+    title: "Discount & Promotional Items (Final Sale)",
+    description:
+      "All items purchased on discount, promotional sale, special offer, clearance, or using coupon codes are strictly Final Sale.\n\nThese items are strictly non-refundable and non-exchangeable under any circumstances, including for change of mind, style preference, or sizing issues. No returns, refunds, or exchanges will be accepted for sale or promotional merchandise, except in the rare event of a verified manufacturing defect where an identical replacement is unavailable. Please verify sizing, specifications, and order details carefully before completing your purchase.",
   },
   {
     title: "Initiating a Return",
     description:
-      "To request a return or exchange, please contact our customer service team for authorization. Once approved, you can send the item back to us using a trackable shipping method.",
+      "To request a return or exchange for eligible regular-priced items, please contact our customer service team for authorization. Once approved, you can send the item back to us using a trackable shipping method.",
   },
   {
     title: "Return Process",
