@@ -40,3 +40,26 @@ test("Firebase origin hosts do not noindex the public domain behind its proxy", 
     assert.equal(response.headers.get("x-robots-tag"), publicHost ? null : "noindex, nofollow");
   }
 });
+
+test("favicon and app icons adhere to Google Search guidelines (raster PNG/ICO, multiples of 48px square, no SVG)", () => {
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const layoutContent = fs.readFileSync(path.join(__dirname, "../app/layout.tsx"), "utf8");
+
+  // Google does not support SVG favicons in search results
+  assert.equal(/type:\s*["']image\/svg\+xml["']/.test(layoutContent), false);
+  assert.equal(/neverbe-mark-black\.svg/.test(layoutContent), false);
+
+  // App router icon routes must exist
+  assert.equal(fs.existsSync(path.join(__dirname, "../app/favicon.ico")), true);
+  assert.equal(fs.existsSync(path.join(__dirname, "../app/icon.png")), true);
+  assert.equal(fs.existsSync(path.join(__dirname, "../public/favicon.ico")), true);
+  assert.equal(fs.existsSync(path.join(__dirname, "../public/icon-192.png")), true);
+
+  // Fallback OG image in route.tsx must not point to public/ to avoid App Hosting standalone public copy skipping bug
+  const ogRouteContent = fs.readFileSync(path.join(__dirname, "../app/api/og/product/[itemId]/route.tsx"), "utf8");
+  assert.equal(ogRouteContent.includes("public/collections-og.png"), false);
+  assert.equal(ogRouteContent.includes("assets/images/collections-og.png"), true);
+  assert.equal(fs.existsSync(path.join(__dirname, "../assets/images/collections-og.png")), true);
+});
+

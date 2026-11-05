@@ -72,7 +72,7 @@ export async function GET(
     try {
       const fallbackPath = path.join(
         process.cwd(),
-        "public/collections-og.png",
+        "assets/images/collections-og.png",
       );
       const buf = await fs.readFile(fallbackPath);
       return new NextResponse(new Uint8Array(buf), {
